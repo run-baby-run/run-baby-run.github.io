@@ -34,9 +34,8 @@ export const runs = [
   },
 ] as const;
 
-// TODO: replace the placeholder names with the founders' real names.
 export const founders = [
-  { name: 'Founder One', role: 'Co-founder' },
-  { name: 'Founder Two', role: 'Co-founder' },
-  { name: 'Founder Three', role: 'Co-founder' },
+  { name: 'Shaghig Jouharian', role: 'Co-founder' },
+  { name: 'Astrig Jouharian', role: 'Co-founder' },
+  { name: 'Jebid Jouharian', role: 'Co-founder' },
 ];
