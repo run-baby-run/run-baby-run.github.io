@@ -35,9 +35,9 @@ export const runs = [
   },
 ] as const;
 
-export interface Founder {
+export interface Person {
   name: string;
-  surname: string;
+  surname?: string;
   role: string;
   /** Filename in src/assets/founders/ */
   file: string;
@@ -46,7 +46,7 @@ export interface Founder {
   focus?: string;
 }
 
-export const founders: Founder[] = [
+export const founders: Person[] = [
   {
     name: 'Shaghig',
     surname: 'Jouharian',
@@ -69,5 +69,14 @@ export const founders: Founder[] = [
     alt: 'Jebid smiling among other runners after a night race in Yerevan, medal around her neck',
     // Landscape source: the 3:4 crop needs nudging right to keep her centred.
     focus: '54% center',
+  },
+];
+
+export const leaders: Person[] = [
+  {
+    name: 'Har Hov',
+    role: 'Run leader',
+    file: 'harhov.jpg',
+    alt: 'Har Hov sitting on the road after a race, biting his finisher medal',
   },
 ];

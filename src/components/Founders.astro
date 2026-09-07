@@ -1,17 +1,19 @@
 ---
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import { founders } from '../data/site';
+import PersonCard from './PersonCard.astro';
+import { founders, leaders } from '../data/site';
+import type { Person } from '../data/site';
 
 const portraits = import.meta.glob<{ default: ImageMetadata }>('../assets/founders/*.jpg', {
   eager: true,
 });
 
-const people = founders.map((person) => {
+const resolve = (person: Person) => {
   const entry = portraits[`../assets/founders/${person.file}`];
-  if (!entry) throw new Error(`Founder portrait missing: src/assets/founders/${person.file}`);
-  return { ...person, image: entry.default };
-});
+  if (!entry) throw new Error(`Portrait missing: src/assets/founders/${person.file}`);
+  return entry.default;
+};
 ---
 
 <section class="section founders" id="founders">
@@ -27,28 +29,10 @@ const people = founders.map((person) => {
       </p>
     </div>
 
-    <ul class="founders__list">
+    <ul class="people">
       {
-        people.map((person, i) => (
-          <li class="founder reveal" style={`--tilt:${i - 1}deg`}>
-            <figure>
-              <Image
-                src={person.image}
-                alt={person.alt}
-                width={600}
-                widths={[320, 600]}
-                sizes="(max-width: 700px) 88vw, 32vw"
-                style={person.focus ? `object-position:${person.focus}` : undefined}
-                loading="lazy"
-                decoding="async"
-              />
-              <figcaption>
-                <span class="founder__name">{person.name}</span>
-                <span class="founder__surname">{person.surname}</span>
-                <span class="founder__role">{person.role}</span>
-              </figcaption>
-            </figure>
-          </li>
+        founders.map((person, i) => (
+          <PersonCard person={person} image={resolve(person)} tilt={i - 1} />
         ))
       }
     </ul>
@@ -65,6 +49,18 @@ const people = founders.map((person) => {
       />
       <figcaption>All three, same shirt, same idea.</figcaption>
     </figure>
+
+    <div class="leaders">
+      <h3 class="leaders__title">{leaders.length > 1 ? 'Run leaders' : 'Run leader'}</h3>
+      <p class="leaders__note">Out front on the night, alongside the founders.</p>
+      <ul class="people people--leaders">
+        {
+          leaders.map((person, i) => (
+            <PersonCard person={person} image={resolve(person)} tilt={i % 2 ? 1 : -1} />
+          ))
+        }
+      </ul>
+    </div>
   </div>
 </section>
 
@@ -83,71 +79,13 @@ const people = founders.map((person) => {
     max-width: 42ch;
   }
 
-  .founders__list {
+  .people {
     list-style: none;
     margin: 0 0 clamp(2.5rem, 5vw, 4rem);
     padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
     gap: clamp(1.25rem, 3vw, 2.25rem);
-  }
-
-  .founder {
-    rotate: var(--tilt);
-    transition: rotate 0.3s ease, transform 0.3s ease;
-  }
-
-  .founder:hover {
-    rotate: 0deg;
-    transform: translateY(-4px);
-  }
-
-  .founder figure {
-    margin: 0;
-    border: var(--line) solid var(--ink);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    background: var(--cream);
-    overflow: hidden;
-  }
-
-  .founder img {
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
-    border-bottom: var(--line) solid var(--ink);
-  }
-
-  .founder figcaption {
-    display: flex;
-    flex-direction: column;
-    padding: 0.9rem 1.1rem 1.1rem;
-  }
-
-  .founder__name {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: clamp(1.5rem, 2.6vw, 1.875rem);
-    line-height: 1;
-    text-transform: uppercase;
-    letter-spacing: -0.02em;
-  }
-
-  .founder__surname {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.0625rem;
-    line-height: 1.2;
-    text-transform: uppercase;
-    color: var(--pink-deep);
-  }
-
-  .founder__role {
-    margin-top: 0.35rem;
-    font-size: 0.6875rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
   }
 
   .founders__group {
@@ -169,6 +107,29 @@ const people = founders.map((person) => {
     font-weight: 700;
     text-transform: uppercase;
     font-size: 0.9375rem;
+  }
+
+  .leaders {
+    margin-top: clamp(3rem, 6vw, 4.5rem);
+    padding-top: clamp(2rem, 4vw, 3rem);
+    border-top: var(--line) solid var(--ink);
+  }
+
+  .leaders__title {
+    margin-bottom: 0.5rem;
+  }
+
+  .leaders__note {
+    color: var(--ink-soft);
+    max-width: 46ch;
+    margin-bottom: 2rem;
+  }
+
+  /* A short list should stay card-sized rather than stretching across. */
+  .people--leaders {
+    margin-bottom: 0;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 270px));
+    justify-content: start;
   }
 
   @media (max-width: 760px) {
