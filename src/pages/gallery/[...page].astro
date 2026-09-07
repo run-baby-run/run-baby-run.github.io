@@ -10,7 +10,7 @@ import { shots } from '../../data/gallery';
 // getStaticPaths is hoisted out of the component scope, so it cannot close over
 // anything declared here — the page size is inlined deliberately.
 export const getStaticPaths = (({ paginate }) => {
-  return paginate(shots, { pageSize: 6 });
+  return paginate(shots, { pageSize: 9 });
 }) satisfies GetStaticPaths;
 
 const { page } = Astro.props;

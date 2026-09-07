@@ -16,8 +16,9 @@ const zoomed = await Promise.all(
   shots.map((shot) =>
     getImage({
       src: shot.image,
-      width: Math.min(1600, shot.image.width),
+      width: Math.min(1400, shot.image.width),
       format: 'webp',
+      quality: 72,
     })
   )
 );
@@ -42,8 +43,9 @@ const zoomed = await Promise.all(
               <Image
                 src={shot.image}
                 alt={shot.alt}
-                width={1000}
-                widths={[400, 700, 1000]}
+                width={800}
+                widths={[360, 550, 800]}
+                quality={58}
                 sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 32vw"
                 loading="lazy"
                 decoding="async"
