@@ -1,0 +1,118 @@
+---
+interface Props {
+  page: {
+    url: { prev?: string; next?: string; current: string };
+    currentPage: number;
+    lastPage: number;
+    total: number;
+  };
+  /** Builds the href for a page number (page 1 has no /2 suffix). */
+  base?: string;
+}
+
+const { page, base = '/gallery' } = Astro.props;
+const href = (n: number) => (n === 1 ? `${base}/` : `${base}/${n}/`);
+const numbers = Array.from({ length: page.lastPage }, (_, i) => i + 1);
+---
+
+<nav class="pager" aria-label="Gallery pages">
+  <a
+    class="pager__step"
+    href={page.url.prev ?? '#'}
+    aria-disabled={page.url.prev ? undefined : 'true'}
+    rel="prev"
+  >
+    ← Newer
+  </a>
+
+  <ol class="pager__list">
+    {
+      numbers.map((n) => (
+        <li>
+          <a
+            href={href(n)}
+            class={`pager__num${n === page.currentPage ? ' is-current' : ''}`}
+            aria-current={n === page.currentPage ? 'page' : undefined}
+          >
+            {n}
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+
+  <a
+    class="pager__step"
+    href={page.url.next ?? '#'}
+    aria-disabled={page.url.next ? undefined : 'true'}
+    rel="next"
+  >
+    Older →
+  </a>
+</nav>
+
+<style>
+  .pager {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem 1.25rem;
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .pager__list {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .pager__num,
+  .pager__step {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: var(--line) solid var(--ink);
+    border-radius: 999px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    text-decoration: none;
+    background: var(--cream);
+    transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .pager__num {
+    width: 2.75rem;
+    height: 2.75rem;
+    font-size: 1.0625rem;
+  }
+
+  .pager__step {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.9375rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .pager__num:hover,
+  .pager__step:hover {
+    background: var(--pink);
+  }
+
+  .pager__step:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+
+  .pager__num.is-current {
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  .pager__step[aria-disabled='true'] {
+    opacity: 0.32;
+    pointer-events: none;
+  }
+</style>

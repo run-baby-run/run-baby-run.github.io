@@ -1,10 +1,19 @@
 ---
 import { site } from '../data/site';
 
+interface Props {
+  /** Which top-level page is showing, so the nav can mark it. */
+  current?: 'home' | 'gallery';
+}
+
+const { current = 'home' } = Astro.props;
+
+// Absolute hrefs so the section anchors also work from /gallery.
 const links = [
-  { href: '#schedule', label: 'Schedule' },
-  { href: '#club', label: 'The club' },
-  { href: '#founders', label: 'Founders' },
+  { href: '/#schedule', label: 'Schedule' },
+  { href: '/#club', label: 'The club' },
+  { href: '/gallery/', label: 'Gallery', key: 'gallery' },
+  { href: '/#founders', label: 'Founders' },
 ];
 ---
 
@@ -12,7 +21,19 @@ const links = [
   <div class="wrap nav__inner">
     <a class="nav__brand" href="/">Run Baby Run</a>
     <nav class="nav__links">
-      {links.map((link) => <a href={link.href}>{link.label}</a>)}
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            class={[link.href.startsWith('/#') && 'nav__anchor', link.key === current && 'is-current']
+              .filter(Boolean)
+              .join(' ')}
+            aria-current={link.key === current ? 'page' : undefined}
+          >
+            {link.label}
+          </a>
+        ))
+      }
       <a class="btn nav__cta" href={site.whatsapp} target="_blank" rel="noopener">Join us</a>
     </nav>
   </div>
@@ -48,7 +69,7 @@ const links = [
   .nav__links {
     display: flex;
     align-items: center;
-    gap: clamp(1rem, 3vw, 2.25rem);
+    gap: clamp(0.9rem, 2.6vw, 2rem);
     font-weight: 500;
   }
 
@@ -58,7 +79,7 @@ const links = [
     padding-block: 0.25rem;
   }
 
-  /* Underline grows from the left on hover — small, but it makes the nav feel built. */
+  /* Underline grows from the left on hover, and stays put on the current page. */
   .nav__links a:not(.btn)::after {
     content: '';
     position: absolute;
@@ -72,7 +93,8 @@ const links = [
     transition: transform 0.22s ease;
   }
 
-  .nav__links a:not(.btn):hover::after {
+  .nav__links a:not(.btn):hover::after,
+  .nav__links a.is-current::after {
     transform: scaleX(1);
   }
 
@@ -82,8 +104,9 @@ const links = [
     box-shadow: 3px 3px 0 var(--ink);
   }
 
-  @media (max-width: 620px) {
-    .nav__links a:not(.btn) {
+  @media (max-width: 720px) {
+    /* Section anchors are dropped on small screens; the Gallery page stays. */
+    .nav__anchor {
       display: none;
     }
     .nav__brand {

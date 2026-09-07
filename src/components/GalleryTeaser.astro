@@ -1,0 +1,50 @@
+---
+import GalleryGrid from './GalleryGrid.astro';
+import { shots } from '../data/gallery';
+
+// Landscape only, so the teaser row stays a clean single height.
+const preview = shots.filter((shot) => !shot.tall).slice(0, 3);
+---
+
+<section class="section teaser" id="gallery">
+  <div class="wrap">
+    <div class="teaser__head">
+      <div>
+        <p class="eyebrow">Most weeks look like this</p>
+        <h2>Every run ends<br />with a photo.</h2>
+      </div>
+      <a class="btn btn--ghost teaser__cta" href="/gallery/">
+        See all {shots.length} photos →
+      </a>
+    </div>
+
+    <GalleryGrid shots={preview} />
+  </div>
+</section>
+
+<style>
+  .teaser__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .teaser__cta {
+    flex: none;
+  }
+
+  /* One clean row on the home page, whatever the column rules say. */
+  .teaser :global(.gallery) {
+    columns: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: clamp(1.25rem, 3vw, 2.25rem);
+  }
+
+  .teaser :global(.gallery .shot) {
+    margin-bottom: 0;
+  }
+</style>

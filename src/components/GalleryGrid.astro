@@ -1,0 +1,89 @@
+---
+import { Image } from 'astro:assets';
+import type { ResolvedShot } from '../data/gallery';
+
+interface Props {
+  shots: ResolvedShot[];
+  /** Index of the first shot on this page, so tilts stay varied across pages. */
+  offset?: number;
+}
+
+const { shots, offset = 0 } = Astro.props;
+---
+
+<ul class="gallery">
+  {
+    shots.map((shot, i) => {
+      const n = offset + i;
+      return (
+        <li class={`shot reveal${shot.tall ? ' shot--tall' : ''}`} style={`--tilt:${(n % 3) - 1}deg`}>
+          <figure>
+            <Image
+              src={shot.image}
+              alt={shot.alt}
+              width={1000}
+              widths={[400, 700, 1000]}
+              sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 32vw"
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>{shot.caption}</figcaption>
+          </figure>
+        </li>
+      );
+    })
+  }
+</ul>
+
+<style>
+  /* Columns rather than grid: portrait and landscape shots pack without
+     leaving holes, at the cost of column-wise reading order. */
+  .gallery {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    columns: 300px;
+    column-gap: clamp(1.25rem, 3vw, 2.25rem);
+  }
+
+  .shot {
+    break-inside: avoid;
+    margin-bottom: clamp(1.25rem, 3vw, 2.25rem);
+    rotate: var(--tilt);
+    transition: rotate 0.3s ease, transform 0.3s ease;
+  }
+
+  .shot:hover {
+    rotate: 0deg;
+    transform: translateY(-4px);
+  }
+
+  .shot figure {
+    margin: 0;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    background: var(--cream);
+    overflow: hidden;
+  }
+
+  .shot img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-bottom: var(--line) solid var(--ink);
+  }
+
+  .shot--tall img {
+    aspect-ratio: 3 / 4;
+  }
+
+  .shot figcaption {
+    padding: 0.7rem 1rem 0.85rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.9375rem;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+  }
+</style>

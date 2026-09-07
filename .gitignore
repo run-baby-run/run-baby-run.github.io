@@ -3,3 +3,6 @@ dist/
 .astro/
 .DS_Store
 npm-debug.log*
+
+# Original full-size drops (derivatives live in src/assets/gallery/)
+/gallery/
