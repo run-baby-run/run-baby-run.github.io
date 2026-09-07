@@ -4,10 +4,7 @@ import { site } from '../data/site';
 
 <header class="nav">
   <div class="wrap nav__inner">
-    <a class="nav__brand" href="/">
-      <img src="/images/logo.jpg" alt="" width="48" height="48" />
-      <span>Run Baby Run</span>
-    </a>
+    <a class="nav__brand" href="/">Run Baby Run</a>
     <nav class="nav__links">
       <a href="#schedule">Schedule</a>
       <a href="#club">The club</a>
@@ -36,22 +33,12 @@ import { site } from '../data/site';
   }
 
   .nav__brand {
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
     text-decoration: none;
     font-family: var(--font-display);
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: -0.01em;
     font-size: 1.125rem;
-  }
-
-  .nav__brand img {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    object-fit: cover;
   }
 
   .nav__links {
@@ -77,8 +64,8 @@ import { site } from '../data/site';
   }
 
   @media (max-width: 720px) {
-    .nav__brand span {
-      display: none;
+    .nav__brand {
+      font-size: 1rem;
     }
     .nav__links a:not(.btn) {
       font-size: 0.9375rem;
