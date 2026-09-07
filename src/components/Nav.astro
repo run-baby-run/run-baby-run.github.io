@@ -3,7 +3,7 @@ import { site } from '../data/site';
 
 interface Props {
   /** Which top-level page is showing, so the nav can mark it. */
-  current?: 'home' | 'gallery';
+  current?: 'home' | 'gallery' | 'members';
 }
 
 const { current = 'home' } = Astro.props;
@@ -13,6 +13,7 @@ const links = [
   { href: '/#schedule', label: 'Schedule' },
   { href: '/#club', label: 'The club' },
   { href: '/gallery/', label: 'Gallery', key: 'gallery' },
+  { href: '/members/', label: 'Members', key: 'members' },
   { href: '/#founders', label: 'Founders' },
 ];
 ---

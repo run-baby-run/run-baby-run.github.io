@@ -1,0 +1,35 @@
+import type { ImageMetadata } from 'astro';
+
+export interface Member {
+  name: string;
+  /** Filename in src/assets/members/ */
+  file: string;
+}
+
+export interface ResolvedMember extends Member {
+  image: ImageMetadata;
+}
+
+const entries: Member[] = [
+  { name: 'Akshy', file: 'akshy.jpg' },
+  { name: 'Aram', file: 'aram.jpg' },
+  { name: 'Arman', file: 'arman.jpg' },
+  { name: 'Ashot', file: 'ashot.jpg' },
+  { name: 'Hayk', file: 'hayk.jpg' },
+  { name: 'Hrag', file: 'hrag.jpg' },
+  { name: 'Inga', file: 'inga.jpg' },
+  { name: 'Korosh', file: 'korosh.jpg' },
+  { name: 'Moojan', file: 'moojan.jpg' },
+  { name: 'Sabrina', file: 'sabrina.jpg' },
+  { name: 'Shaghig', file: 'shaghig.jpg' },
+];
+
+const files = import.meta.glob<{ default: ImageMetadata }>('../assets/members/*.jpg', {
+  eager: true,
+});
+
+export const members: ResolvedMember[] = entries.map((member) => {
+  const entry = files[`../assets/members/${member.file}`];
+  if (!entry) throw new Error(`Member photo missing: src/assets/members/${member.file}`);
+  return { ...member, image: entry.default };
+});

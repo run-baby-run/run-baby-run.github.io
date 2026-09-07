@@ -1,0 +1,141 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { members } from '../data/members';
+import { site } from '../data/site';
+---
+
+<Base
+  title="Members — Run Baby Run Club"
+  description="Some of the people you'll meet at a Run Baby Run meeting point in Yerevan."
+>
+  <Nav current="members" />
+  <main>
+    <section class="section members">
+      <div class="wrap">
+        <p class="eyebrow">The regulars</p>
+        <h1 class="members__title">Meet the club.</h1>
+        <p class="members__lead">
+          {members.length} of the faces you'll see at the meeting point. There is no roster and no
+          membership — these are just the people who keep turning up.
+        </p>
+
+        <ul class="members__grid">
+          {
+            members.map((member, i) => (
+              <li class="member reveal" style={`--tilt:${(i % 3) - 1}deg`}>
+                <figure>
+                  <Image
+                    src={member.image}
+                    alt={`Portrait of ${member.name}`}
+                    width={420}
+                    widths={[220, 420]}
+                    quality={72}
+                    sizes="(max-width: 520px) 44vw, (max-width: 900px) 30vw, 200px"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>{member.name}</figcaption>
+                </figure>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="members__cta sticker">
+          <div>
+            <h2 class="members__cta-title">Want your face here?</h2>
+            <p>Turn up to a run. That's the whole process.</p>
+          </div>
+          <a class="btn" href={site.whatsapp} target="_blank" rel="noopener">Join the WhatsApp</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .members__title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(2.75rem, 8vw, 5rem);
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+    margin: 0 0 1.25rem;
+  }
+
+  .members__lead {
+    font-size: 1.125rem;
+    max-width: 48ch;
+    color: var(--ink-soft);
+    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+  }
+
+  .members__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: clamp(1rem, 2.5vw, 1.75rem);
+  }
+
+  .member {
+    rotate: var(--tilt);
+    transition: rotate 0.3s ease, transform 0.3s ease;
+  }
+
+  .member:hover {
+    rotate: 0deg;
+    transform: translateY(-4px);
+  }
+
+  .member figure {
+    margin: 0;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--cream);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .member img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-bottom: var(--line) solid var(--ink);
+  }
+
+  .member figcaption {
+    padding: 0.6rem 0.85rem 0.7rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.0625rem;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+
+  .members__cta {
+    margin-top: clamp(3rem, 6vw, 4.5rem);
+    padding: clamp(1.5rem, 4vw, 2.25rem);
+    background: var(--sage);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem 2rem;
+  }
+
+  .members__cta-title {
+    font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+    margin-bottom: 0.35rem;
+  }
+
+  .members__cta p {
+    margin: 0;
+  }
+</style>
