@@ -84,11 +84,6 @@ const entries: Shot[] = [
     caption: 'Small but keen',
   },
   {
-    file: 'run-14.jpg',
-    alt: 'The club gathered on a wet street under blossoming trees in spring',
-    caption: 'Blossom season',
-  },
-  {
     file: 'run-15.jpg',
     alt: 'A large group posing beside flowering magnolia trees in a city square',
     caption: 'Magnolias and trainers',
@@ -99,16 +94,6 @@ const entries: Shot[] = [
     caption: 'Indoor regroup',
   },
   {
-    file: 'run-17.jpg',
-    alt: 'A big group posing together inside a lit shopping centre atrium',
-    caption: 'The whole atrium',
-  },
-  {
-    file: 'run-18.jpg',
-    alt: 'Runners gathered outside a small coffee kiosk with a dog',
-    caption: 'Coffee stop',
-  },
-  {
     file: 'run-19.jpg',
     alt: 'A small group on a street, one person leaping into the air, with a dog',
     caption: 'Someone always jumps',
@@ -117,11 +102,6 @@ const entries: Shot[] = [
     file: 'run-20.jpg',
     alt: 'The group posing outside a coffee kiosk, a dog lying in front',
     caption: 'Post-run coffee',
-  },
-  {
-    file: 'run-21.jpg',
-    alt: 'Runners lined up under the arch of a large concrete bridge',
-    caption: 'Under the arch',
   },
   {
     file: 'run-22.jpg',
@@ -139,19 +119,9 @@ const entries: Shot[] = [
     caption: 'Morning laps',
   },
   {
-    file: 'run-25.jpg',
-    alt: 'Runners in race bibs in front of a night race backdrop',
-    caption: 'Race night',
-  },
-  {
     file: 'run-26.jpg',
     alt: 'A large group in race bibs posing at a night race start',
     caption: 'Bibs on',
-  },
-  {
-    file: 'run-27.jpg',
-    alt: 'Three runners posing in a bright corridor after a run',
-    caption: 'Cooldown poses',
   },
   {
     file: 'run-28.jpg',
@@ -159,24 +129,9 @@ const entries: Shot[] = [
     caption: 'Corridor photoshoot',
   },
   {
-    file: 'run-29.jpg',
-    alt: 'Three runners posing together indoors after a session',
-    caption: 'Still going',
-  },
-  {
-    file: 'run-30.jpg',
-    alt: 'Three runners lined up for one more photo in a corridor',
-    caption: 'Last one, promise',
-  },
-  {
     file: 'run-31.jpg',
     alt: 'A dense crowd of runners waiting at a race start',
     caption: 'Start line crowd',
-  },
-  {
-    file: 'run-32.jpg',
-    alt: 'The group gathered in a courtyard on a cold evening',
-    caption: 'Evening meet',
   },
   {
     file: 'run-33.jpg',
@@ -199,19 +154,9 @@ const entries: Shot[] = [
     caption: 'Balance check',
   },
   {
-    file: 'run-37.jpg',
-    alt: 'A group selfie taken in front of a large window after a run',
-    caption: 'Window selfie',
-  },
-  {
     file: 'run-38.jpg',
     alt: 'Runners crowding into a selfie in front of a window',
     caption: 'Everyone in frame',
-  },
-  {
-    file: 'run-39.jpg',
-    alt: 'Another group selfie by the window after a session',
-    caption: 'One more selfie',
   },
   {
     file: 'run-40.jpg',
