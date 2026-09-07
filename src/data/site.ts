@@ -66,7 +66,8 @@ export const founders: Founder[] = [
     surname: 'Jouharian',
     role: 'Co-founder',
     file: 'jebid.jpg',
-    alt: 'Jebid photographed in front of the Eiffel Tower in Paris',
-    focus: 'center 35%',
+    alt: 'Jebid smiling among other runners after a night race in Yerevan, medal around her neck',
+    // Landscape source: the 3:4 crop needs nudging right to keep her centred.
+    focus: '54% center',
   },
 ];
