@@ -5,38 +5,69 @@ const year = new Date().getFullYear();
 
 <footer class="footer">
   <div class="wrap footer__inner">
-    <p>© {year} {site.name} Club · {site.city}</p>
-    <p>
-      <a href={site.instagram} target="_blank" rel="noopener">Instagram</a>
-      <span aria-hidden="true">·</span>
-      <a href={site.whatsapp} target="_blank" rel="noopener">WhatsApp</a>
-    </p>
+    <img class="footer__mark" src="/images/logo.png" alt="" width="832" height="427" loading="lazy" />
+    <div class="footer__meta">
+      <p>© {year} {site.name} Club · {site.city}</p>
+      <p class="footer__links">
+        <a href={site.instagram} target="_blank" rel="noopener">Instagram</a>
+        <a href={site.whatsapp} target="_blank" rel="noopener">WhatsApp</a>
+      </p>
+    </div>
   </div>
 </footer>
 
 <style>
   .footer {
-    padding-block: 2rem;
-    font-size: 0.9375rem;
-    color: var(--ink-soft);
+    padding-block: clamp(2.5rem, 5vw, 4rem);
   }
 
   .footer__inner {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     justify-content: space-between;
-    gap: 0.5rem 1.5rem;
+    gap: 1.5rem;
   }
 
-  .footer p {
+  .footer__mark {
+    width: 180px;
+    height: auto;
+  }
+
+  .footer__meta {
+    text-align: right;
+    font-size: 0.9375rem;
+    color: var(--ink-soft);
+  }
+
+  .footer__meta p {
     margin: 0;
   }
 
-  .footer a {
-    color: inherit;
+  .footer__links {
+    display: flex;
+    gap: 1.25rem;
+    justify-content: flex-end;
+    margin-top: 0.35rem;
   }
 
-  .footer span {
-    margin-inline: 0.5rem;
+  .footer__links a {
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+
+  .footer__links a:hover {
+    color: var(--pink-deep);
+  }
+
+  @media (max-width: 560px) {
+    .footer__meta {
+      text-align: left;
+    }
+    .footer__links {
+      justify-content: flex-start;
+    }
   }
 </style>

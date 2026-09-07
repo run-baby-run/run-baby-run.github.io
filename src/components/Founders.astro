@@ -4,20 +4,28 @@ import { founders } from '../data/site';
 
 <section class="section founders" id="founders">
   <div class="wrap">
-    <p class="eyebrow">Who started this</p>
-    <h2>The three who<br />showed up first.</h2>
+    <div class="founders__head">
+      <div>
+        <p class="eyebrow">Who started this</p>
+        <h2>The three who showed up first.</h2>
+      </div>
+      <p class="founders__note">
+        Shaghig, Astrig and Jebid started with a handful of friends and a standing Tuesday night.
+        It grew from there — same idea, more people.
+      </p>
+    </div>
 
     <div class="founders__photos">
-      <figure>
+      <figure class="sticker founders__photo founders__photo--a reveal">
         <img
           src="/images/founders-2.jpg"
-          alt="The three founders of Run Baby Run in club t-shirts at a race event"
+          alt="The three founders of Run Baby Run in club shirts at a race event"
           width="1170"
           height="780"
           loading="lazy"
         />
       </figure>
-      <figure>
+      <figure class="sticker founders__photo founders__photo--b reveal">
         <img
           src="/images/founders-1.jpg"
           alt="The founders greeting runners at a Run Baby Run event in Yerevan"
@@ -32,38 +40,61 @@ import { founders } from '../data/site';
       {
         founders.map((person) => (
           <li>
-            <span class="founders__name">{person.name}</span>
+            <span class="founders__first">{person.name.split(' ')[0]}</span>
+            <span class="founders__last">{person.name.split(' ').slice(1).join(' ')}</span>
             <span class="founders__role">{person.role}</span>
           </li>
         ))
       }
     </ul>
-
-    <p class="founders__note">
-      They started with a handful of friends and a standing Tuesday night. It grew from there —
-      same idea, more people.
-    </p>
   </div>
 </section>
 
 <style>
+  .founders__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+    gap: clamp(1.5rem, 5vw, 4rem);
+    align-items: end;
+    margin-bottom: 3.5rem;
+  }
+
+  .founders__note {
+    margin: 0;
+    color: var(--ink-soft);
+    max-width: 42ch;
+  }
+
   .founders__photos {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 1.25rem;
-    margin: 3rem 0 2.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    margin-bottom: 3.5rem;
   }
 
-  .founders__photos figure {
+  .founders__photo {
     margin: 0;
-    border: 2px solid var(--ink);
-    border-radius: 1.5rem;
     overflow: hidden;
+    transition: rotate 0.35s ease, transform 0.35s ease;
   }
 
-  .founders__photos img {
+  .founders__photo--a {
+    rotate: -2deg;
+  }
+
+  .founders__photo--b {
+    rotate: 2deg;
+    margin-top: clamp(0rem, 4vw, 3rem);
+  }
+
+  .founders__photo:hover {
+    rotate: 0deg;
+    transform: translateY(-4px);
+  }
+
+  .founders__photo img {
     width: 100%;
-    height: 100%;
     aspect-ratio: 3 / 2;
     object-fit: cover;
   }
@@ -71,36 +102,57 @@ import { founders } from '../data/site';
   .founders__names {
     list-style: none;
     padding: 0;
-    margin: 0 0 2rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: clamp(1rem, 2.5vw, 1.75rem);
   }
 
   .founders__names li {
     display: flex;
     flex-direction: column;
-    padding: 0.75rem 1.5rem;
-    border: 2px solid var(--ink);
-    border-radius: 1rem;
+    padding-top: 1rem;
+    border-top: var(--line) solid var(--ink);
   }
 
-  .founders__name {
+  .founders__first {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 1.25rem;
+    font-size: clamp(1.75rem, 3.2vw, 2.25rem);
+    line-height: 1;
     text-transform: uppercase;
+    letter-spacing: -0.02em;
+  }
+
+  .founders__last {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.125rem, 2vw, 1.375rem);
+    line-height: 1.15;
+    text-transform: uppercase;
+    color: var(--pink-deep);
   }
 
   .founders__role {
-    font-size: 0.8125rem;
-    letter-spacing: 0.12em;
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--ink-soft);
   }
 
-  .founders__note {
-    max-width: 52ch;
-    color: var(--ink-soft);
+  @media (max-width: 760px) {
+    .founders__head {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+
+    .founders__photos {
+      grid-template-columns: 1fr;
+    }
+
+    .founders__photo--b {
+      margin-top: 0;
+    }
   }
 </style>

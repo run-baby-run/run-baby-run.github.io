@@ -5,80 +5,107 @@ import { runs } from '../data/site';
 <section class="section schedule" id="schedule">
   <div class="wrap">
     <p class="eyebrow">Every week, rain or shine</p>
-    <h2>Three runs.<br />No sign-up.</h2>
+    <h2 class="schedule__head">
+      Three runs.<br /><span class="schedule__accent">No sign-up.</span>
+    </h2>
 
-    <div class="grid">
+    <div class="schedule__grid">
       {
-        runs.map((run) => (
-          <article class={`card card--${run.accent}`}>
-            <p class="card__label">
-              {run.icon} {run.label}
+        runs.map((run, i) => (
+          <article class={`run reveal run--${run.accent}`} style={`--tilt:${i % 2 ? 1 : -1}deg`}>
+            <p class="run__label">
+              <span aria-hidden="true">{run.icon}</span> {run.label}
             </p>
-            <h3>{run.day}</h3>
-            <p class="card__time">{run.time}</p>
-            <p class="card__blurb">{run.blurb}</p>
+            <h3 class="run__day">{run.day}</h3>
+            <p class="run__time">{run.time}</p>
+            <p class="run__blurb">{run.blurb}</p>
           </article>
         ))
       }
     </div>
 
-    <p class="note">
-      Meeting points change week to week — we post them on Instagram and in the WhatsApp group a
-      day or two before each run.
+    <p class="schedule__note">
+      <strong>Meeting points move week to week.</strong> We post them on Instagram and in the
+      WhatsApp group a day or two before each run.
     </p>
   </div>
 </section>
 
 <style>
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.25rem;
-    margin-top: 3rem;
+  .schedule__head {
+    margin-bottom: 3.5rem;
   }
 
-  .card {
-    border: 2px solid var(--ink);
-    border-radius: 1.5rem;
-    padding: 1.75rem;
+  .schedule__accent {
+    color: var(--pink-deep);
+    -webkit-text-stroke: 1.5px var(--ink);
+  }
+
+  .schedule__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: clamp(1.25rem, 2.5vw, 2rem);
+  }
+
+  .run {
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    padding: 1.9rem 1.75rem 2rem;
     display: flex;
     flex-direction: column;
+    rotate: var(--tilt);
+    transition: rotate 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
   }
 
-  .card--pink {
+  .run:hover {
+    rotate: 0deg;
+    transform: translate(-3px, -3px);
+    box-shadow: 11px 11px 0 var(--ink);
+  }
+
+  .run--pink {
     background: var(--pink);
   }
-
-  .card--green {
-    background: var(--green);
+  .run--sage {
+    background: var(--sage);
   }
 
-  .card__label {
+  .run__label {
     font-weight: 700;
-    font-size: 0.8125rem;
-    letter-spacing: 0.14em;
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    margin: 0 0 1.25rem;
+    margin: 0 0 1.75rem;
   }
 
-  .card__time {
+  .run__day {
+    font-size: clamp(1.5rem, 2.6vw, 1.875rem);
+  }
+
+  .run__time {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 2.75rem;
-    line-height: 1;
+    font-size: clamp(3.25rem, 7vw, 4.25rem);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
-    margin: 0.375rem 0 1rem;
+    margin: 0.5rem 0 1.25rem;
   }
 
-  .card__blurb {
+  .run__blurb {
     margin: 0;
     font-size: 0.9375rem;
     line-height: 1.55;
   }
 
-  .note {
-    margin-top: 2rem;
-    max-width: 52ch;
+  .schedule__note {
+    margin: 3rem 0 0;
+    max-width: 54ch;
     color: var(--ink-soft);
+  }
+
+  .schedule__note strong {
+    color: var(--ink);
   }
 </style>

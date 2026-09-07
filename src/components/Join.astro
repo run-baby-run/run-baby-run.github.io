@@ -3,34 +3,73 @@ import { site } from '../data/site';
 ---
 
 <section class="section join" id="join">
+  <span class="join__blob" aria-hidden="true"></span>
   <div class="wrap join__inner">
-    <h2>Just show up.<br />We'll take it<br />from there.</h2>
-    <div class="join__actions">
-      <a class="btn join__btn" href={site.whatsapp} target="_blank" rel="noopener">
-        Join the WhatsApp group
-      </a>
-      <a class="btn btn--ghost join__btn" href={site.instagram} target="_blank" rel="noopener">
-        Follow {site.instagramHandle}
-      </a>
+    <h2 class="join__head">
+      Just show up.<br />
+      <span class="join__accent">We'll take it</span><br />
+      from there.
+    </h2>
+
+    <div class="join__side">
+      <p class="join__copy">
+        No forms, no fee, no fitness test. Say hi in the group chat, or just walk up to the meeting
+        point on the night.
+      </p>
+      <div class="join__actions">
+        <a class="btn join__btn" href={site.whatsapp} target="_blank" rel="noopener">
+          Join the WhatsApp group
+        </a>
+        <a class="btn join__btn join__btn--ghost" href={site.instagram} target="_blank" rel="noopener">
+          Follow {site.instagramHandle}
+        </a>
+      </div>
     </div>
   </div>
 </section>
 
 <style>
   .join {
+    position: relative;
     background: var(--ink);
     color: var(--cream);
+    border-top: var(--line) solid var(--ink);
+    overflow: hidden;
+  }
+
+  .join__blob {
+    position: absolute;
+    width: 32vw;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: var(--line) solid var(--pink);
+    opacity: 0.35;
+    right: -10vw;
+    bottom: -16vw;
   }
 
   .join__inner {
+    position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: clamp(2rem, 6vw, 4rem);
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: clamp(2rem, 6vw, 4.5rem);
     align-items: center;
   }
 
-  .join h2 {
+  .join__head {
     color: var(--cream);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+  }
+
+  .join__accent {
+    color: var(--pink);
+  }
+
+  .join__copy {
+    font-size: 1.0625rem;
+    color: color-mix(in srgb, var(--cream) 72%, transparent);
+    max-width: 38ch;
+    margin-bottom: 2rem;
   }
 
   .join__actions {
@@ -43,27 +82,30 @@ import { site } from '../data/site';
   .join__btn {
     background: var(--pink);
     color: var(--ink);
-    border-color: var(--pink);
+    border-color: var(--ink);
+    box-shadow: 4px 4px 0 var(--cream);
   }
 
   .join__btn:hover {
     background: var(--cream);
-    border-color: var(--cream);
+    box-shadow: 6px 6px 0 var(--pink);
   }
 
-  .join__btn.btn--ghost {
+  .join__btn--ghost {
     background: transparent;
     color: var(--cream);
     border-color: var(--cream);
+    box-shadow: 4px 4px 0 color-mix(in srgb, var(--cream) 35%, transparent);
   }
 
-  .join__btn.btn--ghost:hover {
-    background: var(--green);
+  .join__btn--ghost:hover {
+    background: var(--sage);
     color: var(--ink);
-    border-color: var(--green);
+    border-color: var(--ink);
+    box-shadow: 6px 6px 0 var(--cream);
   }
 
-  @media (max-width: 820px) {
+  @media (max-width: 860px) {
     .join__inner {
       grid-template-columns: 1fr;
     }

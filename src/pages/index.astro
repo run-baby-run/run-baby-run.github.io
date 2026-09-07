@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
+import Marquee from '../components/Marquee.astro';
 import Schedule from '../components/Schedule.astro';
 import Club from '../components/Club.astro';
 import Founders from '../components/Founders.astro';
@@ -13,9 +14,14 @@ import Footer from '../components/Footer.astro';
   <Nav />
   <main>
     <Hero />
+    <Marquee
+      tone="pink"
+      items={['Just show up', 'All paces welcome', 'Always free', 'Yerevan', 'Coffee after']}
+    />
     <Schedule />
     <Club />
     <Founders />
+    <Marquee tone="sage" reverse items={['Tue 22:00', 'Thu 07:45', 'Sat 06:30', 'See you there']} />
     <Join />
   </main>
   <Footer />

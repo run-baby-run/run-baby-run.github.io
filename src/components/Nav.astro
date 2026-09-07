@@ -1,14 +1,18 @@
 ---
 import { site } from '../data/site';
+
+const links = [
+  { href: '#schedule', label: 'Schedule' },
+  { href: '#club', label: 'The club' },
+  { href: '#founders', label: 'Founders' },
+];
 ---
 
 <header class="nav">
   <div class="wrap nav__inner">
     <a class="nav__brand" href="/">Run Baby Run</a>
     <nav class="nav__links">
-      <a href="#schedule">Schedule</a>
-      <a href="#club">The club</a>
-      <a href="#founders">Founders</a>
+      {links.map((link) => <a href={link.href}>{link.label}</a>)}
       <a class="btn nav__cta" href={site.whatsapp} target="_blank" rel="noopener">Join us</a>
     </nav>
   </div>
@@ -18,10 +22,10 @@ import { site } from '../data/site';
   .nav {
     position: sticky;
     top: 0;
-    z-index: 20;
-    background: color-mix(in srgb, var(--cream) 88%, transparent);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
+    z-index: 30;
+    background: color-mix(in srgb, var(--cream) 85%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: var(--line) solid var(--ink);
   }
 
   .nav__inner {
@@ -29,52 +33,61 @@ import { site } from '../data/site';
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding-block: 0.75rem;
+    padding-block: 0.7rem;
   }
 
   .nav__brand {
-    text-decoration: none;
     font-family: var(--font-display);
     font-weight: 800;
+    font-size: 1.25rem;
     text-transform: uppercase;
-    letter-spacing: -0.01em;
-    font-size: 1.125rem;
+    letter-spacing: -0.02em;
+    text-decoration: none;
   }
 
   .nav__links {
     display: flex;
     align-items: center;
-    gap: clamp(1rem, 3vw, 2rem);
+    gap: clamp(1rem, 3vw, 2.25rem);
     font-weight: 500;
   }
 
-  .nav__links a {
+  .nav__links a:not(.btn) {
+    position: relative;
     text-decoration: none;
+    padding-block: 0.25rem;
   }
 
-  .nav__links a:not(.btn):hover {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 4px;
+  /* Underline grows from the left on hover — small, but it makes the nav feel built. */
+  .nav__links a:not(.btn)::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2.5px;
+    width: 100%;
+    background: var(--pink-deep);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.22s ease;
+  }
+
+  .nav__links a:not(.btn):hover::after {
+    transform: scaleX(1);
   }
 
   .nav__cta {
-    padding: 0.6rem 1.25rem;
+    padding: 0.55rem 1.25rem;
     font-size: 0.9375rem;
+    box-shadow: 3px 3px 0 var(--ink);
   }
 
-  @media (max-width: 720px) {
-    .nav__brand {
-      font-size: 1rem;
-    }
-    .nav__links a:not(.btn) {
-      font-size: 0.9375rem;
-    }
-  }
-
-  @media (max-width: 520px) {
+  @media (max-width: 620px) {
     .nav__links a:not(.btn) {
       display: none;
+    }
+    .nav__brand {
+      font-size: 1.125rem;
     }
   }
 </style>

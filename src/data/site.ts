@@ -22,7 +22,7 @@ export const runs = [
     icon: '☀️',
     label: 'Morning run',
     blurb: 'Before work, before excuses. Short, honest, and you get the whole day back afterwards.',
-    accent: 'green',
+    accent: 'sage',
   },
   {
     day: 'Saturday',
