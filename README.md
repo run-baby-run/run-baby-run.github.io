@@ -2,7 +2,7 @@
 
 Website for [Run Baby Run](https://www.instagram.com/run.baby.run.club/), a free running
 club in Yerevan, Armenia. Built with [Astro](https://astro.build) and deployed to
-GitHub Pages at <https://runbabyrun.github.io>.
+GitHub Pages at <https://run-baby-run.github.io>.
 
 ## Local development
 

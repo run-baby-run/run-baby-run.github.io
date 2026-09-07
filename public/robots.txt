@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://runbabyrun.github.io/sitemap-index.xml
+Sitemap: https://run-baby-run.github.io/sitemap-index.xml
