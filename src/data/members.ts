@@ -20,8 +20,10 @@ const entries: Member[] = [
   { name: 'Inga', file: 'inga.jpg' },
   { name: 'Korosh', file: 'korosh.jpg' },
   { name: 'Moojan', file: 'moojan.jpg' },
+  { name: 'Pouria', file: 'pouria.jpg' },
   { name: 'Sabrina', file: 'sabrina.jpg' },
   { name: 'Shaghig', file: 'shaghig.jpg' },
+  { name: 'Subhav', file: 'subhav.jpg' },
 ];
 
 const files = import.meta.glob<{ default: ImageMetadata }>('../assets/members/*.jpg', {
