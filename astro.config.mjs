@@ -2,9 +2,9 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// GitHub Pages user site: https://run-baby-run.github.io is served at the domain
-// root, so no `base` is needed here.
+// Served from the custom domain runbabyrun.fun (see public/CNAME) at the
+// domain root, so no `base` is needed here.
 export default defineConfig({
-  site: 'https://run-baby-run.github.io',
+  site: 'https://runbabyrun.fun',
   integrations: [sitemap()],
 });

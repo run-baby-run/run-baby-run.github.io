@@ -2,7 +2,7 @@
 
 Website for [Run Baby Run](https://www.instagram.com/run.baby.run.club/), a free running
 club in Yerevan, Armenia. Built with [Astro](https://astro.build) and deployed to
-GitHub Pages at <https://run-baby-run.github.io>.
+GitHub Pages, served at <https://runbabyrun.fun>.
 
 ## Local development
 
@@ -35,5 +35,11 @@ GitHub Actions**.
 
 ### Custom domain
 
-Rename `public/CNAME.example` to `public/CNAME`, put the domain inside it, and point the
-domain's DNS at GitHub Pages. Then update `site` in `astro.config.mjs` to match.
+The site is served from **runbabyrun.fun**. The domain lives in `public/CNAME`, which
+Astro copies into `dist/` on every build — GitHub Pages needs that file present or it
+drops the custom domain. If the domain ever changes, update `public/CNAME` and `site`
+in `astro.config.mjs` together.
+
+DNS (at the registrar) should point the apex at all four GitHub Pages addresses:
+`185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`, with
+`www` as a CNAME to `run-baby-run.github.io.`
