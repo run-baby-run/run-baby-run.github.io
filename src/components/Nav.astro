@@ -65,6 +65,9 @@ const links = [
     text-transform: uppercase;
     letter-spacing: -0.02em;
     text-decoration: none;
+    /* Both of these must never wrap: the wordmark reads as two lines and the
+       pill CTA collapses into a blob if they do. */
+    white-space: nowrap;
   }
 
   .nav__links {
@@ -103,15 +106,66 @@ const links = [
     padding: 0.55rem 1.25rem;
     font-size: 0.9375rem;
     box-shadow: 3px 3px 0 var(--ink);
+    white-space: nowrap;
+    flex: none;
   }
 
   @media (max-width: 720px) {
-    /* Section anchors are dropped on small screens; the Gallery page stays. */
+    /* Section anchors are dropped on small screens; the real pages stay. */
     .nav__anchor {
       display: none;
     }
     .nav__brand {
       font-size: 1.125rem;
+    }
+  }
+
+  /* Phone widths: every item has to fit on one line beside the CTA. */
+  @media (max-width: 480px) {
+    .nav__inner {
+      gap: 0.5rem;
+    }
+
+    .nav__brand {
+      font-size: 1rem;
+    }
+
+    .nav__links {
+      gap: 0.9rem;
+    }
+
+    .nav__links a:not(.btn) {
+      font-size: 0.875rem;
+    }
+
+    .nav__cta {
+      padding: 0.5rem 0.9rem;
+      font-size: 0.8125rem;
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+  }
+
+  /* Very narrow phones: trim the row padding too, or the CTA runs off. */
+  @media (max-width: 380px) {
+    .nav__inner {
+      padding-inline: 0.85rem;
+    }
+
+    .nav__brand {
+      font-size: 0.9375rem;
+    }
+
+    .nav__links {
+      gap: 0.6rem;
+    }
+
+    .nav__links a:not(.btn) {
+      font-size: 0.8125rem;
+    }
+
+    .nav__cta {
+      padding: 0.45rem 0.75rem;
+      font-size: 0.75rem;
     }
   }
 </style>

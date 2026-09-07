@@ -13,6 +13,12 @@ npm run build    # static output in dist/
 npm run preview
 ```
 
+## Checking phone layouts
+
+Headless Chrome clamps its layout viewport to 500px, so `--window-size` cannot
+reproduce a real phone. Use puppeteer-core's device emulation (`setViewport`
+with `isMobile: true`) when checking anything below that width.
+
 ## Editing content
 
 Almost everything lives in **`src/data/site.ts`** — the tagline, links, the three weekly
