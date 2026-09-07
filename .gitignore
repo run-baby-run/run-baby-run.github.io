@@ -4,5 +4,8 @@ dist/
 .DS_Store
 npm-debug.log*
 
-# Original full-size drops (derivatives live in src/assets/gallery/)
+# Original full-size drops (optimised derivatives live under src/assets/)
 /gallery/
+/Asdghig.jpg
+/Shaghig.jpg
+/jebid.jpg

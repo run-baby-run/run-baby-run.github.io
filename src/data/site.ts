@@ -5,6 +5,7 @@ export const site = {
   instagram: 'https://www.instagram.com/run.baby.run.club/',
   instagramHandle: '@run.baby.run.club',
   whatsapp: 'https://chat.whatsapp.com/I8efTvyrNSZKm5PxoadkVt',
+  strava: 'https://www.strava.com/clubs/1997257',
 };
 
 export const runs = [
@@ -34,8 +35,38 @@ export const runs = [
   },
 ] as const;
 
-export const founders = [
-  { name: 'Shaghig Jouharian', role: 'Co-founder' },
-  { name: 'Astrig Jouharian', role: 'Co-founder' },
-  { name: 'Jebid Jouharian', role: 'Co-founder' },
+export interface Founder {
+  name: string;
+  surname: string;
+  role: string;
+  /** Filename in src/assets/founders/ */
+  file: string;
+  alt: string;
+  /** object-position for the 3:4 crop, when centre is not the right choice. */
+  focus?: string;
+}
+
+export const founders: Founder[] = [
+  {
+    name: 'Shaghig',
+    surname: 'Jouharian',
+    role: 'Co-founder',
+    file: 'shaghig.jpg',
+    alt: 'Shaghig holding up a marathon finisher medal at the end of a race',
+  },
+  {
+    name: 'Asdghig',
+    surname: 'Jouharian',
+    role: 'Co-founder',
+    file: 'asdghig.jpg',
+    alt: 'Asdghig holding up a Yerevan Night Run medal after the race',
+  },
+  {
+    name: 'Jebid',
+    surname: 'Jouharian',
+    role: 'Co-founder',
+    file: 'jebid.jpg',
+    alt: 'Jebid photographed in front of the Eiffel Tower in Paris',
+    focus: 'center 35%',
+  },
 ];

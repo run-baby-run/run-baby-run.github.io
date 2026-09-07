@@ -1,5 +1,17 @@
 ---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import { founders } from '../data/site';
+
+const portraits = import.meta.glob<{ default: ImageMetadata }>('../assets/founders/*.jpg', {
+  eager: true,
+});
+
+const people = founders.map((person) => {
+  const entry = portraits[`../assets/founders/${person.file}`];
+  if (!entry) throw new Error(`Founder portrait missing: src/assets/founders/${person.file}`);
+  return { ...person, image: entry.default };
+});
 ---
 
 <section class="section founders" id="founders">
@@ -10,43 +22,49 @@ import { founders } from '../data/site';
         <h2>The three who showed up first.</h2>
       </div>
       <p class="founders__note">
-        Shaghig, Astrig and Jebid started with a handful of friends and a standing Tuesday night.
-        It grew from there — same idea, more people.
+        Shaghig, Asdghig and Jebid started with a handful of friends and a standing Tuesday
+        night. It grew from there — same idea, more people.
       </p>
     </div>
 
-    <div class="founders__photos">
-      <figure class="sticker founders__photo founders__photo--a reveal">
-        <img
-          src="/images/founders-2.jpg"
-          alt="The three founders of Run Baby Run in club shirts at a race event"
-          width="1170"
-          height="780"
-          loading="lazy"
-        />
-      </figure>
-      <figure class="sticker founders__photo founders__photo--b reveal">
-        <img
-          src="/images/founders-1.jpg"
-          alt="The founders greeting runners at a Run Baby Run event in Yerevan"
-          width="1170"
-          height="780"
-          loading="lazy"
-        />
-      </figure>
-    </div>
-
-    <ul class="founders__names">
+    <ul class="founders__list">
       {
-        founders.map((person) => (
-          <li>
-            <span class="founders__first">{person.name.split(' ')[0]}</span>
-            <span class="founders__last">{person.name.split(' ').slice(1).join(' ')}</span>
-            <span class="founders__role">{person.role}</span>
+        people.map((person, i) => (
+          <li class="founder reveal" style={`--tilt:${i - 1}deg`}>
+            <figure>
+              <Image
+                src={person.image}
+                alt={person.alt}
+                width={600}
+                widths={[320, 600]}
+                sizes="(max-width: 700px) 88vw, 32vw"
+                style={person.focus ? `object-position:${person.focus}` : undefined}
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption>
+                <span class="founder__name">{person.name}</span>
+                <span class="founder__surname">{person.surname}</span>
+                <span class="founder__role">{person.role}</span>
+              </figcaption>
+            </figure>
           </li>
         ))
       }
     </ul>
+
+    <figure class="founders__group sticker">
+      <Image
+        src={import('../assets/founders/together.jpg')}
+        alt="Shaghig, Asdghig and Jebid together in club shirts at a race event"
+        width={1100}
+        widths={[600, 1100]}
+        sizes="(max-width: 1180px) 92vw, 1100px"
+        loading="lazy"
+        decoding="async"
+      />
+      <figcaption>All three, same shirt, same idea.</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -65,94 +83,98 @@ import { founders } from '../data/site';
     max-width: 42ch;
   }
 
-  .founders__photos {
+  .founders__list {
+    list-style: none;
+    margin: 0 0 clamp(2.5rem, 5vw, 4rem);
+    padding: 0;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: start;
-    gap: clamp(1.25rem, 3vw, 2.5rem);
-    margin-bottom: 3.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: clamp(1.25rem, 3vw, 2.25rem);
   }
 
-  .founders__photo {
-    margin: 0;
-    overflow: hidden;
-    transition: rotate 0.35s ease, transform 0.35s ease;
+  .founder {
+    rotate: var(--tilt);
+    transition: rotate 0.3s ease, transform 0.3s ease;
   }
 
-  .founders__photo--a {
-    rotate: -2deg;
-  }
-
-  .founders__photo--b {
-    rotate: 2deg;
-    margin-top: clamp(0rem, 4vw, 3rem);
-  }
-
-  .founders__photo:hover {
+  .founder:hover {
     rotate: 0deg;
     transform: translateY(-4px);
   }
 
-  .founders__photo img {
-    width: 100%;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-  }
-
-  .founders__names {
-    list-style: none;
-    padding: 0;
+  .founder figure {
     margin: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: clamp(1rem, 2.5vw, 1.75rem);
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    background: var(--cream);
+    overflow: hidden;
   }
 
-  .founders__names li {
+  .founder img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-bottom: var(--line) solid var(--ink);
+  }
+
+  .founder figcaption {
     display: flex;
     flex-direction: column;
-    padding-top: 1rem;
-    border-top: var(--line) solid var(--ink);
+    padding: 0.9rem 1.1rem 1.1rem;
   }
 
-  .founders__first {
+  .founder__name {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(1.75rem, 3.2vw, 2.25rem);
+    font-size: clamp(1.5rem, 2.6vw, 1.875rem);
     line-height: 1;
     text-transform: uppercase;
     letter-spacing: -0.02em;
   }
 
-  .founders__last {
+  .founder__surname {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(1.125rem, 2vw, 1.375rem);
-    line-height: 1.15;
+    font-size: 1.0625rem;
+    line-height: 1.2;
     text-transform: uppercase;
     color: var(--pink-deep);
   }
 
-  .founders__role {
-    margin-top: 0.4rem;
-    font-size: 0.75rem;
+  .founder__role {
+    margin-top: 0.35rem;
+    font-size: 0.6875rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--ink-soft);
+  }
+
+  .founders__group {
+    margin: 0;
+    overflow: hidden;
+    rotate: -0.75deg;
+  }
+
+  .founders__group img {
+    width: 100%;
+    aspect-ratio: 16 / 7;
+    object-fit: cover;
+    border-bottom: var(--line) solid var(--ink);
+  }
+
+  .founders__group figcaption {
+    padding: 0.8rem 1.25rem 0.95rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.9375rem;
   }
 
   @media (max-width: 760px) {
     .founders__head {
       grid-template-columns: 1fr;
       align-items: start;
-    }
-
-    .founders__photos {
-      grid-template-columns: 1fr;
-    }
-
-    .founders__photo--b {
-      margin-top: 0;
     }
   }
 </style>
