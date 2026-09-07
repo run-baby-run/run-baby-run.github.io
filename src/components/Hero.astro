@@ -1,0 +1,120 @@
+---
+import { site } from '../data/site';
+import { runs } from '../data/site';
+---
+
+<section class="hero">
+  <div class="wrap hero__inner">
+    <div class="hero__copy">
+      <p class="hero__pin">📍 {site.city}</p>
+
+      <h1 class="hero__title">
+        <img
+          src="/images/logo.jpg"
+          alt="Run Baby Run"
+          width="1080"
+          height="1080"
+          fetchpriority="high"
+        />
+      </h1>
+
+      <p class="hero__tagline">{site.tagline}</p>
+
+      <div class="hero__actions">
+        <a class="btn" href={site.whatsapp} target="_blank" rel="noopener">Join the WhatsApp</a>
+        <a class="btn btn--ghost" href="#schedule">See the schedule</a>
+      </div>
+    </div>
+
+    <ul class="hero__ticker" aria-label="Weekly run times">
+      {
+        runs.map((run) => (
+          <li>
+            <span class="hero__ticker-day">{run.day.slice(0, 3)}</span>
+            <span class="hero__ticker-time">{run.time}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(1.5rem, 5vw, 3.5rem) clamp(2.5rem, 6vw, 4.5rem);
+  }
+
+  .hero__title {
+    margin: 0 0 0.5rem;
+    max-width: 760px;
+  }
+
+  /* The logotype ships on a cream card; multiply drops it onto the page ground. */
+  .hero__title img {
+    width: 100%;
+    height: auto;
+    mix-blend-mode: multiply;
+  }
+
+  .hero__pin {
+    font-weight: 700;
+    font-size: 0.875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 0.5rem;
+  }
+
+  .hero__tagline {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 4.5vw, 2.75rem);
+    line-height: 1.15;
+    max-width: 20ch;
+    margin: 0 0 2rem;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .hero__ticker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    list-style: none;
+    margin: clamp(2.5rem, 6vw, 4rem) 0 0;
+    padding: 0;
+  }
+
+  .hero__ticker li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.625rem;
+    padding: 0.5rem 1.125rem;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+  }
+
+  .hero__ticker li:nth-child(2) {
+    background: var(--green);
+  }
+
+  .hero__ticker li:nth-child(odd) {
+    background: var(--pink);
+  }
+
+  .hero__ticker-day {
+    font-family: var(--font-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .hero__ticker-time {
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+</style>

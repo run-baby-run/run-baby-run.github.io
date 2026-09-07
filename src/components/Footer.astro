@@ -1,0 +1,42 @@
+---
+import { site } from '../data/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <p>© {year} {site.name} Club · {site.city}</p>
+    <p>
+      <a href={site.instagram} target="_blank" rel="noopener">Instagram</a>
+      <span aria-hidden="true">·</span>
+      <a href={site.whatsapp} target="_blank" rel="noopener">WhatsApp</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding-block: 2rem;
+    font-size: 0.9375rem;
+    color: var(--ink-soft);
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+  }
+
+  .footer p {
+    margin: 0;
+  }
+
+  .footer a {
+    color: inherit;
+  }
+
+  .footer span {
+    margin-inline: 0.5rem;
+  }
+</style>

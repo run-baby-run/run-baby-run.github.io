@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://runbabyrun.github.io/sitemap-index.xml

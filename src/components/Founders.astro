@@ -1,0 +1,106 @@
+---
+import { founders } from '../data/site';
+---
+
+<section class="section founders" id="founders">
+  <div class="wrap">
+    <p class="eyebrow">Who started this</p>
+    <h2>The three who<br />showed up first.</h2>
+
+    <div class="founders__photos">
+      <figure>
+        <img
+          src="/images/founders-2.jpg"
+          alt="The three founders of Run Baby Run in club t-shirts at a race event"
+          width="1170"
+          height="780"
+          loading="lazy"
+        />
+      </figure>
+      <figure>
+        <img
+          src="/images/founders-1.jpg"
+          alt="The founders greeting runners at a Run Baby Run event in Yerevan"
+          width="1170"
+          height="780"
+          loading="lazy"
+        />
+      </figure>
+    </div>
+
+    <ul class="founders__names">
+      {
+        founders.map((person) => (
+          <li>
+            <span class="founders__name">{person.name}</span>
+            <span class="founders__role">{person.role}</span>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="founders__note">
+      They started with a handful of friends and a standing Tuesday night. It grew from there —
+      same idea, more people.
+    </p>
+  </div>
+</section>
+
+<style>
+  .founders__photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.25rem;
+    margin: 3rem 0 2.5rem;
+  }
+
+  .founders__photos figure {
+    margin: 0;
+    border: 2px solid var(--ink);
+    border-radius: 1.5rem;
+    overflow: hidden;
+  }
+
+  .founders__photos img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+
+  .founders__names {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .founders__names li {
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid var(--ink);
+    border-radius: 1rem;
+  }
+
+  .founders__name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.25rem;
+    text-transform: uppercase;
+  }
+
+  .founders__role {
+    font-size: 0.8125rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .founders__note {
+    max-width: 52ch;
+    color: var(--ink-soft);
+  }
+</style>

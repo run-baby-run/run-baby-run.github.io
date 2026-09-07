@@ -1,0 +1,84 @@
+---
+import { runs } from '../data/site';
+---
+
+<section class="section schedule" id="schedule">
+  <div class="wrap">
+    <p class="eyebrow">Every week, rain or shine</p>
+    <h2>Three runs.<br />No sign-up.</h2>
+
+    <div class="grid">
+      {
+        runs.map((run) => (
+          <article class={`card card--${run.accent}`}>
+            <p class="card__label">
+              {run.icon} {run.label}
+            </p>
+            <h3>{run.day}</h3>
+            <p class="card__time">{run.time}</p>
+            <p class="card__blurb">{run.blurb}</p>
+          </article>
+        ))
+      }
+    </div>
+
+    <p class="note">
+      Meeting points change week to week — we post them on Instagram and in the WhatsApp group a
+      day or two before each run.
+    </p>
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+    margin-top: 3rem;
+  }
+
+  .card {
+    border: 2px solid var(--ink);
+    border-radius: 1.5rem;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card--pink {
+    background: var(--pink);
+  }
+
+  .card--green {
+    background: var(--green);
+  }
+
+  .card__label {
+    font-weight: 700;
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin: 0 0 1.25rem;
+  }
+
+  .card__time {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 2.75rem;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    margin: 0.375rem 0 1rem;
+  }
+
+  .card__blurb {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  .note {
+    margin-top: 2rem;
+    max-width: 52ch;
+    color: var(--ink-soft);
+  }
+</style>
