@@ -24,6 +24,7 @@ const entries: Member[] = [
   { name: 'Mariam', file: 'mariam.jpg' },
   { name: 'Mehrdad', file: 'mehrdad.jpg' },
   { name: 'Moojan', file: 'moojan.jpg' },
+  { name: 'Narek', file: 'narek.jpg' },
   { name: 'Pavel', file: 'pavel.jpg' },
   { name: 'Pouria', file: 'pouria.jpg' },
   { name: 'Sabrina', file: 'sabrina.jpg' },
