@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import type { ResolvedShot } from '../data/gallery';
 
 interface Props {
@@ -9,6 +9,18 @@ interface Props {
 }
 
 const { shots, offset = 0 } = Astro.props;
+
+// A bigger rendition for the zoom view. Generated at build time alongside the
+// thumbnails, but only fetched when someone actually opens a photo.
+const zoomed = await Promise.all(
+  shots.map((shot) =>
+    getImage({
+      src: shot.image,
+      width: Math.min(1600, shot.image.width),
+      format: 'webp',
+    })
+  )
+);
 ---
 
 <ul class="gallery">
@@ -18,15 +30,31 @@ const { shots, offset = 0 } = Astro.props;
       return (
         <li class={`shot reveal${shot.tall ? ' shot--tall' : ''}`} style={`--tilt:${(n % 3) - 1}deg`}>
           <figure>
-            <Image
-              src={shot.image}
-              alt={shot.alt}
-              width={1000}
-              widths={[400, 700, 1000]}
-              sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 32vw"
-              loading="lazy"
-              decoding="async"
-            />
+            {/* Without JS this is just a link to the larger image. */}
+            <a
+              class="shot__link"
+              href={zoomed[i].src}
+              data-zoom={zoomed[i].src}
+              data-caption={shot.caption}
+              data-alt={shot.alt}
+              aria-label={`Open photo: ${shot.caption}`}
+            >
+              <Image
+                src={shot.image}
+                alt={shot.alt}
+                width={1000}
+                widths={[400, 700, 1000]}
+                sizes="(max-width: 640px) 92vw, (max-width: 1000px) 46vw, 32vw"
+                loading="lazy"
+                decoding="async"
+              />
+              <span class="shot__zoom" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <circle cx="10.5" cy="10.5" r="6.5" />
+                  <path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6" />
+                </svg>
+              </span>
+            </a>
             <figcaption>{shot.caption}</figcaption>
           </figure>
         </li>
@@ -34,6 +62,101 @@ const { shots, offset = 0 } = Astro.props;
     })
   }
 </ul>
+
+<script>
+  // One lightbox per page, built on first use so no-JS visitors just get links.
+  const links = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>('.shot__link')
+  );
+
+  if (links.length > 0) {
+    let dialog: HTMLDialogElement | null = null;
+    let img: HTMLImageElement;
+    let caption: HTMLElement;
+    let counter: HTMLElement;
+    let index = 0;
+
+    const build = () => {
+      const el = document.createElement('dialog');
+      el.className = 'lightbox';
+      el.innerHTML = `
+        <button class="lightbox__close" type="button" aria-label="Close">✕</button>
+        <button class="lightbox__nav lightbox__nav--prev" type="button" aria-label="Previous photo">←</button>
+        <button class="lightbox__nav lightbox__nav--next" type="button" aria-label="Next photo">→</button>
+        <figure class="lightbox__figure">
+          <img class="lightbox__img" alt="" />
+          <figcaption class="lightbox__caption">
+            <span class="lightbox__text"></span>
+            <span class="lightbox__count"></span>
+          </figcaption>
+        </figure>`;
+      document.body.append(el);
+
+      img = el.querySelector('.lightbox__img') as HTMLImageElement;
+      caption = el.querySelector('.lightbox__text') as HTMLElement;
+      counter = el.querySelector('.lightbox__count') as HTMLElement;
+
+      el.querySelector('.lightbox__close')!.addEventListener('click', () => el.close());
+      el.querySelector('.lightbox__nav--prev')!.addEventListener('click', () => show(index - 1));
+      el.querySelector('.lightbox__nav--next')!.addEventListener('click', () => show(index + 1));
+
+      // Clicking the backdrop (but not the photo) closes.
+      el.addEventListener('click', (event) => {
+        if (event.target === el) el.close();
+      });
+
+      // Horizontal swipe on touch devices.
+      let startX = 0;
+      el.addEventListener(
+        'touchstart',
+        (event) => {
+          startX = event.changedTouches[0].clientX;
+        },
+        { passive: true }
+      );
+      el.addEventListener(
+        'touchend',
+        (event) => {
+          const dx = event.changedTouches[0].clientX - startX;
+          if (Math.abs(dx) > 45) show(dx < 0 ? index + 1 : index - 1);
+        },
+        { passive: true }
+      );
+
+      el.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          show(index - 1);
+        } else if (event.key === 'ArrowRight') {
+          event.preventDefault();
+          show(index + 1);
+        }
+      });
+
+      return el;
+    };
+
+    const show = (next: number) => {
+      index = (next + links.length) % links.length;
+      const link = links[index];
+      img.src = link.dataset.zoom!;
+      img.alt = link.dataset.alt ?? '';
+      caption.textContent = link.dataset.caption ?? '';
+      counter.textContent = `${index + 1} / ${links.length}`;
+    };
+
+    links.forEach((link, i) => {
+      link.addEventListener('click', (event) => {
+        // Let modified clicks open the image in a new tab as usual.
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+        event.preventDefault();
+        dialog ??= build();
+        show(i);
+        dialog.showModal();
+      });
+    });
+  }
+</script>
 
 <style>
   /* Columns rather than grid: portrait and landscape shots pack without
@@ -67,6 +190,12 @@ const { shots, offset = 0 } = Astro.props;
     overflow: hidden;
   }
 
+  .shot__link {
+    display: block;
+    position: relative;
+    cursor: zoom-in;
+  }
+
   .shot img {
     width: 100%;
     aspect-ratio: 4 / 3;
@@ -78,6 +207,29 @@ const { shots, offset = 0 } = Astro.props;
     aspect-ratio: 3 / 4;
   }
 
+  .shot__zoom {
+    position: absolute;
+    right: 0.65rem;
+    bottom: 0.9rem;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: var(--line) solid var(--ink);
+    border-radius: 50%;
+    background: var(--pink);
+    color: var(--ink);
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .shot__link:hover .shot__zoom,
+  .shot__link:focus-visible .shot__zoom {
+    opacity: 1;
+    transform: none;
+  }
+
   .shot figcaption {
     padding: 0.7rem 1rem 0.85rem;
     font-family: var(--font-display);
@@ -85,5 +237,141 @@ const { shots, offset = 0 } = Astro.props;
     font-size: 0.9375rem;
     text-transform: uppercase;
     letter-spacing: 0.01em;
+  }
+</style>
+
+<style is:global>
+  /* Sized by the photo, so portrait shots do not sit in a letterboxed slab. */
+  .lightbox {
+    width: fit-content;
+    max-width: 96vw;
+    max-height: 94vh;
+    padding: 0;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--cream);
+    box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.35);
+    overflow: visible;
+  }
+
+  .lightbox::backdrop {
+    background: rgba(10, 10, 10, 0.82);
+    backdrop-filter: blur(3px);
+  }
+
+  .lightbox__figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    /* Centre rather than stretch, so the image keeps its intrinsic size and
+       the dialog can shrink-to-fit around it. */
+    align-items: center;
+    max-height: 94vh;
+  }
+
+  .lightbox__img {
+    display: block;
+    width: auto;
+    height: auto;
+    min-height: 0;
+    max-width: 96vw;
+    max-height: calc(94vh - 3.5rem);
+    object-fit: contain;
+    border-bottom: var(--line) solid var(--ink);
+    border-radius: calc(var(--radius) - 3px) calc(var(--radius) - 3px) 0 0;
+    background: var(--ink);
+  }
+
+  .lightbox__caption {
+    align-self: stretch;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1.1rem 0.85rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.9375rem;
+  }
+
+  .lightbox__count {
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lightbox__close,
+  .lightbox__nav {
+    position: absolute;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: var(--line) solid var(--ink);
+    border-radius: 50%;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.125rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .lightbox__close:hover,
+  .lightbox__nav:hover {
+    background: var(--pink);
+    transform: scale(1.06);
+  }
+
+  .lightbox__close {
+    top: -1.1rem;
+    right: -1.1rem;
+  }
+
+  .lightbox__nav {
+    top: 50%;
+    translate: 0 -50%;
+  }
+
+  .lightbox__nav--prev {
+    left: -1.35rem;
+  }
+
+  .lightbox__nav--next {
+    right: -1.35rem;
+  }
+
+  @media (max-width: 720px) {
+    .lightbox {
+      width: 94vw;
+    }
+
+    .lightbox__close {
+      top: -1rem;
+      right: -0.6rem;
+    }
+
+    .lightbox__nav--prev {
+      left: 0.5rem;
+    }
+
+    .lightbox__nav--next {
+      right: 0.5rem;
+    }
+
+    .lightbox__nav {
+      background: color-mix(in srgb, var(--cream) 88%, transparent);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lightbox__close,
+    .lightbox__nav {
+      transition: none;
+    }
   }
 </style>
