@@ -54,7 +54,12 @@ import { site } from '../data/site';
             <h2 class="members__cta-title">Want your face here?</h2>
             <p>Turn up to a run. That's the whole process.</p>
           </div>
-          <a class="btn" href={site.whatsapp} target="_blank" rel="noopener">Join the WhatsApp</a>
+          <div class="members__cta-actions">
+            <a class="btn" href={site.whatsapp} target="_blank" rel="noopener">Join the WhatsApp</a>
+            <a class="btn btn--ghost" href={site.stravaLeaderboard} target="_blank" rel="noopener">
+              Club leaderboard →
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -135,5 +140,11 @@ import { site } from '../data/site';
 
   .members__cta p {
     margin: 0;
+  }
+
+  .members__cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
   }
 </style>

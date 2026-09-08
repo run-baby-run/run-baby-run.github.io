@@ -6,6 +6,7 @@ export const site = {
   instagramHandle: '@run.baby.run.club',
   whatsapp: 'https://chat.whatsapp.com/I8efTvyrNSZKm5PxoadkVt',
   strava: 'https://www.strava.com/clubs/1997257',
+  stravaLeaderboard: 'https://www.strava.com/clubs/1997257/leaderboard',
 };
 
 export const runs = [
