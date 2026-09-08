@@ -11,6 +11,8 @@
   --ink-soft: #56524d;
   --pink: #f6a8c4;
   --pink-deep: #e8709f;
+  /* Text-safe accent: --pink-deep is 2.68:1 on cream and fails AA. */
+  --pink-text: #d52268;
   --sage: #a9c4a0;
   --sage-deep: #79a06c;
 
