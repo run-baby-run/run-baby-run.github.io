@@ -18,7 +18,9 @@ const dark = '#1d1d1d';
 const glass = '#cfdfe4';
 const awning = '#eae2d2';
 const skin = '#f7e2cf';
-const drink = '#f2c14e';
+const cupPlastic = '#eef3f5';
+const cupCream = '#f0e2cf';
+const coffee = '#6b4327';
 ---
 
 <svg class="cafes" viewBox="0 0 430 200" role="img" aria-label="Coffee House and Prépa">
@@ -132,9 +134,25 @@ const drink = '#f2c14e';
     <!-- arm holding the cup -->
     <path d="M143 120 L138 132" stroke={ink} stroke-width="8" stroke-linecap="round" />
     <path d="M143 120 L138 132" stroke={skin} stroke-width="4.5" stroke-linecap="round" />
-    <!-- iced coffee -->
-    <path d="M131 124 L143 124 L141 140 L133 140 Z" fill={drink} stroke={ink} stroke-width="3" stroke-linejoin="round" />
-    <path d="M138 124 L142 112" stroke={ink} stroke-width="3" stroke-linecap="round" />
+    <!-- A Coffee House iced coffee: clear tumbler, coffee under cream, red
+         label. Too small for the wordmark, so the flame carries the brand. -->
+    <path d="M129.5 122 L144.5 122 L142 143 L132 143 Z" fill={cupPlastic} />
+    <path d="M131 133 L143 133 L142 143 L132 143 Z" fill={coffee} />
+    <path d="M129.5 122 L144.5 122 L144 127 L130 127 Z" fill={cupCream} />
+    <path
+      d="M129.5 122 L144.5 122 L142 143 L132 143 Z"
+      fill="none"
+      stroke={ink}
+      stroke-width="3"
+      stroke-linejoin="round"
+    />
+    <!-- lid -->
+    <path d="M128 119 L146 119 L145 123 L129 123 Z" fill={cupCream} stroke={ink} stroke-width="3" stroke-linejoin="round" />
+    <!-- label -->
+    <rect x="133" y="130" width="9" height="7" rx="1" fill={red} stroke={ink} stroke-width="1.5" />
+    <path d="M137.2 131.6 Q138.6 133 137.5 134.3 Q136.6 135.2 137.3 135.8 Q136 135.2 136.4 133.8 Q136.8 132.6 137.2 131.6 Z" fill={cream} />
+    <!-- straw -->
+    <path d="M139 119 L143 108" stroke={ink} stroke-width="3" stroke-linecap="round" />
   </g>
 </svg>
 
