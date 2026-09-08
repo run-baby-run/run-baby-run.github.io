@@ -14,6 +14,10 @@ const runners = [
   { shirt: '#141414', shorts: '#f6a8c4', legs: '#141414', shoe: '#f6a8c4', head: 'cap' as const, delay: -0.19 },
   { shirt: '#f6a8c4', shorts: '#cfcfc9', legs: '#141414', shoe: '#f7f6f4', head: 'bun' as const, delay: 0 },
 ];
+
+// One of them wears the watch — three people all checking their wrists at
+// once would read as a glitch rather than a habit.
+const WATCH = 2;
 ---
 
 <div class:list={['trio', className]}>
@@ -30,6 +34,7 @@ const runners = [
           shoe={runner.shoe}
           head={runner.head}
           delay={runner.delay}
+          watch={i === WATCH}
         />
       </span>
     ))

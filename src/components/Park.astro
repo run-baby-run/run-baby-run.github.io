@@ -1,0 +1,48 @@
+---
+/**
+ * Seasons Park — the clipped conifers and low hedge the club runs past.
+ * Scenery, so it is drawn lighter than the figures and sits behind them.
+ */
+
+const ink = '#141414';
+const sage = '#a9c4a0';
+const sageDeep = '#79a06c';
+const trunk = '#9b8468';
+---
+
+<svg class="park" viewBox="0 0 260 150" role="img" aria-label="Seasons Park">
+  <!-- back row, paler so it reads as depth -->
+  <g opacity="0.55">
+    <path d="M40 128 L58 74 L76 128 Z" fill={sage} stroke={ink} stroke-width="3.5" stroke-linejoin="round" />
+    <path d="M186 128 L202 80 L218 128 Z" fill={sage} stroke={ink} stroke-width="3.5" stroke-linejoin="round" />
+  </g>
+
+  <!-- clipped conifers -->
+  <path d="M12 130 L34 62 L56 130 Z" fill={sageDeep} stroke={ink} stroke-width="4" stroke-linejoin="round" />
+  <path d="M20 130 L34 96 L48 130 Z" fill={sage} opacity="0.6" />
+
+  <path d="M96 130 L120 48 L144 130 Z" fill={sageDeep} stroke={ink} stroke-width="4" stroke-linejoin="round" />
+  <path d="M106 130 L120 88 L134 130 Z" fill={sage} opacity="0.6" />
+
+  <path d="M164 130 L182 70 L200 130 Z" fill={sageDeep} stroke={ink} stroke-width="4" stroke-linejoin="round" />
+
+  <!-- a round-headed tree, like the ones by the square -->
+  <path d="M228 130 L228 104" stroke={trunk} stroke-width="8" stroke-linecap="round" />
+  <circle cx="228" cy="88" r="22" fill={sage} stroke={ink} stroke-width="4" />
+
+  <!-- low clipped hedge along the front -->
+  <path
+    d="M0 132 Q0 120 14 120 L246 120 Q260 120 260 132 L260 138 L0 138 Z"
+    fill={sage}
+    stroke={ink}
+    stroke-width="4"
+    stroke-linejoin="round"
+  />
+</svg>
+
+<style>
+  .park {
+    width: 100%;
+    height: auto;
+  }
+</style>

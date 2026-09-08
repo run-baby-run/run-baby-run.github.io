@@ -2,10 +2,15 @@
 import RunningTrio from './RunningTrio.astro';
 import Dog from './Dog.astro';
 import Pulpulak from './Pulpulak.astro';
+import Park from './Park.astro';
+import RepublicSquare from './RepublicSquare.astro';
 ---
 
 <div class="band" aria-hidden="true">
   <div class="band__track">
+    <!-- Scenery first, so everything else runs in front of it. -->
+    <span class="band__square"><RepublicSquare /></span>
+    <span class="band__park"><Park /></span>
     <span class="band__fountain"><Pulpulak /></span>
     <span class="band__pack"><RunningTrio /></span>
     <!-- After the pack, so the dog is nearest the viewer: any brush as it
@@ -67,6 +72,27 @@ import Pulpulak from './Pulpulak.astro';
     left: calc(var(--dog-stop) + var(--dog) * 0.63);
     display: block;
     width: var(--fountain);
+  }
+
+  /* Landmarks along the route. Slightly faded so the figures stay the
+     subject; the square is taller than the strip and is meant to run off the
+     top, the way a building does. */
+  .band__park,
+  .band__square {
+    position: absolute;
+    bottom: 0;
+    display: block;
+    opacity: 0.85;
+  }
+
+  .band__park {
+    left: 1%;
+    width: clamp(120px, 20vw, 260px);
+  }
+
+  .band__square {
+    right: 2%;
+    width: clamp(150px, 26vw, 340px);
   }
 
   .band__ground {

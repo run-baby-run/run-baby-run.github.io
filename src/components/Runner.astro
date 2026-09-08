@@ -26,6 +26,8 @@ interface Props {
   skin?: string;
   /** Negative seconds, to stagger the trio out of phase. */
   delay?: number;
+  /** Give this one a watch: they start it setting off, and glance at it. */
+  watch?: boolean;
   class?: string;
 }
 
@@ -37,6 +39,7 @@ const {
   head = 'cap',
   skin = '#f7f6f4',
   delay = 0,
+  watch = false,
   class: className,
 } = Astro.props;
 
@@ -135,14 +138,25 @@ const capFill = shirt === ink ? '#f7f6f4' : ink;
       }
     </g>
 
-    <!-- NEAR limbs -->
-    <g class="runner__arm runner__arm--near">
-      <g class="runner__upperarm">
-        <path d="M66 60 L66 79" stroke={ink} stroke-width="14" stroke-linecap="round" />
-        <path d="M66 60 L66 79" stroke={shirt} stroke-width="8" stroke-linecap="round" />
-        <g class="runner__forearm">
-          <path d="M66 79 L66 96" stroke={ink} stroke-width="13" stroke-linecap="round" />
-          <path d="M66 79 L66 96" stroke={skin} stroke-width="7" stroke-linecap="round" />
+    <!-- NEAR limbs. The watch-check group wraps the arm and adds a rotation
+         ON TOP of the gait, so the arm keeps swinging while it comes up. -->
+    <g class:list={['runner__check', watch && 'runner__check--live']}>
+      <g class="runner__arm runner__arm--near">
+        <g class="runner__upperarm">
+          <path d="M66 60 L66 79" stroke={ink} stroke-width="14" stroke-linecap="round" />
+          <path d="M66 60 L66 79" stroke={shirt} stroke-width="8" stroke-linecap="round" />
+          <g class="runner__forearm">
+            <path d="M66 79 L66 96" stroke={ink} stroke-width="13" stroke-linecap="round" />
+            <path d="M66 79 L66 96" stroke={skin} stroke-width="7" stroke-linecap="round" />
+            {
+              watch && (
+                <g class="runner__watch">
+                  <rect x="59" y="86" width="14" height="11" rx="3" fill={ink} />
+                  <rect x="61.5" y="88" width="9" height="7" rx="1.5" fill="#8fc4e8" />
+                </g>
+              )
+            }
+          </g>
         </g>
       </g>
     </g>
@@ -243,6 +257,30 @@ const capFill = shirt === ink ? '#f7f6f4' : ink;
     transform-origin: 68px 47px;
     animation: head-nod 0.58s ease-in-out infinite;
     animation-delay: var(--delay);
+  }
+
+  /* Rides on the 17s band timeline rather than the stride: they thumb the
+     watch setting off, then glance at it twice on the way past. The rotation
+     stacks on top of the arm swing, so the gait carries on underneath. */
+  .runner__check--live {
+    transform-origin: 65px 60px;
+    animation: check-watch 17s linear infinite;
+  }
+
+  @keyframes check-watch {
+    0%, 1.5% { transform: rotate(0deg); }
+    4% { transform: rotate(-54deg); }
+    9% { transform: rotate(-50deg); }
+    12% { transform: rotate(0deg); }
+    45% { transform: rotate(0deg); }
+    48% { transform: rotate(-46deg); }
+    53% { transform: rotate(-46deg); }
+    56% { transform: rotate(0deg); }
+    75% { transform: rotate(0deg); }
+    78% { transform: rotate(-46deg); }
+    83% { transform: rotate(-46deg); }
+    86% { transform: rotate(0deg); }
+    100% { transform: rotate(0deg); }
   }
 
   /* Forward lean is clockwise for a figure facing right. Two footfalls per

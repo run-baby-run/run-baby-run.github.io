@@ -1,0 +1,65 @@
+---
+/**
+ * Republic Square — the Government House, reduced to what makes it
+ * recognisable at a glance: the tuff arcade, the clock tower and the flag.
+ * Scenery, so it sits behind the figures and is drawn a shade lighter.
+ */
+
+const ink = '#141414';
+const tuff = '#e2c39a';
+const tuffDark = '#c9a578';
+const cream = '#f7f6f4';
+
+// The arcade: a run of round-headed arches either side of the tower.
+const leftArches = [0, 1, 2, 3].map((i) => 16 + i * 30);
+const rightArches = [0, 1, 2, 3].map((i) => 216 + i * 30);
+---
+
+<svg class="square" viewBox="0 0 350 200" role="img" aria-label="Republic Square">
+  <!-- flag -->
+  <path d="M175 8 L175 34" stroke={ink} stroke-width="3.5" stroke-linecap="round" />
+  <path d="M175 10 L196 15 L175 20 Z" fill="#f6a8c4" stroke={ink} stroke-width="3" stroke-linejoin="round" />
+
+  <!-- tower -->
+  <path
+    d="M148 34 L202 34 L202 190 L148 190 Z"
+    fill={tuff}
+    stroke={ink}
+    stroke-width="4"
+    stroke-linejoin="round"
+  />
+  <path d="M144 34 L206 34 L206 44 L144 44 Z" fill={tuffDark} stroke={ink} stroke-width="4" stroke-linejoin="round" />
+  <!-- clock -->
+  <circle cx="175" cy="66" r="15" fill={cream} stroke={ink} stroke-width="4" />
+  <path d="M175 66 L175 57 M175 66 L182 70" stroke={ink} stroke-width="3" stroke-linecap="round" />
+  <!-- tower arch -->
+  <path d="M162 190 L162 124 Q175 110 188 124 L188 190 Z" fill={tuffDark} stroke={ink} stroke-width="4" stroke-linejoin="round" />
+
+  <!-- wings -->
+  <path d="M6 96 L148 96 L148 190 L6 190 Z" fill={tuff} stroke={ink} stroke-width="4" stroke-linejoin="round" />
+  <path d="M202 96 L344 96 L344 190 L202 190 Z" fill={tuff} stroke={ink} stroke-width="4" stroke-linejoin="round" />
+
+  <!-- arcades -->
+  {
+    [...leftArches, ...rightArches].map((x) => (
+      <path
+        d={`M${x} 186 L${x} 140 Q${x + 11} 126 ${x + 22} 140 L${x + 22} 186 Z`}
+        fill={tuffDark}
+        stroke={ink}
+        stroke-width="3.5"
+        stroke-linejoin="round"
+      />
+    ))
+  }
+
+  <!-- cornice and colonnade line -->
+  <path d="M6 96 L344 96" stroke={ink} stroke-width="4" stroke-linecap="round" />
+  <path d="M6 118 L148 118 M202 118 L344 118" stroke={ink} stroke-width="3" stroke-linecap="round" />
+</svg>
+
+<style>
+  .square {
+    width: 100%;
+    height: auto;
+  }
+</style>
