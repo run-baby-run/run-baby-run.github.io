@@ -252,39 +252,42 @@ const capFill = shirt === ink ? '#f7f6f4' : ink;
     25%, 75% { transform: rotate(7deg) translateY(-6px); }
   }
 
-  /* Thigh and shin are coupled the way a real stride couples them: the leg
-     reaches out nearly straight to land, stays straight through stance, then
-     folds hard behind on the heel kick and unfolds again on the way through. */
+  /* SIGNS MATTER. Positive rotation is clockwise, and these limbs hang
+     downward, so a POSITIVE angle swings the free end backwards (left) and a
+     negative one swings it forwards (right). Getting this backwards mirrors
+     the whole cycle: the knee bends the wrong way and the figure moonwalks.
+     Thigh: negative reaches the knee forward, positive drives it behind.
+     Shin: positive folds the heel up behind, which is how a knee works. */
   @keyframes thigh {
-    0%   { transform: rotate(34deg); }   /* reach, about to land */
-    25%  { transform: rotate(2deg); }    /* stance, under the hip */
-    50%  { transform: rotate(-34deg); }  /* toe-off, behind */
-    75%  { transform: rotate(-4deg); }   /* knee driving through */
-    100% { transform: rotate(34deg); }
-  }
-
-  @keyframes thigh-far {
-    0%   { transform: rotate(-34deg); }
-    25%  { transform: rotate(-4deg); }
-    50%  { transform: rotate(34deg); }
-    75%  { transform: rotate(2deg); }
+    0%   { transform: rotate(-34deg); }  /* reach, about to land */
+    25%  { transform: rotate(-2deg); }   /* stance, under the hip */
+    50%  { transform: rotate(34deg); }   /* toe-off, behind */
+    75%  { transform: rotate(4deg); }    /* knee driving through */
     100% { transform: rotate(-34deg); }
   }
 
+  @keyframes thigh-far {
+    0%   { transform: rotate(34deg); }
+    25%  { transform: rotate(4deg); }
+    50%  { transform: rotate(-34deg); }
+    75%  { transform: rotate(-2deg); }
+    100% { transform: rotate(34deg); }
+  }
+
   @keyframes shin {
-    0%   { transform: rotate(-14deg); }  /* almost straight to land */
-    25%  { transform: rotate(-4deg); }   /* straight under load */
-    50%  { transform: rotate(-62deg); }  /* heel kicking up behind */
-    75%  { transform: rotate(-96deg); }  /* folded tight, swinging through */
-    100% { transform: rotate(-14deg); }
+    0%   { transform: rotate(14deg); }   /* almost straight to land */
+    25%  { transform: rotate(4deg); }    /* straight under load */
+    50%  { transform: rotate(62deg); }   /* heel kicking up behind */
+    75%  { transform: rotate(96deg); }   /* folded tight, swinging through */
+    100% { transform: rotate(14deg); }
   }
 
   @keyframes shin-far {
-    0%   { transform: rotate(-62deg); }
-    25%  { transform: rotate(-96deg); }
-    50%  { transform: rotate(-14deg); }
-    75%  { transform: rotate(-4deg); }
-    100% { transform: rotate(-62deg); }
+    0%   { transform: rotate(62deg); }
+    25%  { transform: rotate(96deg); }
+    50%  { transform: rotate(14deg); }
+    75%  { transform: rotate(4deg); }
+    100% { transform: rotate(62deg); }
   }
 
   @keyframes foot {
@@ -303,17 +306,18 @@ const capFill = shirt === ink ? '#f7f6f4' : ink;
     100% { transform: rotate(26deg); }
   }
 
-  /* Arms oppose the legs. */
+  /* Arms oppose the legs: at 0% the near LEG is reaching forward, so the near
+     ARM must be back — positive, by the same sign rule as above. */
   @keyframes upperarm {
-    0%   { transform: rotate(-38deg); }
-    50%  { transform: rotate(26deg); }
-    100% { transform: rotate(-38deg); }
+    0%   { transform: rotate(30deg); }
+    50%  { transform: rotate(-34deg); }
+    100% { transform: rotate(30deg); }
   }
 
   @keyframes upperarm-far {
-    0%   { transform: rotate(26deg); }
-    50%  { transform: rotate(-38deg); }
-    100% { transform: rotate(26deg); }
+    0%   { transform: rotate(-34deg); }
+    50%  { transform: rotate(30deg); }
+    100% { transform: rotate(-34deg); }
   }
 
   @keyframes forearm {
@@ -341,15 +345,15 @@ const capFill = shirt === ink ? '#f7f6f4' : ink;
     }
 
     .runner__body { transform: rotate(7deg); }
-    .runner__leg--near .runner__thigh { transform: rotate(30deg); }
-    .runner__leg--near .runner__shin { transform: rotate(-12deg); }
+    .runner__leg--near .runner__thigh { transform: rotate(-30deg); }
+    .runner__leg--near .runner__shin { transform: rotate(12deg); }
     .runner__leg--near .runner__foot { transform: rotate(-6deg); }
-    .runner__leg--far .runner__thigh { transform: rotate(-30deg); }
-    .runner__leg--far .runner__shin { transform: rotate(-70deg); }
+    .runner__leg--far .runner__thigh { transform: rotate(30deg); }
+    .runner__leg--far .runner__shin { transform: rotate(70deg); }
     .runner__leg--far .runner__foot { transform: rotate(20deg); }
-    .runner__arm--near .runner__upperarm { transform: rotate(-34deg); }
+    .runner__arm--near .runner__upperarm { transform: rotate(26deg); }
     .runner__arm--near .runner__forearm { transform: rotate(-74deg); }
-    .runner__arm--far .runner__upperarm { transform: rotate(24deg); }
+    .runner__arm--far .runner__upperarm { transform: rotate(-30deg); }
     .runner__arm--far .runner__forearm { transform: rotate(-94deg); }
   }
 </style>
