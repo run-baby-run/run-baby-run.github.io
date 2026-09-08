@@ -1,0 +1,299 @@
+---
+import { song } from '../data/song';
+---
+
+<div class="mini" id="rbr-mini" hidden>
+  <button class="mini__toggle" type="button" data-mini-toggle aria-label="Pause the club song">
+    <svg class="mini__icon mini__icon--play" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8 5.5v13l11-6.5z" />
+    </svg>
+    <svg class="mini__icon mini__icon--pause" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8 5h3.2v14H8zM12.8 5H16v14h-3.2z" />
+    </svg>
+  </button>
+
+  <a class="mini__text" href="/#song">
+    <span class="mini__title">{song.title}</span>
+    <span class="mini__time" data-mini-time>0:00</span>
+  </a>
+
+  <button class="mini__close" type="button" data-mini-close aria-label="Stop the club song">✕</button>
+
+  <span class="mini__bar" aria-hidden="true"><span data-mini-progress></span></span>
+</div>
+
+<script>
+  // One controller for the whole site. The <audio> and this bar are persisted
+  // across navigations by transition:persist, so global listeners are bound
+  // once; the full player on the home page is re-wired after every navigation.
+  interface PageUi {
+    root: HTMLElement;
+    toggle: HTMLButtonElement;
+    seek: HTMLInputElement;
+    current: HTMLElement;
+    duration: HTMLElement;
+  }
+
+  const w = window as typeof window & { __rbrPage?: PageUi | null };
+
+  // Every binding is guarded by a flag on the element itself rather than a
+  // global: only the <audio> is reliably persisted across a navigation, so
+  // any node that gets recreated must be re-bound, and any node that survives
+  // must not be bound twice.
+  const claim = (el: HTMLElement) => {
+    if (el.dataset.rbrBound === 'true') return false;
+    el.dataset.rbrBound = 'true';
+    return true;
+  };
+
+  const playPause = (a: HTMLAudioElement) => {
+    if (a.paused) a.play().catch(() => {});
+    else a.pause();
+  };
+
+  const fmt = (s: number) =>
+    Number.isFinite(s) && s >= 0
+      ? `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`
+      : '0:00';
+
+  const audio = () => document.getElementById('rbr-audio') as HTMLAudioElement | null;
+  const mini = () => document.getElementById('rbr-mini');
+
+  function paint() {
+    const a = audio();
+    const m = mini();
+    if (!a || !m) return;
+
+    const pct = a.duration ? (a.currentTime / a.duration) * 100 : 0;
+    const bar = m.querySelector<HTMLElement>('[data-mini-progress]');
+    if (bar) bar.style.width = `${pct}%`;
+    const time = m.querySelector<HTMLElement>('[data-mini-time]');
+    if (time) time.textContent = fmt(a.currentTime);
+
+    const page = w.__rbrPage;
+    if (page) {
+      page.seek.value = String(pct * 10);
+      page.seek.style.setProperty('--progress', `${pct}%`);
+      page.current.textContent = fmt(a.currentTime);
+      if (a.duration) page.duration.textContent = fmt(a.duration);
+    }
+  }
+
+  function setPlaying(playing: boolean) {
+    const m = mini();
+    if (m) {
+      m.classList.toggle('is-playing', playing);
+      const t = m.querySelector('[data-mini-toggle]');
+      t?.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} the club song`);
+      if (playing) m.hidden = false;
+    }
+    const page = w.__rbrPage;
+    if (page) {
+      page.root.classList.toggle('is-playing', playing);
+      page.toggle.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} the club song`);
+    }
+  }
+
+  function bindGlobal() {
+    const a = audio();
+    const m = mini();
+    if (!a || !m) return;
+
+    if (claim(m)) {
+      m.querySelector('[data-mini-toggle]')?.addEventListener('click', () => playPause(a));
+      m.querySelector('[data-mini-close]')?.addEventListener('click', () => {
+        a.pause();
+        a.currentTime = 0;
+        m.hidden = true;
+        paint();
+      });
+    }
+
+    if (!claim(a)) return;
+
+    a.addEventListener('play', () => setPlaying(true));
+    a.addEventListener('pause', () => setPlaying(false));
+    a.addEventListener('ended', () => {
+      setPlaying(false);
+      m.hidden = true;
+    });
+    a.addEventListener('timeupdate', paint);
+    a.addEventListener('loadedmetadata', paint);
+  }
+
+  // Re-attach the home page's full player after each navigation.
+  function bindPage() {
+    const a = audio();
+    const root = document.querySelector<HTMLElement>('[data-player]');
+    if (!a || !root) {
+      w.__rbrPage = null;
+      return;
+    }
+
+    const ui = root.querySelector<HTMLElement>('[data-ui]');
+    const toggle = root.querySelector<HTMLButtonElement>('[data-toggle]');
+    const seek = root.querySelector<HTMLInputElement>('[data-seek]');
+    const current = root.querySelector<HTMLElement>('[data-current]');
+    const duration = root.querySelector<HTMLElement>('[data-duration]');
+    if (!ui || !toggle || !seek || !current || !duration) return;
+
+    ui.hidden = false;
+    w.__rbrPage = { root, toggle, seek, current, duration };
+
+    // astro:page-load also fires on the initial load, so binding must be
+    // idempotent — a second click handler would pause playback the instant
+    // the first one started it (play() clears .paused synchronously).
+    if (!claim(root)) {
+      setPlaying(!a.paused);
+      paint();
+      return;
+    }
+
+    toggle.addEventListener('click', () => playPause(a));
+
+    seek.addEventListener('input', () => {
+      const pct = Number(seek.value) / 10;
+      seek.style.setProperty('--progress', `${pct}%`);
+      if (a.duration) current.textContent = fmt((pct / 100) * a.duration);
+    });
+
+    seek.addEventListener('change', () => {
+      if (a.duration) a.currentTime = (Number(seek.value) / 1000) * a.duration;
+    });
+
+    setPlaying(!a.paused);
+    paint();
+  }
+
+  function init() {
+    bindGlobal();
+    bindPage();
+    const a = audio();
+    const m = mini();
+    // No play/pause event fires across a navigation, so restore the icon and
+    // the bar's visibility from the audio element's actual state.
+    if (a) setPlaying(!a.paused);
+    if (a && m && (!a.paused || a.currentTime > 0)) m.hidden = false;
+    paint();
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>
+
+<style>
+  .mini {
+    position: fixed;
+    z-index: 40;
+    left: clamp(0.75rem, 3vw, 1.5rem);
+    bottom: clamp(0.75rem, 3vw, 1.5rem);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem 0.5rem 0.5rem;
+    border: var(--line) solid var(--ink);
+    border-radius: 999px;
+    background: var(--cream);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .mini[hidden] {
+    display: none;
+  }
+
+  .mini__toggle,
+  .mini__close {
+    flex: none;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: var(--line) solid var(--ink);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .mini__toggle {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  .mini__toggle:hover {
+    background: var(--pink);
+    color: var(--ink);
+  }
+
+  .mini__icon {
+    width: 1.1rem;
+    height: 1.1rem;
+    fill: currentColor;
+  }
+
+  .mini__icon--pause,
+  .mini.is-playing .mini__icon--play {
+    display: none;
+  }
+
+  .mini.is-playing .mini__icon--pause {
+    display: block;
+  }
+
+  .mini__text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+    text-decoration: none;
+  }
+
+  .mini__title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+  }
+
+  .mini__time {
+    font-size: 0.6875rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-soft);
+  }
+
+  .mini__close {
+    width: 1.75rem;
+    height: 1.75rem;
+    background: transparent;
+    color: var(--ink);
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+
+  .mini__close:hover {
+    background: var(--pink);
+  }
+
+  .mini__bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: color-mix(in srgb, var(--ink) 14%, transparent);
+  }
+
+  .mini__bar span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: var(--pink-text);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mini__toggle,
+    .mini__close {
+      transition: none;
+    }
+  }
+</style>

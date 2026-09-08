@@ -13,15 +13,11 @@ import { song, lyrics } from '../data/song';
     </div>
 
     <div class="player sticker" data-player>
-      <!-- Native controls until the script upgrades this; nothing downloads
-           until someone presses play. -->
-      <audio
-        class="player__audio"
-        src={song.file}
-        preload="none"
-        controls
-        data-audio
-      ></audio>
+      <!-- The audio element itself lives in the layout so playback survives
+           navigation; this is only the fallback for a scriptless browser. -->
+      <noscript>
+        <audio class="player__audio" src={song.file} preload="none" controls></audio>
+      </noscript>
 
       <div class="player__ui" hidden data-ui>
         <button class="player__toggle" type="button" data-toggle aria-label={`Play ${song.title}`}>
@@ -72,64 +68,6 @@ import { song, lyrics } from '../data/song';
     </details>
   </div>
 </section>
-
-<script>
-  const root = document.querySelector<HTMLElement>('[data-player]');
-  const audio = root?.querySelector<HTMLAudioElement>('[data-audio]');
-
-  if (root && audio) {
-    const ui = root.querySelector<HTMLElement>('[data-ui]')!;
-    const toggle = root.querySelector<HTMLButtonElement>('[data-toggle]')!;
-    const seek = root.querySelector<HTMLInputElement>('[data-seek]')!;
-    const current = root.querySelector<HTMLElement>('[data-current]')!;
-    const duration = root.querySelector<HTMLElement>('[data-duration]')!;
-
-    // Swap the native controls for the custom UI only once we know scripting works.
-    audio.removeAttribute('controls');
-    audio.hidden = true;
-    ui.hidden = false;
-
-    const fmt = (s: number) =>
-      Number.isFinite(s) ? `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}` : '—:—';
-
-    const paint = () => {
-      const pct = audio.duration ? (audio.currentTime / audio.duration) * 1000 : 0;
-      seek.value = String(pct);
-      seek.style.setProperty('--progress', `${pct / 10}%`);
-      current.textContent = fmt(audio.currentTime);
-    };
-
-    toggle.addEventListener('click', () => {
-      if (audio.paused) audio.play();
-      else audio.pause();
-    });
-
-    const setState = (playing: boolean) => {
-      root.classList.toggle('is-playing', playing);
-      toggle.setAttribute('aria-label', `${playing ? 'Pause' : 'Play'} the club song`);
-    };
-
-    audio.addEventListener('play', () => setState(true));
-    audio.addEventListener('pause', () => setState(false));
-    audio.addEventListener('ended', () => setState(false));
-    audio.addEventListener('timeupdate', paint);
-    audio.addEventListener('loadedmetadata', () => {
-      duration.textContent = fmt(audio.duration);
-      paint();
-    });
-
-    let scrubbing = false;
-    seek.addEventListener('input', () => {
-      scrubbing = true;
-      seek.style.setProperty('--progress', `${Number(seek.value) / 10}%`);
-      if (audio.duration) current.textContent = fmt((Number(seek.value) / 1000) * audio.duration);
-    });
-    seek.addEventListener('change', () => {
-      if (audio.duration) audio.currentTime = (Number(seek.value) / 1000) * audio.duration;
-      scrubbing = false;
-    });
-  }
-</script>
 
 <style>
   .song {

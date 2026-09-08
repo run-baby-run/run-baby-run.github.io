@@ -80,12 +80,12 @@ const zoomed = await Promise.all(
 </ul>
 
 <script>
-  // One lightbox per page, built on first use so no-JS visitors just get links.
-  const links = Array.from(
-    document.querySelectorAll<HTMLAnchorElement>('.shot__link')
-  );
+  // Re-initialised on every navigation: with client-side routing the body is
+  // swapped, so the previous dialog and links are gone.
+  function initLightbox() {
+    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.shot__link'));
+    if (links.length === 0) return;
 
-  if (links.length > 0) {
     let dialog: HTMLDialogElement | null = null;
     let img: HTMLImageElement;
     let caption: HTMLElement;
@@ -196,6 +196,10 @@ const zoomed = await Promise.all(
     };
 
     links.forEach((link, i) => {
+      // Same reason as the player: this runs on load and on astro:page-load.
+      if (link.dataset.lbBound === 'true') return;
+      link.dataset.lbBound = 'true';
+
       link.addEventListener('click', (event) => {
         // Let modified clicks open the image in a new tab as usual.
         if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
@@ -205,7 +209,21 @@ const zoomed = await Promise.all(
         dialog.showModal();
       });
     });
+
+    // A dialog appended to <body> would be left behind by a navigation.
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        dialog?.close();
+        dialog?.remove();
+        dialog = null;
+      },
+      { once: true }
+    );
   }
+
+  initLightbox();
+  document.addEventListener('astro:page-load', initLightbox);
 </script>
 
 <style>
