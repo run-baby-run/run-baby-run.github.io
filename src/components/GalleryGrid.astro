@@ -10,17 +10,28 @@ interface Props {
 
 const { shots, offset = 0 } = Astro.props;
 
-// A bigger rendition for the zoom view. Generated at build time alongside the
-// thumbnails, but only fetched when someone actually opens a photo.
+// Zoom renditions. A phone should not download a desktop-sized photo, so this
+// is a srcset rather than one fixed size, and it is only fetched on open.
 const zoomed = await Promise.all(
-  shots.map((shot) =>
-    getImage({
-      src: shot.image,
-      width: Math.min(1400, shot.image.width),
-      format: 'webp',
-      quality: 72,
-    })
-  )
+  shots.map(async (shot) => {
+    const widths = [...new Set([800, 1200, Math.min(1600, shot.image.width)])]
+      .filter((w) => w <= shot.image.width)
+      .sort((a, b) => a - b);
+
+    const renditions = await Promise.all(
+      widths.map((width) =>
+        getImage({ src: shot.image, width, format: 'webp', quality: 68 })
+      )
+    );
+
+    const largest = renditions[renditions.length - 1];
+    return {
+      src: largest.src,
+      srcset: renditions.map((r, i) => `${r.src} ${widths[i]}w`).join(', '),
+      width: widths[widths.length - 1],
+      height: Math.round((widths[widths.length - 1] / shot.image.width) * shot.image.height),
+    };
+  })
 );
 ---
 
@@ -36,6 +47,9 @@ const zoomed = await Promise.all(
               class="shot__link"
               href={zoomed[i].src}
               data-zoom={zoomed[i].src}
+              data-zoom-srcset={zoomed[i].srcset}
+              data-zoom-w={zoomed[i].width}
+              data-zoom-h={zoomed[i].height}
               data-caption={shot.caption}
               data-alt={shot.alt}
               aria-label={`Open photo: ${shot.caption}`}
@@ -138,13 +152,47 @@ const zoomed = await Promise.all(
       return el;
     };
 
+    const preload = (i: number) => {
+      const link = links[(i + links.length) % links.length];
+      const img = new Image();
+      img.sizes = '96vw';
+      img.srcset = link.dataset.zoomSrcset ?? '';
+      img.src = link.dataset.zoom!;
+    };
+
     const show = (next: number) => {
       index = (next + links.length) % links.length;
       const link = links[index];
-      img.src = link.dataset.zoom!;
+
+      // Size the element up front from the known dimensions, so the box is
+      // correct before any bytes arrive and nothing jumps on load.
+      img.width = Number(link.dataset.zoomW) || 0;
+      img.height = Number(link.dataset.zoomH) || 0;
+
+      // The grid thumbnail is already decoded in this page, so paint it behind
+      // the full image straight away — the dialog is never empty.
+      const thumb = link.querySelector('img');
+      const placeholder = thumb?.currentSrc || thumb?.src;
+      img.style.backgroundImage = placeholder ? `url("${placeholder}")` : '';
+
+      img.classList.add('is-loading');
       img.alt = link.dataset.alt ?? '';
+      img.sizes = '96vw';
+      img.srcset = link.dataset.zoomSrcset ?? '';
+      img.src = link.dataset.zoom!;
+
+      const done = () => img.classList.remove('is-loading');
+      if (img.complete) done();
+      else img.addEventListener('load', done, { once: true });
+
       caption.textContent = link.dataset.caption ?? '';
       counter.textContent = `${index + 1} / ${links.length}`;
+
+      // Arrow navigation should feel instant.
+      if (links.length > 1) {
+        preload(index + 1);
+        preload(index - 1);
+      }
     };
 
     links.forEach((link, i) => {
@@ -281,7 +329,19 @@ const zoomed = await Promise.all(
     object-fit: contain;
     border-bottom: var(--line) solid var(--ink);
     border-radius: calc(var(--radius) - 3px) calc(var(--radius) - 3px) 0 0;
-    background: var(--ink);
+    /* The cached thumbnail sits behind until the full image decodes. */
+    background-color: var(--ink);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: opacity 0.2s ease;
+  }
+
+  /* Until the bitmap arrives the element would paint its alt text (and a
+     broken-image glyph) over the placeholder. */
+  .lightbox__img.is-loading {
+    color: transparent;
+    font-size: 0;
   }
 
   .lightbox__caption {
