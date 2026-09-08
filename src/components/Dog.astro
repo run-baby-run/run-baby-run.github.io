@@ -1,0 +1,225 @@
+---
+/**
+ * One of the street dogs that tags along on a run, drawn side-on to match the
+ * club's flat, ink-outlined style.
+ *
+ * The whole performance is one 17s loop, shared with the pack in RunnersBand:
+ * the dog trails the runners, pulls up at the pulpulak, drinks, then chases
+ * after them. Its legs have to STOP while it drinks, which a short looping
+ * gait cannot express — so the gait is generated here as explicit keyframes
+ * across the full loop, holding still through the drinking window.
+ */
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+
+const ink = '#141414';
+const coat = '#c9a273';
+const coatDark = '#a8834f';
+
+// --- choreography, as fractions of the shared loop -------------------------
+const RUN1_END = 0.42; // arrives at the fountain
+const DRINK_END = 0.68; // head comes back up
+const STRIDES_1 = 9;
+const STRIDES_2 = 8;
+const SAMPLES_PER_STRIDE = 4;
+const SWING = 32; // degrees fore/aft
+const pct = (n: number) => `${(n * 100).toFixed(2)}%`;
+
+/** Stops of {t, phase}: phase accumulates strides while running, holds while drinking. */
+const stops: { t: number; phase: number }[] = [];
+for (let i = 0; i <= STRIDES_1 * SAMPLES_PER_STRIDE; i++) {
+  const f = i / (STRIDES_1 * SAMPLES_PER_STRIDE);
+  stops.push({ t: f * RUN1_END, phase: f * STRIDES_1 });
+}
+stops.push({ t: DRINK_END, phase: STRIDES_1 });
+for (let i = 1; i <= STRIDES_2 * SAMPLES_PER_STRIDE; i++) {
+  const f = i / (STRIDES_2 * SAMPLES_PER_STRIDE);
+  stops.push({ t: DRINK_END + f * (1 - DRINK_END), phase: STRIDES_1 + f * STRIDES_2 });
+}
+
+const gait = (offset: number) =>
+  stops
+    .map(
+      (s) =>
+        `${pct(s.t)}{transform:rotate(${(Math.sin((s.phase + offset) * Math.PI * 2) * SWING).toFixed(1)}deg)}`
+    )
+    .join('');
+
+// A diagonal trot: front-left moves with back-right, so only two phases exist.
+const keyframes = `
+@keyframes dogGaitA{${gait(0)}}
+@keyframes dogGaitB{${gait(0.5)}}
+@keyframes dogBob{${stops
+  .map((s) => {
+    const still = s.t > RUN1_END && s.t < DRINK_END;
+    const y = still ? 0 : Math.abs(Math.sin(s.phase * Math.PI * 2)) * -2.5;
+    return `${pct(s.t)}{transform:translateY(${y.toFixed(2)}px)}`;
+  })
+  .join('')}}
+/* vw, not %: a percentage here would resolve against the dog's own width
+   rather than the band, and it would barely move. --dog-stop is set by the
+   band and moves left on narrow screens, where the pack takes up far more of
+   the width and would otherwise still be covering the fountain. */
+@keyframes dogTravel{
+0%{transform:translateX(calc(var(--dog-stop) - 61vw))}
+${pct(RUN1_END)}{transform:translateX(var(--dog-stop))}
+${pct(DRINK_END)}{transform:translateX(var(--dog-stop))}
+100%{transform:translateX(calc(var(--dog-stop) + 75vw))}
+}
+@keyframes dogHead{
+0%,${pct(RUN1_END - 0.02)}{transform:rotate(0deg)}
+${pct(RUN1_END + 0.02)}{transform:rotate(40deg)}
+${pct(RUN1_END + 0.06)}{transform:rotate(46deg)}
+${pct(RUN1_END + 0.1)}{transform:rotate(40deg)}
+${pct(RUN1_END + 0.14)}{transform:rotate(46deg)}
+${pct(RUN1_END + 0.18)}{transform:rotate(40deg)}
+${pct(RUN1_END + 0.22)}{transform:rotate(46deg)}
+${pct(DRINK_END - 0.01)}{transform:rotate(40deg)}
+${pct(DRINK_END + 0.02)}{transform:rotate(0deg)}
+100%{transform:rotate(0deg)}
+}
+@keyframes dogTail{
+0%,100%{transform:rotate(-12deg)}
+50%{transform:rotate(14deg)}
+}
+`;
+---
+
+<style is:global set:html={keyframes}></style>
+
+<span class:list={['dog', className]}>
+  <svg viewBox="0 0 170 110" role="img" aria-label="A street dog running with the club">
+    <g class="dog__bob">
+      <!-- FAR legs, behind the body -->
+      <g class="dog__leg dog__leg--b" style="--pivot:58px 66px">
+        <path d="M58 66 L54 96" stroke={coatDark} stroke-width="9" stroke-linecap="round" />
+        <path d="M54 96 L62 98" stroke={coatDark} stroke-width="8" stroke-linecap="round" />
+      </g>
+      <g class="dog__leg dog__leg--a" style="--pivot:116px 64px">
+        <path d="M116 64 L114 96" stroke={coatDark} stroke-width="9" stroke-linecap="round" />
+        <path d="M114 96 L122 98" stroke={coatDark} stroke-width="8" stroke-linecap="round" />
+      </g>
+
+      <!-- tail -->
+      <g class="dog__tail">
+        <path
+          d="M40 52 Q22 46 18 30"
+          fill="none"
+          stroke={ink}
+          stroke-width="11"
+          stroke-linecap="round"
+        />
+        <path
+          d="M40 52 Q22 46 18 30"
+          fill="none"
+          stroke={coat}
+          stroke-width="6"
+          stroke-linecap="round"
+        />
+      </g>
+
+      <!-- body -->
+      <path
+        d="M40 50 Q44 40 62 40 L112 40 Q130 40 132 52 L132 62 Q130 72 112 72 L60 72 Q42 72 40 62 Z"
+        fill={coat}
+        stroke={ink}
+        stroke-width="4.5"
+        stroke-linejoin="round"
+      />
+
+      <!-- head, pivoting at the neck so it can drop to the basin -->
+      <g class="dog__head">
+        <path d="M126 50 L138 40" stroke={ink} stroke-width="14" stroke-linecap="round" />
+        <path d="M126 50 L138 40" stroke={coat} stroke-width="9" stroke-linecap="round" />
+        <path
+          d="M130 34 Q130 22 143 22 Q156 22 157 32 L166 38 Q168 42 162 44 L150 45 Q132 45 130 34 Z"
+          fill={coat}
+          stroke={ink}
+          stroke-width="4.5"
+          stroke-linejoin="round"
+        />
+        <path d="M132 24 L128 12 L142 18 Z" fill={coat} stroke={ink} stroke-width="4" stroke-linejoin="round" />
+        <circle cx="147" cy="31" r="2.6" fill={ink} />
+        <circle cx="165" cy="40" r="2.4" fill={ink} />
+      </g>
+
+      <!-- NEAR legs, in front of the body -->
+      <g class="dog__leg dog__leg--a" style="--pivot:62px 66px">
+        <path d="M62 66 L58 97" stroke={ink} stroke-width="11" stroke-linecap="round" />
+        <path d="M62 66 L58 97" stroke={coat} stroke-width="6.5" stroke-linecap="round" />
+        <path d="M58 97 L67 99" stroke={ink} stroke-width="9" stroke-linecap="round" />
+        <path d="M58 97 L67 99" stroke={coat} stroke-width="5" stroke-linecap="round" />
+      </g>
+      <g class="dog__leg dog__leg--b" style="--pivot:120px 64px">
+        <path d="M120 64 L118 97" stroke={ink} stroke-width="11" stroke-linecap="round" />
+        <path d="M120 64 L118 97" stroke={coat} stroke-width="6.5" stroke-linecap="round" />
+        <path d="M118 97 L127 99" stroke={ink} stroke-width="9" stroke-linecap="round" />
+        <path d="M118 97 L127 99" stroke={coat} stroke-width="5" stroke-linecap="round" />
+      </g>
+    </g>
+  </svg>
+</span>
+
+<style>
+  .dog {
+    display: block;
+    animation: dogTravel 17s linear infinite;
+  }
+
+  .dog svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .dog :global(*) {
+    transform-box: view-box;
+  }
+
+  .dog__bob {
+    transform-origin: 85px 60px;
+    animation: dogBob 17s linear infinite;
+  }
+
+  .dog__leg {
+    transform-origin: var(--pivot);
+  }
+
+  .dog__leg--a {
+    animation: dogGaitA 17s linear infinite;
+  }
+
+  .dog__leg--b {
+    animation: dogGaitB 17s linear infinite;
+  }
+
+  .dog__head {
+    transform-origin: 130px 46px;
+    animation: dogHead 17s linear infinite;
+  }
+
+  .dog__tail {
+    transform-origin: 40px 52px;
+    animation: dogTail 0.5s ease-in-out infinite alternate;
+  }
+
+  /* Park the dog at the fountain, mid-drink, rather than animating. */
+  @media (prefers-reduced-motion: reduce) {
+    .dog,
+    .dog :global(*) {
+      animation: none !important;
+    }
+
+    .dog {
+      transform: translateX(var(--dog-stop));
+    }
+
+    .dog__head {
+      transform: rotate(42deg);
+    }
+  }
+</style>

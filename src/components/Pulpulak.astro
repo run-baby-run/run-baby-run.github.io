@@ -1,0 +1,77 @@
+---
+/**
+ * A pulpulak — the little Yerevan drinking fountain the club runs past, and
+ * that the street dogs drink from. Drawn in the site's flat, ink-outlined
+ * style, with the mosaic column done in the club's own colours rather than
+ * the real thing's blues and oranges.
+ */
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+
+const ink = '#141414';
+const cream = '#f7f6f4';
+const pink = '#f6a8c4';
+const sage = '#a9c4a0';
+
+// The mosaic column: four rows of little tiles in the brand palette.
+const tileColours = [pink, sage, cream, sage, pink, cream, sage, pink, cream, pink, sage, cream];
+const tiles = tileColours.map((fill, i) => ({
+  fill,
+  x: 34 + (i % 3) * 11,
+  y: 60 + Math.floor(i / 3) * 13,
+}));
+---
+
+<svg
+  class:list={['pulpulak', className]}
+  viewBox="0 0 100 150"
+  role="img"
+  aria-label="A pulpulak, the Yerevan street drinking fountain"
+>
+  <!-- basin: a round tiled disc, seen slightly from above -->
+  <ellipse cx="50" cy="38" rx="34" ry="11" fill={cream} stroke={ink} stroke-width="4.5" />
+  <path
+    d="M16 38 A34 11 0 0 0 84 38 L84 45 A34 11 0 0 1 16 45 Z"
+    fill={pink}
+    stroke={ink}
+    stroke-width="4.5"
+    stroke-linejoin="round"
+  />
+  <ellipse cx="50" cy="38" rx="18" ry="5.5" fill={sage} stroke={ink} stroke-width="3" />
+
+  <!-- spout -->
+  <path d="M50 38 L50 26" stroke={ink} stroke-width="6" stroke-linecap="round" />
+  <circle cx="50" cy="24" r="4" fill={cream} stroke={ink} stroke-width="3" />
+
+  <!-- mosaic column -->
+  <path
+    d="M32 48 L68 48 L66 124 L34 124 Z"
+    fill={cream}
+    stroke={ink}
+    stroke-width="4.5"
+    stroke-linejoin="round"
+  />
+  {tiles.map((t) => <rect x={t.x} y={t.y} width="8" height="9" rx="1.5" fill={t.fill} />)}
+
+  <!-- metal frame and base -->
+  <path d="M28 60 L28 128 M72 60 L72 128" stroke={ink} stroke-width="4" stroke-linecap="round" />
+  <path d="M24 128 L76 128" stroke={ink} stroke-width="5" stroke-linecap="round" />
+  <path
+    d="M26 128 L74 128 L78 142 L22 142 Z"
+    fill={sage}
+    stroke={ink}
+    stroke-width="4.5"
+    stroke-linejoin="round"
+  />
+</svg>
+
+<style>
+  .pulpulak {
+    width: 100%;
+    height: auto;
+  }
+</style>

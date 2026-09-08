@@ -1,41 +1,67 @@
 ---
 import RunningTrio from './RunningTrio.astro';
+import Dog from './Dog.astro';
+import Pulpulak from './Pulpulak.astro';
 ---
 
 <div class="band" aria-hidden="true">
   <div class="band__track">
+    <span class="band__fountain"><Pulpulak /></span>
+    <span class="band__dog"><Dog /></span>
     <span class="band__pack"><RunningTrio /></span>
   </div>
   <span class="band__ground"></span>
 </div>
 
 <style>
-  /* A strip the pack crosses on its way to the join section. Decorative, so
-     it is hidden from assistive tech — the schedule and CTA already say
-     everything this says. */
+  /* A strip the pack crosses on its way to the join section: the runners go
+     by, a street dog trails them, stops at the pulpulak for a drink, then
+     chases after them. Decorative, so it is hidden from assistive tech — the
+     schedule and CTA already say everything this says. */
   .band {
-    --pack: clamp(150px, 21vw, 250px);
+    --pack: clamp(130px, 21vw, 250px);
+    --dog: clamp(84px, 13vw, 160px);
+    --fountain: clamp(44px, 7vw, 86px);
+    /* Where the dog pulls up. The pack is proportionally much wider on a
+       phone and clears the middle of the band later, so the fountain moves
+       left there to stay out from under it. */
+    --dog-stop: 33vw;
     position: relative;
     overflow: hidden;
     background: var(--cream);
     padding-top: clamp(1.5rem, 4vw, 3rem);
   }
 
-  /* No fixed height: the track takes its height from the pack, so the figures
-     can never be clipped at the top. */
+  /* No fixed height: the track takes its height from the pack, so nothing can
+     be clipped at the top. Everything else is absolutely placed against it. */
   .band__track {
     position: relative;
   }
 
-  /* The figures run on the spot; this is what carries them across. translateX
-     does not affect layout, so nothing here widens the page. */
+  /* The figures run on the spot; translateX carries them across, and does not
+     affect layout, so none of this can widen the page. */
   .band__pack {
     display: block;
     width: var(--pack);
-    /* The rig leaves a little air below the feet inside its viewBox; this
-       drops the pack so they land on the ground line. */
     margin-bottom: calc(var(--pack) * -0.085);
     animation: cross 17s linear infinite;
+  }
+
+  .band__dog {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: var(--dog);
+  }
+
+  /* Sits where the dog's muzzle comes down, so the two stay together however
+     the sizes scale. */
+  .band__fountain {
+    position: absolute;
+    bottom: 0;
+    left: calc(var(--dog-stop) + var(--dog) * 0.72);
+    display: block;
+    width: var(--fountain);
   }
 
   .band__ground {
@@ -53,12 +79,18 @@ import RunningTrio from './RunningTrio.astro';
     }
   }
 
+  @media (max-width: 700px) {
+    .band {
+      --dog-stop: 16vw;
+    }
+  }
+
   /* Standing still off-canvas would just look like a gap, so park the pack
      in view instead. */
   @media (prefers-reduced-motion: reduce) {
     .band__pack {
       animation: none;
-      transform: translateX(12vw);
+      transform: translateX(62vw);
     }
   }
 </style>
