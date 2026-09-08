@@ -168,16 +168,6 @@ const entries: Shot[] = [
     alt: 'A selfie of three runners under a clear blue sky',
     caption: 'Blue sky, three of us',
   },
-  {
-    file: 'run-42.jpg',
-    alt: 'A big group on a wet street among evergreen trees',
-    caption: 'Winter turnout',
-  },
-  {
-    file: 'run-43.jpg',
-    alt: 'A long line of runners posing across a street on a grey day',
-    caption: 'Everyone showed up',
-  },
 ];
 
 // Eager glob so Astro has the metadata at build time and can emit optimised files.

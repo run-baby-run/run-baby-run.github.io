@@ -8,7 +8,7 @@ import StravaLink from '../../components/StravaLink.astro';
 import { stats, slugify, captured } from '../../data/stats';
 import { members } from '../../data/members';
 import { founders, leaders } from '../../data/site';
-import { photoFor } from '../../data/photos';
+import { memberPhoto, founderPhoto } from '../../data/photos';
 
 export const getStaticPaths = (() =>
   stats.map((athlete) => ({
@@ -18,12 +18,18 @@ export const getStaticPaths = (() =>
 
 const { athlete } = Astro.props;
 
-// The person may be a member, a founder or the run leader.
-const person =
-  members.find((m) => m.name === athlete.member) ??
-  [...founders, ...leaders].find((p) => p.name === athlete.member);
+// The person may be a member, a founder or the run leader. Which set they come
+// from decides which folder the photo is read from: the two folders share some
+// filenames (shaghig.jpg is both the founder and the member Sha).
+const member = members.find((m) => m.name === athlete.member);
+const notMember = [...founders, ...leaders].find((p) => p.name === athlete.member);
+const person = member ?? notMember;
 
-const image = person ? photoFor(person.file) : undefined;
+const image = member
+  ? memberPhoto(member.file)
+  : notMember
+    ? founderPhoto(notMember.file)
+    : undefined;
 const role = founders.some((f) => f.name === athlete.member)
   ? 'Co-founder'
   : leaders.some((l) => l.name === athlete.member)

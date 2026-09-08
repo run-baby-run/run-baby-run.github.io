@@ -522,7 +522,6 @@ export const stats: AthleteStats[] = [
     member: 'Sevag',
     stravaName: 'Sevag Sulahian',
     location: 'Yerevan',
-    strava: '203841915',
     recent: { activitiesPerWeek: 1, distancePerWeekKm: 16.4, timePerWeek: '2h 4m', elevationPerWeekM: 144 },
     bests: [
       { label: '400m', time: '1:40' },
