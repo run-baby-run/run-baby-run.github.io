@@ -3,7 +3,11 @@ import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import PageHeader from '../components/PageHeader.astro';
+import Avatar from '../components/Avatar.astro';
 import { stats, ranking, bestFor, slugify, captured, RANKED } from '../data/stats';
+import { photosByName } from '../data/photos';
+
+const photos = await photosByName();
 
 // Only rank a distance if enough people have run it for the board to mean anything.
 const boards = RANKED.map((label) => ({ label, rows: ranking(label) })).filter(
@@ -61,9 +65,12 @@ const totalsBoards = [
           {
             podium.map((athlete, i) => (
               <li class={`podium__item podium__item--${i}`}>
-                <span class="podium__medal" aria-hidden="true">
-                  {medal[i]}
-                </span>
+                <div class="podium__top">
+                  <Avatar name={athlete.member} image={photos.get(athlete.member)} size={56} />
+                  <span class="podium__medal" aria-hidden="true">
+                    {medal[i]}
+                  </span>
+                </div>
                 <a class="podium__name" href={`/athletes/${slugify(athlete.member)}/`}>
                   {athlete.member}
                 </a>
@@ -82,6 +89,7 @@ const totalsBoards = [
                   {board.rows.map((athlete, i) => (
                     <li>
                       <span class="board__rank">{i + 1}</span>
+                      <Avatar name={athlete.member} image={photos.get(athlete.member)} />
                       <a class="board__name" href={`/athletes/${slugify(athlete.member)}/`}>
                         {athlete.member}
                       </a>
@@ -101,6 +109,7 @@ const totalsBoards = [
                   {board.rows.map((athlete, i) => (
                     <li>
                       <span class="board__rank">{i + 1}</span>
+                      <Avatar name={athlete.member} image={photos.get(athlete.member)} />
                       <a class="board__name" href={`/athletes/${slugify(athlete.member)}/`}>
                         {athlete.member}
                       </a>
@@ -158,6 +167,13 @@ const totalsBoards = [
     rotate: 1.5deg;
   }
 
+  .podium__top {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+  }
+
   .podium__medal {
     font-size: 1.75rem;
     line-height: 1;
@@ -203,10 +219,10 @@ const totalsBoards = [
 
   .board__list li {
     display: grid;
-    grid-template-columns: 1.75rem 1fr auto;
-    align-items: baseline;
-    gap: 0.6rem;
-    padding: 0.5rem 0;
+    grid-template-columns: 1.5rem auto 1fr auto;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.4rem 0;
     border-bottom: 1.5px solid color-mix(in srgb, var(--ink) 14%, transparent);
   }
 
