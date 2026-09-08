@@ -30,7 +30,8 @@ const role = founders.some((f) => f.name === athlete.member)
     ? 'Run leader'
     : 'Member';
 
-const strava = person && 'strava' in person ? person.strava : undefined;
+// Someone not yet on the members page carries their own Strava id.
+const strava = (person && 'strava' in person ? person.strava : undefined) ?? athlete.strava;
 
 const totals = [
   { label: 'This year', value: athlete.thisYear },

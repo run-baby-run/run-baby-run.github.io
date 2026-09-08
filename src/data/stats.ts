@@ -34,6 +34,11 @@ export interface AthleteStats {
   thisYear: Totals;
   allTime: Totals;
   highlight?: string;
+  /**
+   * Strava athlete id. Only needed for people not yet on the members page
+   * (no photo); otherwise the id on their member record is used.
+   */
+  strava?: string;
 }
 
 export const captured = '8 September 2026';
@@ -510,6 +515,29 @@ export const stats: AthleteStats[] = [
     thisYear: { activities: 134, distanceKm: 1058.7, time: '111h 51m', elevationM: 8182 },
     allTime: { activities: 208, distanceKm: 1499.8, time: '155h 34m', elevationM: 11339 },
     highlight: 'Marathon best of 4:24:12',
+  },
+  {
+    member: 'Sevag',
+    stravaName: 'Sevag Sulahian',
+    location: 'Yerevan',
+    strava: '203841915',
+    recent: { activitiesPerWeek: 1, distancePerWeekKm: 16.4, timePerWeek: '2h 4m', elevationPerWeekM: 144 },
+    bests: [
+      { label: '400m', time: '1:40' },
+      { label: '½ mile', time: '4:00' },
+      { label: '1K', time: '5:11' },
+      { label: '1 mile', time: '8:54' },
+      { label: '2 mile', time: '18:05' },
+      { label: '5K', time: '29:08' },
+      { label: '10K', time: '59:31' },
+      { label: '15K', time: '1:41:41' },
+      { label: '10 mile', time: '1:49:44' },
+      { label: '20K', time: '2:17:42' },
+      { label: 'Half-Marathon', time: '2:47:30' },
+    ],
+    thisYear: { activities: 23, distanceKm: 229.2, time: '27h 39m', elevationM: 1797 },
+    allTime: { activities: 23, distanceKm: 229.2, time: '27h 39m', elevationM: 1797 },
+    highlight: 'Set a 20K best of 2:17:42',
   },
   {
     member: 'Subhav',
