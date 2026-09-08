@@ -7,8 +7,10 @@ import Pulpulak from './Pulpulak.astro';
 <div class="band" aria-hidden="true">
   <div class="band__track">
     <span class="band__fountain"><Pulpulak /></span>
-    <span class="band__dog"><Dog /></span>
     <span class="band__pack"><RunningTrio /></span>
+    <!-- After the pack, so the dog is nearest the viewer: any brush as it
+         passes reads as depth rather than two things intersecting. -->
+    <span class="band__dog"><Dog /></span>
   </div>
   <span class="band__ground"></span>
 </div>
@@ -19,13 +21,15 @@ import Pulpulak from './Pulpulak.astro';
      chases after them. Decorative, so it is hidden from assistive tech — the
      schedule and CTA already say everything this says. */
   .band {
-    --pack: clamp(130px, 21vw, 250px);
-    --dog: clamp(84px, 13vw, 160px);
+    --pack: clamp(110px, 21vw, 250px);
+    --dog: clamp(76px, 13vw, 160px);
     --fountain: clamp(44px, 7vw, 86px);
-    /* Where the dog pulls up. The pack is proportionally much wider on a
-       phone and clears the middle of the band later, so the fountain moves
-       left there to stay out from under it. */
-    --dog-stop: 33vw;
+    /* Where the dog pulls up — and, through it, where the fountain sits. Far
+       enough left that the dog trails the pack instead of running through it:
+       the two move at different speeds, so the stop is what decides whether
+       their spans ever intersect. The pack is proportionally much wider on a
+       phone, so this moves further left there. */
+    --dog-stop: 18vw;
     position: relative;
     overflow: hidden;
     background: var(--cream);
@@ -47,10 +51,11 @@ import Pulpulak from './Pulpulak.astro';
     animation: cross 17s linear infinite;
   }
 
+  /* A shade lower than the pack, so it sits nearer the viewer. */
   .band__dog {
     position: absolute;
     left: 0;
-    bottom: 0;
+    bottom: calc(var(--dog) * -0.03);
     width: var(--dog);
   }
 
@@ -59,7 +64,7 @@ import Pulpulak from './Pulpulak.astro';
   .band__fountain {
     position: absolute;
     bottom: 0;
-    left: calc(var(--dog-stop) + var(--dog) * 0.72);
+    left: calc(var(--dog-stop) + var(--dog) * 0.63);
     display: block;
     width: var(--fountain);
   }
@@ -81,7 +86,7 @@ import Pulpulak from './Pulpulak.astro';
 
   @media (max-width: 700px) {
     .band {
-      --dog-stop: 16vw;
+      --dog-stop: 4vw;
     }
   }
 

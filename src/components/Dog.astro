@@ -41,24 +41,49 @@ for (let i = 1; i <= STRIDES_2 * SAMPLES_PER_STRIDE; i++) {
   stops.push({ t: DRINK_END + f * (1 - DRINK_END), phase: STRIDES_1 + f * STRIDES_2 });
 }
 
-const gait = (offset: number) =>
-  stops
-    .map(
-      (s) =>
-        `${pct(s.t)}{transform:rotate(${(Math.sin((s.phase + offset) * Math.PI * 2) * SWING).toFixed(1)}deg)}`
-    )
-    .join('');
+/**
+ * A leg's timeline. `offset` phases the diagonal trot; `drink` is the angle it
+ * holds at the fountain — the front legs come up onto the pulpulak while the
+ * back legs stay planted, so the two cannot share one set of keyframes.
+ */
+const gait = (offset: number, drink: number) => {
+  // The generated stops land exactly ON the window boundaries, so testing for
+  // "strictly inside" matched none of them and the drink pose never appeared.
+  // Insert stops just inside the window instead.
+  const frames = stops
+    .filter((s) => s.t <= RUN1_END + 1e-9 || s.t >= DRINK_END - 1e-9)
+    .map((s) => ({ t: s.t, angle: Math.sin((s.phase + offset) * Math.PI * 2) * SWING }));
+  frames.push({ t: RUN1_END + 0.035, angle: drink });
+  frames.push({ t: DRINK_END - 0.015, angle: drink });
+  frames.sort((a, b) => a.t - b.t);
+  return frames.map((f) => `${pct(f.t)}{transform:rotate(${f.angle.toFixed(1)}deg)}`).join('');
+};
 
-// A diagonal trot: front-left moves with back-right, so only two phases exist.
+// A diagonal trot: front-left moves with back-right, so there are two phases —
+// but front and back need different poses at the fountain, hence four sets.
 const keyframes = `
-@keyframes dogGaitA{${gait(0)}}
-@keyframes dogGaitB{${gait(0.5)}}
-@keyframes dogBob{${stops
-  .map((s) => {
-    const still = s.t > RUN1_END && s.t < DRINK_END;
-    const y = still ? 0 : Math.abs(Math.sin(s.phase * Math.PI * 2)) * -2.5;
-    return `${pct(s.t)}{transform:translateY(${y.toFixed(2)}px)}`;
-  })
+/* Front paws land around y 76-82 in the rig — up on the fountain, and clear
+   of the head, which sits above y 45 and would otherwise hide them. */
+@keyframes dogFrontA{${gait(0, -72)}}
+@keyframes dogFrontB{${gait(0.5, -58)}}
+@keyframes dogBackA{${gait(0, 6)}}
+@keyframes dogBackB{${gait(0.5, -8)}}
+@keyframes dogRear{
+0%,${pct(RUN1_END - 0.02)}{transform:rotate(0deg)}
+${pct(RUN1_END + 0.03)}{transform:rotate(-22deg)}
+${pct(DRINK_END - 0.01)}{transform:rotate(-22deg)}
+${pct(DRINK_END + 0.03)}{transform:rotate(0deg)}
+100%{transform:rotate(0deg)}
+}
+@keyframes dogBob{${[
+  ...stops
+    .filter((s) => s.t <= RUN1_END + 1e-9 || s.t >= DRINK_END - 1e-9)
+    .map((s) => ({ t: s.t, y: Math.abs(Math.sin(s.phase * Math.PI * 2)) * -2.5 })),
+  { t: RUN1_END + 0.035, y: 0 },
+  { t: DRINK_END - 0.015, y: 0 },
+]
+  .sort((a, b) => a.t - b.t)
+  .map((f) => `${pct(f.t)}{transform:translateY(${f.y.toFixed(2)}px)}`)
   .join('')}}
 /* vw, not %: a percentage here would resolve against the dog's own width
    rather than the band, and it would barely move. --dog-stop is set by the
@@ -70,16 +95,18 @@ ${pct(RUN1_END)}{transform:translateX(var(--dog-stop))}
 ${pct(DRINK_END)}{transform:translateX(var(--dog-stop))}
 100%{transform:translateX(calc(var(--dog-stop) + 75vw))}
 }
+/* Up, not down: the basin sits above the dog's standing head height, so it
+   reaches for the spout rather than stooping to it. The wobble is lapping. */
 @keyframes dogHead{
 0%,${pct(RUN1_END - 0.02)}{transform:rotate(0deg)}
-${pct(RUN1_END + 0.02)}{transform:rotate(40deg)}
-${pct(RUN1_END + 0.06)}{transform:rotate(46deg)}
-${pct(RUN1_END + 0.1)}{transform:rotate(40deg)}
-${pct(RUN1_END + 0.14)}{transform:rotate(46deg)}
-${pct(RUN1_END + 0.18)}{transform:rotate(40deg)}
-${pct(RUN1_END + 0.22)}{transform:rotate(46deg)}
-${pct(DRINK_END - 0.01)}{transform:rotate(40deg)}
-${pct(DRINK_END + 0.02)}{transform:rotate(0deg)}
+${pct(RUN1_END + 0.03)}{transform:rotate(-20deg)}
+${pct(RUN1_END + 0.07)}{transform:rotate(-27deg)}
+${pct(RUN1_END + 0.11)}{transform:rotate(-20deg)}
+${pct(RUN1_END + 0.15)}{transform:rotate(-27deg)}
+${pct(RUN1_END + 0.19)}{transform:rotate(-20deg)}
+${pct(RUN1_END + 0.23)}{transform:rotate(-27deg)}
+${pct(DRINK_END - 0.01)}{transform:rotate(-20deg)}
+${pct(DRINK_END + 0.03)}{transform:rotate(0deg)}
 100%{transform:rotate(0deg)}
 }
 @keyframes dogTail{
@@ -94,12 +121,15 @@ ${pct(DRINK_END + 0.02)}{transform:rotate(0deg)}
 <span class:list={['dog', className]}>
   <svg viewBox="0 0 170 110" role="img" aria-label="A street dog running with the club">
     <g class="dog__bob">
+      <!-- Pivots on the back paws, so rearing up lifts the front of the dog
+           without sliding its hind feet along the ground. -->
+      <g class="dog__rear">
       <!-- FAR legs, behind the body -->
-      <g class="dog__leg dog__leg--b" style="--pivot:58px 66px">
+      <g class="dog__leg dog__leg--back-b" style="--pivot:58px 66px">
         <path d="M58 66 L54 96" stroke={coatDark} stroke-width="9" stroke-linecap="round" />
         <path d="M54 96 L62 98" stroke={coatDark} stroke-width="8" stroke-linecap="round" />
       </g>
-      <g class="dog__leg dog__leg--a" style="--pivot:116px 64px">
+      <g class="dog__leg dog__leg--front-a" style="--pivot:116px 64px">
         <path d="M116 64 L114 96" stroke={coatDark} stroke-width="9" stroke-linecap="round" />
         <path d="M114 96 L122 98" stroke={coatDark} stroke-width="8" stroke-linecap="round" />
       </g>
@@ -148,17 +178,18 @@ ${pct(DRINK_END + 0.02)}{transform:rotate(0deg)}
       </g>
 
       <!-- NEAR legs, in front of the body -->
-      <g class="dog__leg dog__leg--a" style="--pivot:62px 66px">
+      <g class="dog__leg dog__leg--back-a" style="--pivot:62px 66px">
         <path d="M62 66 L58 97" stroke={ink} stroke-width="11" stroke-linecap="round" />
         <path d="M62 66 L58 97" stroke={coat} stroke-width="6.5" stroke-linecap="round" />
         <path d="M58 97 L67 99" stroke={ink} stroke-width="9" stroke-linecap="round" />
         <path d="M58 97 L67 99" stroke={coat} stroke-width="5" stroke-linecap="round" />
       </g>
-      <g class="dog__leg dog__leg--b" style="--pivot:120px 64px">
+      <g class="dog__leg dog__leg--front-b" style="--pivot:120px 64px">
         <path d="M120 64 L118 97" stroke={ink} stroke-width="11" stroke-linecap="round" />
         <path d="M120 64 L118 97" stroke={coat} stroke-width="6.5" stroke-linecap="round" />
         <path d="M118 97 L127 99" stroke={ink} stroke-width="9" stroke-linecap="round" />
         <path d="M118 97 L127 99" stroke={coat} stroke-width="5" stroke-linecap="round" />
+      </g>
       </g>
     </g>
   </svg>
@@ -185,16 +216,29 @@ ${pct(DRINK_END + 0.02)}{transform:rotate(0deg)}
     animation: dogBob 17s linear infinite;
   }
 
+  .dog__rear {
+    transform-origin: 58px 97px;
+    animation: dogRear 17s linear infinite;
+  }
+
   .dog__leg {
     transform-origin: var(--pivot);
   }
 
-  .dog__leg--a {
-    animation: dogGaitA 17s linear infinite;
+  .dog__leg--front-a {
+    animation: dogFrontA 17s linear infinite;
   }
 
-  .dog__leg--b {
-    animation: dogGaitB 17s linear infinite;
+  .dog__leg--front-b {
+    animation: dogFrontB 17s linear infinite;
+  }
+
+  .dog__leg--back-a {
+    animation: dogBackA 17s linear infinite;
+  }
+
+  .dog__leg--back-b {
+    animation: dogBackB 17s linear infinite;
   }
 
   .dog__head {
@@ -218,8 +262,20 @@ ${pct(DRINK_END + 0.02)}{transform:rotate(0deg)}
       transform: translateX(var(--dog-stop));
     }
 
+    .dog__rear {
+      transform: rotate(-15deg);
+    }
+
     .dog__head {
-      transform: rotate(42deg);
+      transform: rotate(-24deg);
+    }
+
+    .dog__leg--front-a {
+      transform: rotate(-72deg);
+    }
+
+    .dog__leg--front-b {
+      transform: rotate(-58deg);
     }
   }
 </style>
