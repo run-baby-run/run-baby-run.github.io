@@ -88,20 +88,22 @@ import Cafes from './Cafes.astro';
     opacity: 0.85;
   }
 
-  /* In the gap between the pulpulak and the square. */
+  /* In the gap between the pulpulak and the square. Widths are a share of the
+     band with only an upper cap — a px floor (as clamp() gives) stops these
+     shrinking on a narrow screen, and the cafés end up on top of the square. */
   .band__cafes {
     left: 38%;
-    width: clamp(150px, 27vw, 360px);
+    width: min(28%, 360px);
   }
 
   .band__park {
     left: 1%;
-    width: clamp(120px, 20vw, 260px);
+    width: min(22%, 260px);
   }
 
   .band__square {
     right: 2%;
-    width: clamp(150px, 26vw, 340px);
+    width: min(26%, 340px);
   }
 
   .band__ground {

@@ -28,11 +28,34 @@ const pepperGreen = '#7fa96a';
 const bloom = '#d98fa8';
 const bloomDeep = '#a35470';
 const orange = '#e8622a';
+const ivy = '#4a6b3f';
+const ivyLight = '#6f8f5c';
+const interior = '#f0d9b0';
+const peachTea = '#f0a54e';
 ---
 
 <svg class="cafes" viewBox="0 0 430 200" role="img" aria-label="Coffee House and Prépa">
   <!-- ============ COFFEE HOUSE ============ -->
   <rect x="2" y="6" width="200" height="184" fill={tuffPink} stroke={ink} stroke-width="4" />
+
+  <!-- Ivy over the facade. Two overlapping rows with varied radii, so it
+       reads as a mass of leaves rather than a string of beads. -->
+  <g>
+    {
+      [
+        [6, 20, 13], [16, 12, 10], [27, 20, 12], [38, 11, 9], [48, 21, 13],
+        [60, 13, 10], [71, 22, 11], [82, 12, 9], [93, 20, 12], [104, 12, 10],
+        [116, 21, 13], [127, 11, 9], [138, 20, 12], [150, 13, 10], [161, 21, 11],
+        [172, 11, 9], [183, 20, 13], [194, 13, 10],
+        [10, 33, 10], [30, 31, 8], [55, 34, 9], [88, 32, 8], [120, 33, 9],
+        [155, 31, 8], [188, 34, 10],
+        [7, 47, 11], [14, 62, 9], [6, 76, 10], [16, 90, 8],
+        [197, 48, 11], [190, 63, 9], [198, 78, 10], [188, 93, 8],
+      ].map(([cx, cy, r], i) => (
+        <circle cx={cx} cy={cy} r={r} fill={i % 2 ? ivy : ivyLight} />
+      ))
+    }
+  </g>
 
   <!-- projecting sign: the cup mark and the wordmark, as on the shop -->
   <path d="M18 30 L18 46" stroke={ink} stroke-width="4" stroke-linecap="round" />
@@ -67,9 +90,14 @@ const orange = '#e8622a';
     stroke-linejoin="round"
   />
 
-  <!-- glass door and window -->
-  <rect x="18" y="108" width="58" height="74" fill={glass} stroke={ink} stroke-width="4" />
-  <path d="M47 108 L47 182" stroke={ink} stroke-width="3" />
+  <!-- the doorway: warm light inside, the counter and someone behind it, and
+       the red neon strips down either side of the reveal -->
+  <rect x="18" y="108" width="58" height="74" fill={interior} stroke={ink} stroke-width="4" />
+  <rect x="26" y="146" width="42" height="12" rx="2" fill="#b9bec2" stroke={ink} stroke-width="3" />
+  <circle cx="47" cy="132" r="7" fill={ink} />
+  <path d="M40 146 L40 139 Q47 134 54 139 L54 146 Z" fill={ink} />
+  <path d="M14 106 L14 182 M80 106 L80 182" stroke={red} stroke-width="5" stroke-linecap="round" />
+
   <rect x="92" y="108" width="94" height="58" fill={glass} stroke={ink} stroke-width="4" />
 
   <!-- ============ PRÉPA ============ -->
@@ -112,14 +140,22 @@ const orange = '#e8622a';
     />
     <path d="M262 78 L262 176" stroke={ink} stroke-width="4.5" stroke-linecap="round" />
 
-    <!-- white chairs either side, rounded backs like the real ones -->
-    <g stroke={cream} stroke-width="7" stroke-linecap="round" fill="none">
+    <!-- the orange chairs, rounded backs like the row along the pavement -->
+    <g stroke={ink} stroke-width="10.5" stroke-linecap="round" fill="none">
+      <path d="M226 172 L226 154" />
+      <path d="M222 154 Q231 146 240 154" />
+    </g>
+    <g stroke={orange} stroke-width="6.5" stroke-linecap="round" fill="none">
       <path d="M226 172 L226 154" />
       <path d="M222 154 Q231 146 240 154" />
     </g>
     <path d="M224 182 L224 170 M236 170 L236 182" stroke={ink} stroke-width="3.5" stroke-linecap="round" />
 
-    <g stroke={cream} stroke-width="7" stroke-linecap="round" fill="none">
+    <g stroke={ink} stroke-width="10.5" stroke-linecap="round" fill="none">
+      <path d="M298 172 L298 154" />
+      <path d="M290 154 Q299 146 308 154" />
+    </g>
+    <g stroke={orange} stroke-width="6.5" stroke-linecap="round" fill="none">
       <path d="M298 172 L298 154" />
       <path d="M290 154 Q299 146 308 154" />
     </g>
@@ -169,7 +205,7 @@ const orange = '#e8622a';
   <!-- ============ someone with an iced coffee, out front of Prépa ============ -->
   <g
     class="cafes__girl"
-    transform="translate(79 0) translate(133 182) scale(1.18) translate(-133 -182)"
+    transform="translate(30 0) translate(133 182) scale(1.18) translate(-133 -182)"
   >
     <!-- legs -->
     <path d="M128 182 L128 152" stroke={ink} stroke-width="9" stroke-linecap="round" />
@@ -208,6 +244,33 @@ const orange = '#e8622a';
     <path d="M137.2 131.6 Q138.6 133 137.5 134.3 Q136.6 135.2 137.3 135.8 Q136 135.2 136.4 133.8 Q136.8 132.6 137.2 131.6 Z" fill={cream} />
     <!-- straw -->
     <path d="M139 119 L143 108" stroke={ink} stroke-width="3" stroke-linecap="round" />
+  </g>
+
+  <!-- ============ and someone they're talking to, with a Prépa iced tea ==== -->
+  <g
+    class="cafes__friend"
+    transform="translate(202 182) scale(1.18) translate(-202 -182)"
+  >
+    <!-- legs -->
+    <path d="M197 182 L197 152" stroke={ink} stroke-width="9" stroke-linecap="round" />
+    <path d="M197 182 L197 152" stroke="#3d3a37" stroke-width="5" stroke-linecap="round" />
+    <path d="M207 182 L207 152" stroke={ink} stroke-width="9" stroke-linecap="round" />
+    <path d="M207 182 L207 152" stroke="#3d3a37" stroke-width="5" stroke-linecap="round" />
+    <!-- shorts and tee -->
+    <path d="M191 138 L213 138 L213 156 L191 156 Z" fill="#3d3a37" stroke={ink} stroke-width="3.5" stroke-linejoin="round" />
+    <path d="M191 112 L213 112 L214 140 L190 140 Z" fill={prepaRed} stroke={ink} stroke-width="3.5" stroke-linejoin="round" />
+    <!-- head, turned towards her -->
+    <circle cx="201" cy="100" r="11" fill={skin} stroke={ink} stroke-width="3.5" />
+    <path d="M190 99 Q190 88 201 88 Q212 88 212 99 Q206 94 201 94 Q195 94 190 99 Z" fill={ink} />
+    <!-- near arm, holding the jar out between them -->
+    <path d="M191 120 L186 132" stroke={ink} stroke-width="8" stroke-linecap="round" />
+    <path d="M191 120 L186 132" stroke={skin} stroke-width="4.5" stroke-linecap="round" />
+
+    <!-- Prépa peach iced tea: glass jar, cream label, screw lid -->
+    <rect x="179" y="124" width="14" height="18" rx="2.5" fill={peachTea} stroke={ink} stroke-width="3" />
+    <rect x="180" y="129" width="12" height="8" fill={cupCream} />
+    <path d="M182 133.5 L190 133.5" stroke={prepaRed} stroke-width="2" stroke-linecap="round" />
+    <rect x="180.5" y="120" width="11" height="5" rx="1.5" fill="#b9bec2" stroke={ink} stroke-width="2.5" />
   </g>
 </svg>
 
