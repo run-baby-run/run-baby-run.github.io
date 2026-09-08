@@ -5,6 +5,7 @@ import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import PageHeader from '../components/PageHeader.astro';
 import { members } from '../data/members';
+import StravaLink from '../components/StravaLink.astro';
 import { site } from '../data/site';
 ---
 
@@ -38,7 +39,10 @@ import { site } from '../data/site';
                     loading="lazy"
                     decoding="async"
                   />
-                  <figcaption>{member.name}</figcaption>
+                  <figcaption>
+                    <span class="member__name">{member.name}</span>
+                    <StravaLink id={member.strava} />
+                  </figcaption>
                 </figure>
               </li>
             ))
@@ -99,7 +103,13 @@ import { site } from '../data/site';
   }
 
   .member figcaption {
-    padding: 0.6rem 0.85rem 0.7rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.6rem 0.85rem 0.75rem;
+  }
+
+  .member__name {
     font-family: var(--font-display);
     font-weight: 800;
     font-size: 1.0625rem;

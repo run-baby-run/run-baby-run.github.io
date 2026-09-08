@@ -44,6 +44,8 @@ export interface Person {
   alt: string;
   /** object-position for the 3:4 crop, when centre is not the right choice. */
   focus?: string;
+  /** Strava athlete id. */
+  strava?: string;
 }
 
 export const founders: Person[] = [
@@ -52,6 +54,7 @@ export const founders: Person[] = [
     surname: 'Jouharian',
     role: 'Co-founder',
     file: 'shaghig.jpg',
+    strava: '174103082',
     alt: 'Shaghig holding up a marathon finisher medal at the end of a race',
   },
   {
@@ -59,6 +62,7 @@ export const founders: Person[] = [
     surname: 'Jouharian',
     role: 'Co-founder',
     file: 'asdghig.jpg',
+    strava: '161744242',
     alt: 'Asdghig holding up a Yerevan Night Run medal after the race',
   },
   {
@@ -66,6 +70,7 @@ export const founders: Person[] = [
     surname: 'Jouharian',
     role: 'Co-founder',
     file: 'jebid.jpg',
+    strava: '137055671',
     alt: 'Jebid smiling among other runners after a night race in Yerevan, medal around her neck',
     // Landscape source: the 3:4 crop needs nudging right to keep her centred.
     focus: '54% center',
@@ -77,6 +82,7 @@ export const leaders: Person[] = [
     name: 'Har Hov',
     role: 'Run leader',
     file: 'harhov.jpg',
+    strava: '171132769',
     alt: 'Har Hov sitting on the road after a race, biting his finisher medal',
   },
 ];

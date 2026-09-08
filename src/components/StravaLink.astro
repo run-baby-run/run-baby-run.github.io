@@ -1,0 +1,58 @@
+---
+interface Props {
+  id?: string;
+  label?: string;
+}
+
+const { id, label = 'Strava' } = Astro.props;
+---
+
+{
+  id && (
+    <a
+      class="strava"
+      href={`https://www.strava.com/athletes/${id}`}
+      target="_blank"
+      rel="noopener"
+    >
+      <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
+        <path
+          fill="currentColor"
+          d="M13.8 2 8 13.4h3.4L13.8 8.8l2.4 4.6h3.4L13.8 2Zm2.4 11.4-1.7 3.3-1.7-3.3h-2.5L14.5 21l3.2-7.6h-2.5Z"
+        />
+      </svg>
+      <span>{label}</span>
+      <span class="strava__out" aria-hidden="true">↗</span>
+    </a>
+  )
+}
+
+<style>
+  .strava {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.5rem;
+    padding: 0.2rem 0.55rem;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: var(--cream);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .strava:hover {
+    background: #fc5200;
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  .strava__out {
+    font-size: 0.75em;
+    opacity: 0.7;
+  }
+</style>
