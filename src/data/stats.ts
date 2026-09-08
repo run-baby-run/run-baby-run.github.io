@@ -244,8 +244,10 @@ export const stats: AthleteStats[] = [
       { label: '1K', time: '4:29' },
       { label: '1 mile', time: '4:04' },
       { label: '2 mile', time: '16:45' },
-      // 5K (19:01) removed: GPS artefact, not a real effort. Do not re-add on
-      // the next refresh — Strava will keep reporting it.
+      // Strava reports 19:01 for the 5K, which is a GPS artefact. 27:44 is the
+      // real best, confirmed by Mahty — do not take the Strava figure on the
+      // next refresh.
+      { label: '5K', time: '27:44' },
       { label: '10K', time: '49:37' },
       { label: '15K', time: '1:20:18' },
       { label: '10 mile', time: '1:30:16' },
