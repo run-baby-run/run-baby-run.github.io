@@ -1,0 +1,64 @@
+---
+import RunningTrio from './RunningTrio.astro';
+---
+
+<div class="band" aria-hidden="true">
+  <div class="band__track">
+    <span class="band__pack"><RunningTrio /></span>
+  </div>
+  <span class="band__ground"></span>
+</div>
+
+<style>
+  /* A strip the pack crosses on its way to the join section. Decorative, so
+     it is hidden from assistive tech — the schedule and CTA already say
+     everything this says. */
+  .band {
+    --pack: clamp(150px, 21vw, 250px);
+    position: relative;
+    overflow: hidden;
+    background: var(--cream);
+    padding-top: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  /* No fixed height: the track takes its height from the pack, so the figures
+     can never be clipped at the top. */
+  .band__track {
+    position: relative;
+  }
+
+  /* The figures run on the spot; this is what carries them across. translateX
+     does not affect layout, so nothing here widens the page. */
+  .band__pack {
+    display: block;
+    width: var(--pack);
+    /* The rig leaves a little air below the feet inside its viewBox; this
+       drops the pack so they land on the ground line. */
+    margin-bottom: calc(var(--pack) * -0.085);
+    animation: cross 17s linear infinite;
+  }
+
+  .band__ground {
+    display: block;
+    height: 0;
+    border-top: var(--line) solid var(--ink);
+  }
+
+  @keyframes cross {
+    from {
+      transform: translateX(calc(var(--pack) * -1.1));
+    }
+    to {
+      transform: translateX(100vw);
+    }
+  }
+
+  /* Standing still off-canvas would just look like a gap, so park the pack
+     in view instead. */
+  @media (prefers-reduced-motion: reduce) {
+    .band__pack {
+      animation: none;
+      transform: translateX(12vw);
+    }
+  }
+</style>
