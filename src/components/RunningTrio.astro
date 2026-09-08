@@ -1,0 +1,69 @@
+---
+import Runner from './Runner.astro';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+
+// Kit taken from the three runners in the logo: white top / black shorts,
+// black top / pink shorts, pink vest / grey shorts.
+const runners = [
+  { shirt: '#f7f6f4', shorts: '#141414', legs: '#f6a8c4', shoe: '#f6a8c4', head: 'cap' as const, delay: -0.39 },
+  { shirt: '#141414', shorts: '#f6a8c4', legs: '#141414', shoe: '#f6a8c4', head: 'cap' as const, delay: -0.19 },
+  { shirt: '#f6a8c4', shorts: '#cfcfc9', legs: '#141414', shoe: '#f7f6f4', head: 'bun' as const, delay: 0 },
+];
+---
+
+<div class:list={['trio', className]}>
+  {
+    runners.map((runner, i) => (
+      /* The slot span is owned by THIS component, so these scoped styles
+         apply. A class passed into <Runner> would carry Runner's scope, not
+         ours, and silently match nothing. */
+      <span class={`trio__slot trio__slot--${i}`}>
+        <Runner
+          shirt={runner.shirt}
+          shorts={runner.shorts}
+          legs={runner.legs}
+          shoe={runner.shoe}
+          head={runner.head}
+          delay={runner.delay}
+        />
+      </span>
+    ))
+  }
+</div>
+
+<style>
+  /* Overlapped in a row, as they are in the logo, with the leader in front. */
+  .trio {
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+  }
+
+  /* Overlapped as in the logo, but not so far that the middle runner is lost:
+     three slots at 58% with a -37% pull comes to exactly 100%, so the figures
+     stay large without overflowing. */
+  .trio__slot {
+    display: block;
+    flex: 0 0 58%;
+    min-width: 0;
+  }
+
+  .trio__slot--0 {
+    margin-right: -37%;
+    z-index: 1;
+  }
+
+  .trio__slot--1 {
+    margin-right: -37%;
+    z-index: 2;
+  }
+
+  .trio__slot--2 {
+    z-index: 3;
+  }
+</style>

@@ -1,5 +1,6 @@
 ---
 import { site, runs } from '../data/site';
+import RunningTrio from './RunningTrio.astro';
 ---
 
 <section class="hero">
@@ -10,14 +11,18 @@ import { site, runs } from '../data/site';
     <div class="hero__copy">
       <p class="hero__pin"><span aria-hidden="true">📍</span> {site.city}</p>
 
+      <!-- The logotype keeps the original artwork; the runners beside it are
+           the animated rig, so the mark reads exactly as the logo but moves. -->
       <h1 class="hero__title">
         <img
-          src="/images/logo.png"
+          class="hero__wordmark"
+          src="/images/wordmark.png"
           alt="Run Baby Run"
-          width="832"
-          height="427"
+          width="364"
+          height="368"
           fetchpriority="high"
         />
+        <span class="hero__trio"><RunningTrio /></span>
       </h1>
 
       <p class="hero__tagline">{site.tagline}</p>
@@ -104,13 +109,24 @@ import { site, runs } from '../data/site';
   }
 
   .hero__title {
+    display: flex;
+    align-items: center;
+    gap: 2%;
     margin: 0 0 1.75rem;
     max-width: 620px;
   }
 
-  .hero__title img {
-    width: 100%;
+  .hero__wordmark {
+    flex: 0 0 46%;
+    width: 46%;
     height: auto;
+  }
+
+  /* A wrapper this component owns, so the scoped rule actually matches. */
+  .hero__trio {
+    display: block;
+    flex: 0 0 52%;
+    min-width: 0;
   }
 
   .hero__tagline {
