@@ -13,6 +13,7 @@ import { runs } from '../data/site';
       {
         runs.map((run, i) => (
           <article class={`run reveal run--${run.accent}`} style={`--tilt:${i % 2 ? 1 : -1}deg`}>
+            <span class="run__index" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
             <p class="run__label">
               <span aria-hidden="true">{run.icon}</span> {run.label}
             </p>
@@ -48,6 +49,8 @@ import { runs } from '../data/site';
   }
 
   .run {
+    position: relative;
+    overflow: hidden;
     border: var(--line) solid var(--ink);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow);
@@ -71,7 +74,22 @@ import { runs } from '../data/site';
     background: var(--sage);
   }
 
+  /* A ghost numeral gives each card a bit of poster structure. */
+  .run__index {
+    position: absolute;
+    top: -0.32em;
+    right: 0.06em;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 8rem;
+    line-height: 1;
+    letter-spacing: -0.06em;
+    color: color-mix(in srgb, var(--ink) 11%, transparent);
+    pointer-events: none;
+  }
+
   .run__label {
+    position: relative;
     font-weight: 700;
     font-size: 0.75rem;
     letter-spacing: 0.16em;
@@ -80,6 +98,7 @@ import { runs } from '../data/site';
   }
 
   .run__day {
+    position: relative;
     font-size: clamp(1.5rem, 2.6vw, 1.875rem);
   }
 

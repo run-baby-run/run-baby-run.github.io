@@ -3,6 +3,7 @@ import type { GetStaticPaths } from 'astro';
 import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
 import GalleryGrid from '../../components/GalleryGrid.astro';
 import Pagination from '../../components/Pagination.astro';
 import { shots } from '../../data/gallery';
@@ -23,18 +24,19 @@ const suffix = page.currentPage > 1 ? ` — page ${page.currentPage}` : '';
 >
   <Nav current="gallery" />
   <main>
+    <PageHeader
+      eyebrow="Most weeks look like this"
+      title="The gallery."
+      tone="pink"
+      meta={`Page ${page.currentPage} of ${page.lastPage} · showing ${page.data.length} of ${page.total}`}
+    >
+      <p>
+        Every run ends the same way — someone shouts “photo!” and we all squint into it. {page.total} of them, so far.
+      </p>
+    </PageHeader>
+
     <section class="section gallery-page">
       <div class="wrap">
-        <p class="eyebrow">Most weeks look like this</p>
-        <h1 class="gallery-page__title">The gallery.</h1>
-        <p class="gallery-page__lead">
-          Every run ends the same way — someone shouts “photo!” and we all squint into it. {page.total} of them, so far.
-        </p>
-
-        <p class="gallery-page__count">
-          Page {page.currentPage} of {page.lastPage} · showing {page.data.length} of {page.total}
-        </p>
-
         <GalleryGrid shots={page.data} offset={page.start} />
         <Pagination page={page} />
       </div>
@@ -44,27 +46,7 @@ const suffix = page.currentPage > 1 ? ` — page ${page.currentPage}` : '';
 </Base>
 
 <style>
-  .gallery-page__title {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: clamp(2.75rem, 8vw, 5rem);
-    line-height: 0.98;
-    letter-spacing: -0.025em;
-    text-transform: uppercase;
-    margin: 0 0 1.25rem;
-  }
-
-  .gallery-page__lead {
-    font-size: 1.125rem;
-    max-width: 46ch;
-    color: var(--ink-soft);
-  }
-
-  .gallery-page__count {
-    font-size: 0.8125rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    margin: 0 0 2.5rem;
+  .gallery-page {
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
   }
 </style>

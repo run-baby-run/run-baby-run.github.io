@@ -51,8 +51,13 @@ const resolve = (person: Person) => {
     </figure>
 
     <div class="leaders">
-      <h3 class="leaders__title">{leaders.length > 1 ? 'Run leaders' : 'Run leader'}</h3>
-      <p class="leaders__note">Out front on the night, alongside the founders.</p>
+      <div class="leaders__intro">
+        <h3 class="leaders__title">{leaders.length > 1 ? 'Run leaders' : 'Run leader'}</h3>
+        <p class="leaders__note">
+          Out front on the night, alongside the founders — setting the pace, calling the turns and
+          making sure the back group never runs alone.
+        </p>
+      </div>
       <ul class="people people--leaders">
         {
           leaders.map((person, i) => (
@@ -109,27 +114,41 @@ const resolve = (person: Person) => {
     font-size: 0.9375rem;
   }
 
+  /* Card beside the copy, so a single leader is not stranded in white space. */
   .leaders {
     margin-top: clamp(3rem, 6vw, 4.5rem);
     padding-top: clamp(2rem, 4vw, 3rem);
     border-top: var(--line) solid var(--ink);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+    gap: clamp(1.5rem, 5vw, 4rem);
+    align-items: center;
   }
 
   .leaders__title {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
   }
 
   .leaders__note {
     color: var(--ink-soft);
-    max-width: 46ch;
-    margin-bottom: 2rem;
+    max-width: 40ch;
+    margin: 0;
   }
 
-  /* A short list should stay card-sized rather than stretching across. */
   .people--leaders {
     margin-bottom: 0;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 270px));
-    justify-content: start;
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 700px) {
+    .leaders {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+
+    .people--leaders {
+      max-width: 280px;
+    }
   }
 
   @media (max-width: 760px) {

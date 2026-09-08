@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import PageHeader from '../components/PageHeader.astro';
 import { members } from '../data/members';
 import { site } from '../data/site';
 ---
@@ -13,15 +14,15 @@ import { site } from '../data/site';
 >
   <Nav current="members" />
   <main>
+    <PageHeader eyebrow="The regulars" title="Meet the club." tone="sage">
+      <p>
+        {members.length} of the faces you'll see at the meeting point. There is no roster and no
+        membership — these are just the people who keep turning up.
+      </p>
+    </PageHeader>
+
     <section class="section members">
       <div class="wrap">
-        <p class="eyebrow">The regulars</p>
-        <h1 class="members__title">Meet the club.</h1>
-        <p class="members__lead">
-          {members.length} of the faces you'll see at the meeting point. There is no roster and no
-          membership — these are just the people who keep turning up.
-        </p>
-
         <ul class="members__grid">
           {
             members.map((member, i) => (
@@ -58,21 +59,8 @@ import { site } from '../data/site';
 </Base>
 
 <style>
-  .members__title {
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: clamp(2.75rem, 8vw, 5rem);
-    line-height: 0.98;
-    letter-spacing: -0.025em;
-    text-transform: uppercase;
-    margin: 0 0 1.25rem;
-  }
-
-  .members__lead {
-    font-size: 1.125rem;
-    max-width: 48ch;
-    color: var(--ink-soft);
-    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+  .members {
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
   }
 
   .members__grid {

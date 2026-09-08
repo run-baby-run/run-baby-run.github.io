@@ -1,0 +1,93 @@
+---
+interface Props {
+  eyebrow: string;
+  title: string;
+  tone?: 'pink' | 'sage';
+  meta?: string;
+}
+
+const { eyebrow, title, tone = 'pink', meta } = Astro.props;
+---
+
+<header class={`page-head page-head--${tone}`}>
+  <img class="page-head__mark" src="/images/runners.png" alt="" width="449" height="397" />
+  <div class="wrap page-head__inner">
+    <p class="eyebrow page-head__eyebrow">{eyebrow}</p>
+    <h1 class="page-head__title">{title}</h1>
+    <div class="page-head__body"><slot /></div>
+    {meta && <p class="page-head__meta">{meta}</p>}
+  </div>
+</header>
+
+<style>
+  .page-head {
+    position: relative;
+    overflow: hidden;
+    border-bottom: var(--line) solid var(--ink);
+    padding-block: clamp(2.5rem, 6vw, 4.5rem);
+  }
+
+  .page-head--pink {
+    background: var(--pink);
+  }
+
+  .page-head--sage {
+    background: var(--sage);
+  }
+
+  .page-head__inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .page-head__eyebrow {
+    background: var(--cream);
+  }
+
+  .page-head__title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(2.75rem, 9vw, 5.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    margin: 0 0 1rem;
+  }
+
+  .page-head__body {
+    font-size: 1.125rem;
+    max-width: 46ch;
+  }
+
+  .page-head__body :global(p) {
+    margin: 0;
+  }
+
+  .page-head__meta {
+    margin: 1.5rem 0 0;
+    font-size: 0.8125rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--ink) 62%, transparent);
+  }
+
+  /* The runners break out of the band on the right. */
+  .page-head__mark {
+    position: absolute;
+    right: clamp(-3rem, -2vw, 0rem);
+    bottom: -14%;
+    width: min(30vw, 380px);
+    opacity: 0.22;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+
+  @media (max-width: 760px) {
+    .page-head__mark {
+      width: 46vw;
+      right: -8vw;
+      bottom: -18%;
+      opacity: 0.18;
+    }
+  }
+</style>
