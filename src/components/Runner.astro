@@ -105,7 +105,9 @@ const capFill = shirt === ink ? '#f7f6f4' : ink;
       stroke-linejoin="round"
     />
 
-    <!-- HEAD, in profile facing right -->
+    <!-- HEAD, in profile facing right. The look group tips the whole head down
+         towards the wrist during a watch check, on top of the running nod. -->
+    <g class:list={['runner__look', watch && 'runner__look--live']}>
     <g class="runner__head">
       <!-- neck -->
       <path d="M68 44 L68 36" stroke={ink} stroke-width="11" stroke-linecap="round" />
@@ -137,6 +139,7 @@ const capFill = shirt === ink ? '#f7f6f4' : ink;
         )
       }
     </g>
+    </g>
 
     <!-- NEAR limbs. The watch-check group wraps the arm and adds a rotation
          ON TOP of the gait, so the arm keeps swinging while it comes up. -->
@@ -151,8 +154,8 @@ const capFill = shirt === ink ? '#f7f6f4' : ink;
             {
               watch && (
                 <g class="runner__watch">
-                  <rect x="59" y="86" width="14" height="11" rx="3" fill={ink} />
-                  <rect x="61.5" y="88" width="9" height="7" rx="1.5" fill="#8fc4e8" />
+                  <rect x="58.5" y="85" width="15" height="12" rx="3.5" fill={ink} />
+                  <rect x="61" y="87.5" width="10" height="7" rx="2" fill="#3d3d3d" />
                 </g>
               )
             }
@@ -261,24 +264,49 @@ const capFill = shirt === ink ? '#f7f6f4' : ink;
 
   /* Rides on the 17s band timeline rather than the stride: they thumb the
      watch setting off, then glance at it twice on the way past. The rotation
-     stacks on top of the arm swing, so the gait carries on underneath. */
+     stacks on top of the arm swing, so the gait carries on underneath.
+     The wrist only comes to chest height — the head does the rest of the
+     work, the way it does when you actually check a watch mid-run. */
   .runner__check--live {
     transform-origin: 65px 60px;
     animation: check-watch 17s linear infinite;
   }
 
+  .runner__look--live {
+    transform-origin: 68px 47px;
+    animation: look-watch 17s linear infinite;
+  }
+
   @keyframes check-watch {
     0%, 1.5% { transform: rotate(0deg); }
-    4% { transform: rotate(-54deg); }
-    9% { transform: rotate(-50deg); }
+    4% { transform: rotate(-32deg); }
+    9% { transform: rotate(-30deg); }
     12% { transform: rotate(0deg); }
     45% { transform: rotate(0deg); }
-    48% { transform: rotate(-46deg); }
-    53% { transform: rotate(-46deg); }
+    48% { transform: rotate(-28deg); }
+    53% { transform: rotate(-28deg); }
     56% { transform: rotate(0deg); }
     75% { transform: rotate(0deg); }
-    78% { transform: rotate(-46deg); }
-    83% { transform: rotate(-46deg); }
+    78% { transform: rotate(-28deg); }
+    83% { transform: rotate(-28deg); }
+    86% { transform: rotate(0deg); }
+    100% { transform: rotate(0deg); }
+  }
+
+  /* Positive is clockwise, so for a figure facing right this dips the chin
+     down towards the wrist. */
+  @keyframes look-watch {
+    0%, 1.5% { transform: rotate(0deg); }
+    4% { transform: rotate(26deg); }
+    9% { transform: rotate(24deg); }
+    12% { transform: rotate(0deg); }
+    45% { transform: rotate(0deg); }
+    48% { transform: rotate(24deg); }
+    53% { transform: rotate(24deg); }
+    56% { transform: rotate(0deg); }
+    75% { transform: rotate(0deg); }
+    78% { transform: rotate(24deg); }
+    83% { transform: rotate(24deg); }
     86% { transform: rotate(0deg); }
     100% { transform: rotate(0deg); }
   }
