@@ -3,7 +3,7 @@ import { site } from '../data/site';
 
 interface Props {
   /** Which top-level page is showing, so the nav can mark it. */
-  current?: 'home' | 'gallery' | 'members';
+  current?: 'home' | 'gallery' | 'members' | 'leaderboard';
 }
 
 const { current = 'home' } = Astro.props;
@@ -14,7 +14,7 @@ const links = [
   { href: '/#club', label: 'The club' },
   { href: '/gallery/', label: 'Gallery', key: 'gallery' },
   { href: '/members/', label: 'Members', key: 'members' },
-  { href: '/#founders', label: 'Founders' },
+  { href: '/leaderboard/', label: 'Leaderboard', key: 'leaderboard' },
 ];
 ---
 
@@ -35,8 +35,8 @@ const links = [
           </a>
         ))
       }
-      <a class="btn nav__cta" href={site.whatsapp} target="_blank" rel="noopener">Join us</a>
     </nav>
+    <a class="btn nav__cta" href={site.whatsapp} target="_blank" rel="noopener">Join us</a>
   </div>
 </header>
 
@@ -120,10 +120,13 @@ const links = [
     }
   }
 
-  /* Phone widths: every item has to fit on one line beside the CTA. */
-  @media (max-width: 480px) {
+  /* Phone widths: with five destinations the links no longer fit beside the
+     CTA, so they wrap onto their own row rather than running off the edge. */
+  @media (max-width: 560px) {
     .nav__inner {
+      flex-wrap: wrap;
       gap: 0.5rem;
+      padding-block: 0.6rem;
     }
 
     .nav__brand {
@@ -131,7 +134,12 @@ const links = [
     }
 
     .nav__links {
-      gap: 0.9rem;
+      order: 3;
+      width: 100%;
+      justify-content: space-between;
+      gap: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1.5px solid color-mix(in srgb, var(--ink) 14%, transparent);
     }
 
     .nav__links a:not(.btn) {

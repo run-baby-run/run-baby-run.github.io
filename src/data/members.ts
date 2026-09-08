@@ -24,7 +24,7 @@ const entries: Member[] = [
   { name: 'Korosh', file: 'korosh.jpg' },
   { name: 'Mahty', file: 'mahty.jpg', strava: '163347544' },
   { name: 'Mariam', file: 'mariam.jpg' },
-  { name: 'Mehrdad', file: 'mehrdad.jpg' },
+  { name: 'Mehrdad', file: 'mehrdad.jpg', strava: '86215045' },
   { name: 'Michael', file: 'micheal.jpg', strava: '176527460' },
   { name: 'Mohsen', file: 'mohsen.jpg', strava: '193676470' },
   { name: 'Moojan', file: 'moojan.jpg', strava: '1365038761' },

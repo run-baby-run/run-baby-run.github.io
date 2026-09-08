@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import PageHeader from '../components/PageHeader.astro';
 import { members } from '../data/members';
 import StravaLink from '../components/StravaLink.astro';
+import { byMember, slugify } from '../data/stats';
 import { site } from '../data/site';
 ---
 
@@ -40,7 +41,19 @@ import { site } from '../data/site';
                     decoding="async"
                   />
                   <figcaption>
-                    <span class="member__name">{member.name}</span>
+                    {
+                      byMember.has(member.name) ? (
+                        <a
+                          class="member__name member__name--link"
+                          href={`/athletes/${slugify(member.name)}/`}
+                        >
+                          {member.name}
+                          <span class="member__stats">Bests →</span>
+                        </a>
+                      ) : (
+                        <span class="member__name">{member.name}</span>
+                      )
+                    }
                     <StravaLink id={member.strava} />
                   </figcaption>
                 </figure>
@@ -112,6 +125,25 @@ import { site } from '../data/site';
     flex-direction: column;
     align-items: flex-start;
     padding: 0.6rem 0.85rem 0.75rem;
+  }
+
+  .member__name--link {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+  }
+
+  .member__stats {
+    font-family: var(--font-body);
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--pink-text);
+  }
+
+  .member__name--link:hover .member__stats {
+    text-decoration: underline;
   }
 
   .member__name {

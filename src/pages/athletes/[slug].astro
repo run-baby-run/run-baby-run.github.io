@@ -1,0 +1,251 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import StravaLink from '../../components/StravaLink.astro';
+import { stats, slugify, captured } from '../../data/stats';
+import { members } from '../../data/members';
+import { founders, leaders } from '../../data/site';
+import { photoFor } from '../../data/photos';
+
+export const getStaticPaths = (() =>
+  stats.map((athlete) => ({
+    params: { slug: slugify(athlete.member) },
+    props: { athlete },
+  }))) satisfies GetStaticPaths;
+
+const { athlete } = Astro.props;
+
+// The person may be a member, a founder or the run leader.
+const person =
+  members.find((m) => m.name === athlete.member) ??
+  [...founders, ...leaders].find((p) => p.name === athlete.member);
+
+const image = person ? photoFor(person.file) : undefined;
+const role = founders.some((f) => f.name === athlete.member)
+  ? 'Co-founder'
+  : leaders.some((l) => l.name === athlete.member)
+    ? 'Run leader'
+    : 'Member';
+
+const strava = person && 'strava' in person ? person.strava : undefined;
+
+const totals = [
+  { label: 'This year', value: athlete.thisYear },
+  { label: 'All time', value: athlete.allTime },
+];
+---
+
+<Base
+  title={`${athlete.member} — Run Baby Run Club`}
+  description={`${athlete.member}'s running bests and totals at Run Baby Run, Yerevan.`}
+>
+  <Nav current="members" />
+  <main>
+    <header class="hero">
+      <div class="wrap hero__inner">
+        {
+          image && (
+            <figure class="hero__photo sticker">
+              <Image src={image} alt={`Portrait of ${athlete.member}`} width={420} widths={[260, 420]} quality={74} sizes="(max-width: 700px) 40vw, 260px" />
+            </figure>
+          )
+        }
+        <div class="hero__copy">
+          <p class="eyebrow hero__eyebrow">{role}</p>
+          <h1>{athlete.member}</h1>
+          <p class="hero__strava">
+            {athlete.stravaName}{athlete.location ? ` · ${athlete.location}` : ''}
+          </p>
+          {athlete.highlight && <p class="hero__highlight">{athlete.highlight}</p>}
+          <StravaLink id={strava} label="View on Strava" />
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="panels">
+          <div class="panel">
+            <h2 class="panel__title">Personal bests</h2>
+            <table class="bests">
+              <tbody>
+                {
+                  athlete.bests.map((best) => (
+                    <tr>
+                      <th scope="row">{best.label}</th>
+                      <td>{best.time}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="panel">
+            <h2 class="panel__title">Last four weeks</h2>
+            <dl class="figures">
+              <div><dt>Runs a week</dt><dd>{athlete.recent.activitiesPerWeek}</dd></div>
+              <div><dt>Distance a week</dt><dd>{athlete.recent.distancePerWeekKm} km</dd></div>
+              <div><dt>Time a week</dt><dd>{athlete.recent.timePerWeek}</dd></div>
+              <div><dt>Climbing a week</dt><dd>{athlete.recent.elevationPerWeekM} m</dd></div>
+            </dl>
+
+            {
+              totals.map((block) => (
+                <>
+                  <h2 class="panel__title panel__title--spaced">{block.label}</h2>
+                  <dl class="figures">
+                    <div><dt>Activities</dt><dd>{block.value.activities}</dd></div>
+                    <div><dt>Distance</dt><dd>{block.value.distanceKm.toLocaleString('en')} km</dd></div>
+                    <div><dt>Time</dt><dd>{block.value.time}</dd></div>
+                    <div><dt>Climbing</dt><dd>{block.value.elevationM.toLocaleString('en')} m</dd></div>
+                  </dl>
+                </>
+              ))
+            }
+          </div>
+        </div>
+
+        <p class="note">
+          Figures from Strava, captured {captured}. Best efforts are Strava's own estimates.
+          <a href="/leaderboard/">See the club leaderboard →</a>
+        </p>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .hero {
+    background: var(--cream-deep);
+    border-bottom: var(--line) solid var(--ink);
+    padding-block: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .hero__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: clamp(1.25rem, 4vw, 2.5rem);
+  }
+
+  .hero__photo {
+    flex: none;
+    width: clamp(120px, 22vw, 200px);
+    margin: 0;
+    overflow: hidden;
+    rotate: -2deg;
+  }
+
+  .hero__photo :global(img) {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  .hero__eyebrow {
+    background: var(--cream);
+  }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 7vw, 4.25rem);
+    margin: 0 0 0.4rem;
+  }
+
+  .hero__strava {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.9375rem;
+  }
+
+  .hero__highlight {
+    margin: 0.75rem 0 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.0625rem;
+    max-width: 34ch;
+  }
+
+  .panels {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .panel__title {
+    font-size: clamp(1.25rem, 2.4vw, 1.5rem);
+    margin-bottom: 1rem;
+  }
+
+  .panel__title--spaced {
+    margin-top: 2rem;
+  }
+
+  .bests {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .bests th,
+  .bests td {
+    padding: 0.55rem 0;
+    border-bottom: 1.5px solid color-mix(in srgb, var(--ink) 16%, transparent);
+    text-align: left;
+  }
+
+  .bests th {
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+
+  .bests td {
+    text-align: right;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.125rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .figures {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem 1.25rem;
+    margin: 0;
+  }
+
+  .figures div {
+    border-top: var(--line) solid var(--ink);
+    padding-top: 0.5rem;
+  }
+
+  .figures dt {
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .figures dd {
+    margin: 0.15rem 0 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.375rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .note {
+    margin-top: clamp(2rem, 5vw, 3rem);
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 760px) {
+    .panels {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

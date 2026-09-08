@@ -1,0 +1,251 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { stats, ranking, bestFor, slugify, captured, RANKED } from '../data/stats';
+
+// Only rank a distance if enough people have run it for the board to mean anything.
+const boards = RANKED.map((label) => ({ label, rows: ranking(label) })).filter(
+  (b) => b.rows.length >= 3
+);
+
+const byDistance = [...stats].sort((a, b) => b.thisYear.distanceKm - a.thisYear.distanceKm);
+const byElevation = [...stats].sort((a, b) => b.thisYear.elevationM - a.thisYear.elevationM);
+const byWeek = [...stats].sort((a, b) => b.recent.distancePerWeekKm - a.recent.distancePerWeekKm);
+
+const podium = ranking('5K').slice(0, 3);
+const medal = ['🥇', '🥈', '🥉'];
+
+const totalsBoards = [
+  {
+    heading: 'Kilometres this year',
+    rows: byDistance,
+    value: (a: (typeof stats)[number]) => a.thisYear.distanceKm.toLocaleString('en'),
+  },
+  {
+    heading: 'Metres climbed this year',
+    rows: byElevation,
+    value: (a: (typeof stats)[number]) => a.thisYear.elevationM.toLocaleString('en'),
+  },
+  {
+    heading: 'Kilometres a week, right now',
+    rows: byWeek,
+    value: (a: (typeof stats)[number]) => String(a.recent.distancePerWeekKm),
+  },
+];
+---
+
+<Base
+  title="Leaderboard — Run Baby Run Club"
+  description="Personal bests and yearly totals across the Run Baby Run club in Yerevan."
+>
+  <Nav current="leaderboard" />
+  <main>
+    <PageHeader
+      eyebrow="Bragging rights"
+      title="The leaderboard."
+      tone="pink"
+      meta={`${stats.length} runners · Strava figures captured ${captured}`}
+    >
+      <p>
+        Personal bests and yearly totals for everyone in the club who shares their Strava. No
+        pressure — half of these were set on a Tuesday night with everybody talking.
+      </p>
+    </PageHeader>
+
+    <section class="section">
+      <div class="wrap">
+        <h2 class="board__heading">Fastest 5K</h2>
+        <ol class="podium">
+          {
+            podium.map((athlete, i) => (
+              <li class={`podium__item podium__item--${i}`}>
+                <span class="podium__medal" aria-hidden="true">
+                  {medal[i]}
+                </span>
+                <a class="podium__name" href={`/athletes/${slugify(athlete.member)}/`}>
+                  {athlete.member}
+                </a>
+                <span class="podium__time">{bestFor(athlete, '5K')?.time}</span>
+              </li>
+            ))
+          }
+        </ol>
+
+        <div class="boards">
+          {
+            boards.map((board) => (
+              <section class="board">
+                <h2 class="board__heading">{board.label}</h2>
+                <ol class="board__list">
+                  {board.rows.map((athlete, i) => (
+                    <li>
+                      <span class="board__rank">{i + 1}</span>
+                      <a class="board__name" href={`/athletes/${slugify(athlete.member)}/`}>
+                        {athlete.member}
+                      </a>
+                      <span class="board__value">{bestFor(athlete, board.label)?.time}</span>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            ))
+          }
+
+          {
+            totalsBoards.map((board) => (
+              <section class="board">
+                <h2 class="board__heading">{board.heading}</h2>
+                <ol class="board__list">
+                  {board.rows.map((athlete, i) => (
+                    <li>
+                      <span class="board__rank">{i + 1}</span>
+                      <a class="board__name" href={`/athletes/${slugify(athlete.member)}/`}>
+                        {athlete.member}
+                      </a>
+                      <span class="board__value">{board.value(athlete)}</span>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            ))
+          }
+        </div>
+
+        <p class="note">
+          Figures come from each runner's Strava, captured {captured}, and are a snapshot rather
+          than a live feed. Best efforts are Strava's own estimates, so the odd one is optimistic.
+        </p>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .podium {
+    list-style: none;
+    margin: 0 0 clamp(2.5rem, 5vw, 4rem);
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: clamp(1rem, 2.5vw, 1.75rem);
+  }
+
+  .podium__item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+    padding: 1.25rem 1.4rem 1.4rem;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    background: var(--cream);
+  }
+
+  .podium__item--0 {
+    background: var(--pink);
+    rotate: -1.5deg;
+  }
+
+  .podium__item--1 {
+    background: var(--sage);
+  }
+
+  .podium__item--2 {
+    rotate: 1.5deg;
+  }
+
+  .podium__medal {
+    font-size: 1.75rem;
+    line-height: 1;
+  }
+
+  .podium__name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.375rem, 3vw, 1.875rem);
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .podium__name:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 3px;
+  }
+
+  .podium__time {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.25rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .boards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: clamp(1.5rem, 3.5vw, 2.75rem);
+  }
+
+  .board__heading {
+    font-size: clamp(1.25rem, 2.4vw, 1.625rem);
+    margin-bottom: 1rem;
+  }
+
+  .board__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .board__list li {
+    display: grid;
+    grid-template-columns: 1.75rem 1fr auto;
+    align-items: baseline;
+    gap: 0.6rem;
+    padding: 0.5rem 0;
+    border-bottom: 1.5px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  }
+
+  .board__list li:first-child {
+    border-top: var(--line) solid var(--ink);
+  }
+
+  .board__rank {
+    font-family: var(--font-display);
+    font-weight: 800;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .board__list li:nth-child(1) .board__rank {
+    color: var(--pink-text);
+  }
+
+  .board__name {
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .board__name:hover {
+    color: var(--pink-text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .board__value {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .note {
+    margin-top: clamp(2rem, 5vw, 3rem);
+    max-width: 62ch;
+    font-size: 0.875rem;
+    color: var(--ink-soft);
+  }
+</style>
