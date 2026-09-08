@@ -4,12 +4,14 @@ import Dog from './Dog.astro';
 import Pulpulak from './Pulpulak.astro';
 import Park from './Park.astro';
 import RepublicSquare from './RepublicSquare.astro';
+import Cafes from './Cafes.astro';
 ---
 
 <div class="band" aria-hidden="true">
   <div class="band__track">
     <!-- Scenery first, so everything else runs in front of it. -->
     <span class="band__square"><RepublicSquare /></span>
+    <span class="band__cafes"><Cafes /></span>
     <span class="band__park"><Park /></span>
     <span class="band__fountain"><Pulpulak /></span>
     <span class="band__pack"><RunningTrio /></span>
@@ -78,11 +80,18 @@ import RepublicSquare from './RepublicSquare.astro';
      subject; the square is taller than the strip and is meant to run off the
      top, the way a building does. */
   .band__park,
-  .band__square {
+  .band__square,
+  .band__cafes {
     position: absolute;
     bottom: 0;
     display: block;
     opacity: 0.85;
+  }
+
+  /* In the gap between the pulpulak and the square. */
+  .band__cafes {
+    left: 38%;
+    width: clamp(150px, 27vw, 360px);
   }
 
   .band__park {

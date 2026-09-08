@@ -1,0 +1,134 @@
+---
+/**
+ * The two coffee stops on the route — Prépa under its red awning, and Coffee
+ * House with its little projecting sign — plus someone out front with an iced
+ * coffee, which is where most of the club ends up afterwards.
+ *
+ * Scenery: drawn behind the figures and a shade lighter, so it sets the street
+ * without competing with the run.
+ */
+
+const ink = '#141414';
+const cream = '#f7f6f4';
+const tuff = '#e3d2c1';
+const tuffPink = '#dcc6bd';
+const red = '#c8402f';
+const dark = '#1d1d1d';
+const glass = '#cfdfe4';
+const awning = '#eae2d2';
+const skin = '#f7e2cf';
+const drink = '#f2c14e';
+---
+
+<svg class="cafes" viewBox="0 0 430 200" role="img" aria-label="Prépa and Coffee House">
+  <!-- ============ PRÉPA ============ -->
+  <rect x="2" y="14" width="204" height="176" fill={tuff} stroke={ink} stroke-width="4" />
+
+  <!-- shopfront -->
+  <rect x="14" y="70" width="180" height="112" fill={dark} stroke={ink} stroke-width="4" />
+  <text
+    x="40"
+    y="118"
+    fill={cream}
+    font-family="'Baloo 2', system-ui, sans-serif"
+    font-size="30"
+    font-weight="800"
+    letter-spacing="1"
+  >PRÉPA</text>
+  <!-- doorway -->
+  <rect x="150" y="86" width="36" height="96" fill="#2f2a26" stroke={ink} stroke-width="3" />
+
+  <!-- awning -->
+  <path d="M2 34 L206 34 L206 66 L2 66 Z" fill={red} stroke={ink} stroke-width="4" stroke-linejoin="round" />
+  <text
+    x="104"
+    y="57"
+    fill={cream}
+    font-family="'Baloo 2', system-ui, sans-serif"
+    font-size="19"
+    font-weight="800"
+    text-anchor="middle"
+    letter-spacing="2"
+  >PRÉPA</text>
+
+  <!-- pavement table and chairs -->
+  <g>
+    <path d="M40 182 L40 160" stroke={ink} stroke-width="5" stroke-linecap="round" />
+    <ellipse cx="40" cy="157" rx="24" ry="7" fill={red} stroke={ink} stroke-width="4" />
+    <path d="M14 182 L14 166 M22 166 L22 182" stroke={ink} stroke-width="4" stroke-linecap="round" />
+    <path d="M10 166 L26 166" stroke={red} stroke-width="7" stroke-linecap="round" />
+    <path d="M64 182 L64 166 M72 166 L72 182" stroke={ink} stroke-width="4" stroke-linecap="round" />
+    <path d="M60 166 L76 166" stroke={red} stroke-width="7" stroke-linecap="round" />
+  </g>
+
+  <!-- ============ COFFEE HOUSE ============ -->
+  <rect x="222" y="6" width="206" height="184" fill={tuffPink} stroke={ink} stroke-width="4" />
+
+  <!-- projecting sign -->
+  <path d="M238 30 L238 44" stroke={ink} stroke-width="4" stroke-linecap="round" />
+  <rect x="238" y="24" width="62" height="30" rx="3" fill={red} stroke={ink} stroke-width="4" />
+  <text
+    x="248"
+    y="38"
+    fill={cream}
+    font-family="'Baloo 2', system-ui, sans-serif"
+    font-size="10"
+    font-weight="800"
+  >COFFEE</text>
+  <text
+    x="248"
+    y="49"
+    fill={cream}
+    font-family="'Baloo 2', system-ui, sans-serif"
+    font-size="10"
+    font-weight="800"
+  >HOUSE</text>
+
+  <!-- awning, angled out over the pavement -->
+  <path
+    d="M232 74 L410 66 L414 92 L236 100 Z"
+    fill={awning}
+    stroke={ink}
+    stroke-width="4"
+    stroke-linejoin="round"
+  />
+
+  <!-- glass door and window -->
+  <rect x="240" y="104" width="60" height="78" fill={glass} stroke={ink} stroke-width="4" />
+  <path d="M270 104 L270 182" stroke={ink} stroke-width="3" />
+  <rect x="316" y="104" width="92" height="60" fill={glass} stroke={ink} stroke-width="4" />
+
+  <!-- ============ someone with an iced coffee ============ -->
+  <!-- Out on the pavement in front of Prépa, scaled about her feet so she
+       stands at roughly the height of the runners going past. -->
+  <g
+    class="cafes__girl"
+    transform="translate(-54 0) translate(201 182) scale(1.18) translate(-201 -182)"
+  >
+    <!-- legs -->
+    <path d="M196 182 L196 152" stroke={ink} stroke-width="9" stroke-linecap="round" />
+    <path d="M196 182 L196 152" stroke={skin} stroke-width="5" stroke-linecap="round" />
+    <path d="M206 182 L206 152" stroke={ink} stroke-width="9" stroke-linecap="round" />
+    <path d="M206 182 L206 152" stroke={skin} stroke-width="5" stroke-linecap="round" />
+    <!-- shorts and top -->
+    <path d="M190 138 L212 138 L212 156 L190 156 Z" fill="#f4e3a8" stroke={ink} stroke-width="3.5" stroke-linejoin="round" />
+    <path d="M190 112 L212 112 L213 140 L189 140 Z" fill={cream} stroke={ink} stroke-width="3.5" stroke-linejoin="round" />
+    <!-- head, hair, headband -->
+    <circle cx="201" cy="100" r="11" fill={skin} stroke={ink} stroke-width="3.5" />
+    <path d="M190 100 Q190 88 201 88 Q212 88 212 100 L212 116 L208 116 Q207 98 201 98 Q195 98 194 116 L190 116 Z" fill={ink} />
+    <path d="M191 94 L211 94" stroke={cream} stroke-width="4" stroke-linecap="round" />
+    <!-- arm holding the cup -->
+    <path d="M211 120 L206 132" stroke={ink} stroke-width="8" stroke-linecap="round" />
+    <path d="M211 120 L206 132" stroke={skin} stroke-width="4.5" stroke-linecap="round" />
+    <!-- iced coffee -->
+    <path d="M199 124 L211 124 L209 140 L201 140 Z" fill={drink} stroke={ink} stroke-width="3" stroke-linejoin="round" />
+    <path d="M206 124 L210 112" stroke={ink} stroke-width="3" stroke-linecap="round" />
+  </g>
+</svg>
+
+<style>
+  .cafes {
+    width: 100%;
+    height: auto;
+  }
+</style>

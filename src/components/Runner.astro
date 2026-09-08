@@ -46,7 +46,48 @@ const {
 const ink = '#141414';
 // A black cap on a black shirt would vanish, so it flips to cream.
 const capFill = shirt === ink ? '#f7f6f4' : ink;
+
+/**
+ * The watch arm can't just keep swinging under the check — you hold your wrist
+ * still to read it. A 0.58s loop has no idea where it is in the 17s band
+ * timeline, so for this one runner the arm swing is generated across the whole
+ * loop instead, holding a raised pose through each glance.
+ */
+const BAND = 17; // seconds
+const STRIDE = 0.58;
+const HOLDS: [number, number][] = [
+  [0.028, 0.118],
+  [0.463, 0.557],
+  [0.763, 0.857],
+];
+const inHold = (t: number) => HOLDS.some(([a, b]) => t >= a && t <= b);
+
+function armTrack(amp: number, mid: number, held: number) {
+  const cycles = BAND / STRIDE;
+  const samples = Math.round(cycles * 4);
+  const frames: { t: number; a: number }[] = [];
+  for (let i = 0; i <= samples; i++) {
+    const t = i / samples;
+    if (inHold(t)) continue;
+    frames.push({ t, a: mid + Math.sin(t * cycles * Math.PI * 2) * amp });
+  }
+  // Ease into and out of the held pose rather than snapping to it.
+  for (const [a, b] of HOLDS) {
+    frames.push({ t: a, a: held }, { t: b, a: held });
+  }
+  frames.sort((x, y) => x.t - y.t);
+  return frames
+    .map((f) => `${(f.t * 100).toFixed(2)}%{transform:rotate(${f.a.toFixed(1)}deg)}`)
+    .join('');
+}
+
+const watchKeyframes = watch
+  ? `@keyframes watch-upperarm{${armTrack(32, -2, -6)}}
+@keyframes watch-forearm{${armTrack(12, -84, -96)}}`
+  : '';
 ---
+
+{watch && <style is:global set:html={watchKeyframes} />}
 
 <svg
   class:list={['runner', className]}
@@ -144,7 +185,7 @@ const capFill = shirt === ink ? '#f7f6f4' : ink;
     <!-- NEAR limbs. The watch-check group wraps the arm and adds a rotation
          ON TOP of the gait, so the arm keeps swinging while it comes up. -->
     <g class:list={['runner__check', watch && 'runner__check--live']}>
-      <g class="runner__arm runner__arm--near">
+      <g class:list={['runner__arm', 'runner__arm--near', watch && 'runner__arm--watch']}>
         <g class="runner__upperarm">
           <path d="M66 60 L66 79" stroke={ink} stroke-width="14" stroke-linecap="round" />
           <path d="M66 60 L66 79" stroke={shirt} stroke-width="8" stroke-linecap="round" />
@@ -275,6 +316,18 @@ const capFill = shirt === ink ? '#f7f6f4' : ink;
   .runner__look--live {
     transform-origin: 68px 47px;
     animation: look-watch 17s linear infinite;
+  }
+
+  /* Swing generated across the whole band loop, so it can hold still while
+     she reads the watch. Overrides the shared 0.58s arm animations. */
+  .runner__arm--watch .runner__upperarm {
+    animation: watch-upperarm 17s linear infinite;
+    animation-delay: 0s;
+  }
+
+  .runner__arm--watch .runner__forearm {
+    animation: watch-forearm 17s linear infinite;
+    animation-delay: 0s;
   }
 
   @keyframes check-watch {
