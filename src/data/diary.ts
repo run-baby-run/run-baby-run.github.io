@@ -34,6 +34,12 @@ export interface Entry {
   quote?: { text: string; who?: string };
   /** How many of that day's photographs to show, in the order they were sent. */
   photos?: number;
+  /**
+   * Only photographs sent after this time (HH:MM), for a day that held two
+   * different things — 14 June was a trail race at lunchtime and the Beat Run
+   * that evening, and the diary entry is about the evening.
+   */
+  photosAfter?: string;
   /** Slug in races.ts, when the day was a race. */
   race?: string;
   /** A number worth setting large: a distance, a count. */
@@ -82,7 +88,7 @@ export const entries: Entry[] = [
     story:
       'Our first run to land on Strava with the club’s name on it. So many of us turned up that Shaghig started broadcasting her location so the stragglers could find us. This becomes a recurring feature.',
     stat: { value: '8 km', label: 'Diana Abgar Park, 22:00' },
-    photos: 5,
+    photos: 4,
   },
   {
     date: '2026-03-11',
@@ -134,7 +140,7 @@ export const entries: Entry[] = [
     title: 'And I found a new friend, Amir',
     quote: { text: 'Today’s run was great. Because of the weather. Also I had missed you guys. And I found a new friend, Amir.' },
     story: 'Amir, four hours later, having clearly had a nice time with us: “Thanks everyone, it was amazing time to run with you. Nice to meet you all ❤️”',
-    photos: 5,
+    photos: 3,
   },
   {
     date: '2026-04-04',
@@ -280,6 +286,7 @@ export const entries: Entry[] = [
     kind: 'race',
     title: 'Beat Run at Shahumyan Square',
     race: 'beat-run',
+    photosAfter: '18:00',
     story:
       'Five kilometres in the evening, a crowd of us in matching shirts, and the eternal question from someone who had never met any of us: how will I find you? Our answer: “You will find us and we will know you and you will know us afterwards 😂”',
     photos: 8,

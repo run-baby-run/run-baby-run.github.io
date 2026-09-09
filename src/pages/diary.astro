@@ -9,11 +9,18 @@ import Runner from '../components/Runner.astro';
 import { diary, type Entry } from '../data/diary';
 import { photos } from '../data/library';
 import { hiddenFromDiary } from '../data/hidden';
+import { similarToOthers } from '../data/similar';
 import { races } from '../data/races';
 
 /** Photographs taken on a given day, in the order they were sent. */
-const shotsOn = (date: string) =>
-  photos.filter((p) => p.date === date && !hiddenFromDiary.has(p.id));
+const shotsOn = (date: string, after?: string) =>
+  photos.filter(
+    (p) =>
+      p.date === date &&
+      !hiddenFromDiary.has(p.id) &&
+      !similarToOthers.has(p.id) &&
+      (!after || p.time >= after)
+  );
 
 // Entries are numbered from the beginning, so the number climbs as you scroll
 // back in time — the first run is 001 whichever end you start from.
@@ -86,7 +93,7 @@ const photoTotal = photos.length;
             </h2>
 
             {entries.map((entry) => {
-              const shots = entry.photos ? shotsOn(entry.date).slice(0, entry.photos) : [];
+              const shots = entry.photos ? shotsOn(entry.date, entry.photosAfter).slice(0, entry.photos) : [];
               const race = raceOf(entry.race);
               return (
                 <article
