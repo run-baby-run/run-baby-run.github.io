@@ -1,0 +1,143 @@
+BACK OF THE PACK — club song #3
+Boom bap. The funny one. About the half of the club that finishes last
+and has the best time doing it.
+
+Suno has two boxes. Paste the first block into Style, the second into Lyrics.
+
+
+================================================================
+1. STYLE  (paste into the "Style of Music" box)
+================================================================
+
+boom bap hip hop, 92 bpm, dusty broken drums, warm upright bass, brass stabs,
+vinyl crackle, conversational relaxed flow, male lead with crowd shouts on the
+hook, jazzy piano loop, funny, warm, no aggression
+
+
+================================================================
+2. LYRICS  (paste into the "Lyrics" box, tags and all)
+================================================================
+
+[Intro - spoken, street noise]
+Yeah... ten o'clock.
+Everybody stretching like they know what they're doing.
+Alright.
+
+[Hook - crowd shouts in brackets]
+Back of the pack, back of the pack
+Same coffee, same table, same way back
+I forgot to start my watch, so it doesn't count
+(it counts)
+Back of the pack, back of the pack
+Nobody drops you, nobody laps
+Front group's quick but they wait at the top
+So who's really at the back?
+
+[Verse 1]
+Ten at night and the map just dropped
+Phone in the hand at the corner where we stop
+I don't know your name and you don't know mine
+We'll be old friends by the second kilometre sign
+There's a guy in a jacket saying he's not fit
+Been saying it a year, hasn't missed one bit
+No fee, no forms, no coach with a clipboard
+Just show up - that's the whole of the record
+Somebody's fast, somebody's fresh off the couch
+Same start line, same shout, same route
+And the watch on my wrist says four point nine
+I'm calling it five and I'm calling it fine
+
+[Hook]
+Back of the pack, back of the pack
+Same coffee, same table, same way back
+I forgot to start my watch, so it doesn't count
+(it counts)
+Back of the pack, back of the pack
+Nobody drops you, nobody laps
+Front group's quick but they wait at the top
+So who's really at the back?
+
+[Verse 2]
+Dog picks us up by the second turn
+No lead, no name, no lesson to learn
+Stops at the pulpulak, drinks like a champion
+Catches us back up - now he's in the anthem
+Past Republic Square where the water goes up
+Tourists get the fountain, we're the blur in the cut
+Seasons Park, one more lap of the green
+Legs saying no, group saying lean
+Then somebody shouts PHOTO and the whole thing stops
+Nobody escapes it, everybody props
+Twenty-nine people, one guy blinks
+That's the one that goes up. That's how it works.
+
+[Breakdown - sparse, drums out, just bass and piano]
+Coffee House on the left, Prepa on the right
+Iced tea, flat white, everybody's alright
+The run took an hour
+We've been sitting here two
+That's the part of the club that nobody tells you
+
+[Verse 3]
+Started with three on a standing Tuesday night
+Shaghig, Asdghig, Jebid under one light
+Now the corner can't hold what the corner grew
+And the back of the pack is where you meet them too
+Saturday, six-thirty, still dark on the hill
+Everybody said never, everybody's still here
+Nobody's checking who came in first
+Nobody's asking what your best is worth
+So if you're reading the map and you're scared of the pace
+There's a whole crowd of us holding your place
+Slow at the back with the dog and the jokes
+Best seat in the club, and it's free for folks
+
+[Hook - full crowd, louder]
+Back of the pack, back of the pack
+Same coffee, same table, same way back
+I forgot to start my watch, so it doesn't count
+(IT COUNTS)
+Back of the pack, back of the pack
+Nobody drops you, nobody laps
+Front group's quick but they wait at the top
+So who's really at the back?
+
+[Outro - spoken, fading]
+Front of the pack. Back of the pack.
+Same pack.
+Same time next week.
+
+
+================================================================
+NOTES
+================================================================
+
+- Keep it warm. The joke is affectionate: the back of the pack is where the
+  club actually lives. If a take comes back sounding tough or boastful, that
+  is the wrong take - regenerate rather than keep it.
+
+- [Breakdown] must stay sparse. Adding "(drums out, spoken)" next to the tag
+  usually stops Suno turning it into a fourth chorus.
+
+- The crowd shouts in brackets are the point of the hook. If Suno sings them
+  as normal lines, try putting them on their own line in capitals.
+
+- "Prepa" is written without the accent on purpose - Suno mispronounces
+  "Prepa" less often this way. Listen for it; if it sounds wrong, try
+  "Pre-pa" with the hyphen.
+
+- Generate 4-6 takes and judge them on verse 2 and the breakdown. The hook
+  will be fine on almost every take; the storytelling is where they differ.
+
+- Names to listen for: Shaghig, Asdghig, Jebid. Suno usually gets them close.
+  If a take mangles them badly it is worth regenerating for that alone.
+
+
+================================================================
+FOR REFERENCE - the other two
+================================================================
+
+Song #1 "Just Show Up": indie pop anthem, 124 bpm.
+Song #2 "Run Baby Run": late-night disco house, 126 bpm - see run-baby-run.txt.
+
+Lyrics for both live in src/data/song.ts, which is what the website displays.
