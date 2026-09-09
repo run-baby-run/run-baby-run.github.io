@@ -12,7 +12,29 @@ interface Props {
 
 const { page, base = '/gallery' } = Astro.props;
 const href = (n: number) => (n === 1 ? `${base}/` : `${base}/${n}/`);
-const numbers = Array.from({ length: page.lastPage }, (_, i) => i + 1);
+
+/**
+ * A window of page numbers rather than all of them: the gallery runs to
+ * seventeen pages, and a row that long is wider than a phone. Anything wider
+ * than the screen widens the layout viewport itself, which knocked the photo
+ * viewer — centred in that viewport — half off the side of the screen.
+ *
+ * Always: the first page, the last page, and two either side of the current
+ * one, with a gap marker where numbers were left out.
+ */
+const WINDOW = 2;
+const shown = new Set<number>([1, page.lastPage]);
+for (let n = page.currentPage - WINDOW; n <= page.currentPage + WINDOW; n++) {
+  if (n >= 1 && n <= page.lastPage) shown.add(n);
+}
+
+const numbers: (number | 'gap')[] = [];
+let previous = 0;
+for (const n of [...shown].sort((a, b) => a - b)) {
+  if (previous && n - previous > 1) numbers.push('gap');
+  numbers.push(n);
+  previous = n;
+}
 ---
 
 <nav class="pager" aria-label="Gallery pages">
@@ -27,17 +49,23 @@ const numbers = Array.from({ length: page.lastPage }, (_, i) => i + 1);
 
   <ol class="pager__list">
     {
-      numbers.map((n) => (
-        <li>
-          <a
-            href={href(n)}
-            class={`pager__num${n === page.currentPage ? ' is-current' : ''}`}
-            aria-current={n === page.currentPage ? 'page' : undefined}
-          >
-            {n}
-          </a>
-        </li>
-      ))
+      numbers.map((n) =>
+        n === 'gap' ? (
+          <li class="pager__gap" aria-hidden="true">
+            …
+          </li>
+        ) : (
+          <li>
+            <a
+              href={href(n)}
+              class={`pager__num${n === page.currentPage ? ' is-current' : ''}`}
+              aria-current={n === page.currentPage ? 'page' : undefined}
+            >
+              {n}
+            </a>
+          </li>
+        )
+      )
     }
   </ol>
 
@@ -63,6 +91,8 @@ const numbers = Array.from({ length: page.lastPage }, (_, i) => i + 1);
 
   .pager__list {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 0.5rem;
     list-style: none;
     margin: 0;
@@ -109,6 +139,13 @@ const numbers = Array.from({ length: page.lastPage }, (_, i) => i + 1);
   .pager__num.is-current {
     background: var(--ink);
     color: var(--cream);
+  }
+
+  .pager__gap {
+    display: inline-flex;
+    align-items: flex-end;
+    padding-bottom: 0.4rem;
+    color: var(--ink-soft);
   }
 
   .pager__step[aria-disabled='true'] {

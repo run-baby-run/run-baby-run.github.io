@@ -158,6 +158,7 @@
 <style is:global>
   /* Sized by the photo, so portrait shots do not sit in a letterboxed slab. */
   .lightbox {
+    box-sizing: border-box;
     width: fit-content;
     max-width: 96vw;
     max-height: 94vh;
@@ -181,6 +182,8 @@
     /* Centre rather than stretch, so the image keeps its intrinsic size and
        the dialog can shrink-to-fit around it. */
     align-items: center;
+    max-width: 100%;
+    min-width: 0;
     max-height: 94vh;
   }
 
@@ -189,7 +192,10 @@
     width: auto;
     height: auto;
     min-height: 0;
-    max-width: 96vw;
+    /* Bound to the dialog, not the viewport. Against 96vw the image came out
+       wider than the 94vw dialog plus its border, and spilled past both edges
+       on a phone — which also dragged the caption off the left of the screen. */
+    max-width: 100%;
     max-height: calc(94vh - 3.5rem);
     object-fit: contain;
     border-bottom: var(--line) solid var(--ink);
@@ -212,9 +218,11 @@
   .lightbox__caption {
     align-self: stretch;
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 0.35rem 1rem;
+    min-width: 0;
     padding: 0.75rem 1.1rem 0.85rem;
     font-family: var(--font-display);
     font-weight: 700;
@@ -273,8 +281,16 @@
   }
 
   @media (max-width: 720px) {
+    /* Still shrink to the photo — a landscape shot on a wide phone should not
+       sit in a letterboxed slab — but never past the edge of the screen. */
     .lightbox {
-      width: 94vw;
+      width: fit-content;
+      max-width: 94vw;
+    }
+
+    .lightbox__caption {
+      padding: 0.6rem 0.8rem 0.7rem;
+      font-size: 0.8125rem;
     }
 
     .lightbox__close {
