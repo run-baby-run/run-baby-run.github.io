@@ -3,7 +3,7 @@ import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import { site } from '../data/site';
 import MiniPlayer from '../components/MiniPlayer.astro';
-import { song } from '../data/song';
+import { tracks } from '../data/song';
 
 interface Props {
   title?: string;
@@ -56,7 +56,7 @@ const ogImage = new URL('/images/logo.jpg', Astro.site);
          exact node (and its playback position) across navigations. -->
     <audio
       id="rbr-audio"
-      src={song.file}
+      src={tracks[0].file}
       preload="none"
       transition:persist="rbr-audio"
     ></audio>

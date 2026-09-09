@@ -1,8 +1,14 @@
 ---
-import { song } from '../data/song';
+import { song, tracks } from '../data/song';
 ---
 
-<div class="mini" id="rbr-mini" hidden>
+<div class="mini" id="rbr-mini" hidden data-tracks={JSON.stringify(tracks)}>
+  <button class="mini__step" type="button" data-mini-prev aria-label="Previous take">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M16 5.5v13L7 12zM6 5h2.2v14H6z" />
+    </svg>
+  </button>
+
   <button class="mini__toggle" type="button" data-mini-toggle aria-label="Pause the club song">
     <svg class="mini__icon mini__icon--play" viewBox="0 0 24 24" aria-hidden="true">
       <path d="M8 5.5v13l11-6.5z" />
@@ -12,9 +18,15 @@ import { song } from '../data/song';
     </svg>
   </button>
 
+  <button class="mini__step" type="button" data-mini-next aria-label="Next take">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8 5.5v13L17 12zM15.8 5H18v14h-2.2z" />
+    </svg>
+  </button>
+
   <a class="mini__text" href="/#song">
     <span class="mini__title">{song.title}</span>
-    <span class="mini__time" data-mini-time>0:00</span>
+    <span class="mini__time"><span data-mini-take>1 / {tracks.length}</span> · <span data-mini-time>0:00</span></span>
   </a>
 
   <button class="mini__close" type="button" data-mini-close aria-label="Stop the club song">✕</button>
@@ -32,6 +44,7 @@ import { song } from '../data/song';
     seek: HTMLInputElement;
     current: HTMLElement;
     duration: HTMLElement;
+    take: HTMLElement | null;
   }
 
   const w = window as typeof window & { __rbrPage?: PageUi | null };
@@ -58,6 +71,44 @@ import { song } from '../data/song';
 
   const audio = () => document.getElementById('rbr-audio') as HTMLAudioElement | null;
   const mini = () => document.getElementById('rbr-mini');
+
+  interface Track {
+    label: string;
+    file: string;
+    duration: string;
+  }
+
+  const trackList = (): Track[] => {
+    const raw = mini()?.dataset.tracks;
+    return raw ? (JSON.parse(raw) as Track[]) : [];
+  };
+
+  /** Which take is loaded. Kept on the <audio> so it survives navigation with
+   *  it. Named currentTrack, not current: bindPage has a `current` element. */
+  const currentTrack = () => Number(audio()?.dataset.track ?? 0);
+
+  function loadTrack(next: number, play: boolean) {
+    const a = audio();
+    const list = trackList();
+    if (!a || list.length === 0) return;
+
+    const i = (next + list.length) % list.length;
+    a.dataset.track = String(i);
+    a.src = list[i].file;
+    // No a.load() here: it forces the resource-selection algorithm and Chrome
+    // fetches the file even under preload="none", so stepping through the
+    // takes while paused would download all four.
+
+    const label = `${i + 1} / ${list.length}`;
+    const take = mini()?.querySelector<HTMLElement>('[data-mini-take]');
+    if (take) take.textContent = label;
+    const page = w.__rbrPage;
+    if (page?.take) page.take.textContent = `${label} · ${list[i].label}`;
+    if (page) page.duration.textContent = list[i].duration;
+
+    paint();
+    if (play) a.play().catch(() => {});
+  }
 
   function paint() {
     const a = audio();
@@ -101,6 +152,12 @@ import { song } from '../data/song';
 
     if (claim(m)) {
       m.querySelector('[data-mini-toggle]')?.addEventListener('click', () => playPause(a));
+      m.querySelector('[data-mini-prev]')?.addEventListener('click', () =>
+        loadTrack(currentTrack() - 1, !a.paused)
+      );
+      m.querySelector('[data-mini-next]')?.addEventListener('click', () =>
+        loadTrack(currentTrack() + 1, !a.paused)
+      );
       m.querySelector('[data-mini-close]')?.addEventListener('click', () => {
         a.pause();
         a.currentTime = 0;
@@ -138,7 +195,26 @@ import { song } from '../data/song';
     if (!ui || !toggle || !seek || !current || !duration) return;
 
     ui.hidden = false;
-    w.__rbrPage = { root, toggle, seek, current, duration };
+    w.__rbrPage = {
+      root,
+      toggle,
+      seek,
+      current,
+      duration,
+      take: root.querySelector<HTMLElement>('[data-take]'),
+    };
+
+    // Whichever take is loaded may not be the first — the audio persists
+    // across navigations, so the freshly rendered labels need syncing.
+    const list = trackList();
+    const i = currentTrack();
+    if (list[i]) {
+      const label = `${i + 1} / ${list.length}`;
+      const take = w.__rbrPage.take;
+      if (take) take.textContent = `${label} · ${list[i].label}`;
+      const miniTake = mini()?.querySelector<HTMLElement>('[data-mini-take]');
+      if (miniTake) miniTake.textContent = label;
+    }
 
     // astro:page-load also fires on the initial load, so binding must be
     // idempotent — a second click handler would pause playback the instant
@@ -150,6 +226,12 @@ import { song } from '../data/song';
     }
 
     toggle.addEventListener('click', () => playPause(a));
+    root
+      .querySelector('[data-prev]')
+      ?.addEventListener('click', () => loadTrack(currentTrack() - 1, !a.paused));
+    root
+      .querySelector('[data-next]')
+      ?.addEventListener('click', () => loadTrack(currentTrack() + 1, !a.paused));
 
     seek.addEventListener('input', () => {
       const pct = Number(seek.value) / 10;
@@ -203,7 +285,8 @@ import { song } from '../data/song';
   }
 
   .mini__toggle,
-  .mini__close {
+  .mini__close,
+  .mini__step {
     flex: none;
     display: grid;
     place-items: center;
@@ -212,6 +295,23 @@ import { song } from '../data/song';
     border-radius: 50%;
     cursor: pointer;
     transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .mini__step {
+    width: 1.9rem;
+    height: 1.9rem;
+    background: var(--cream);
+    color: var(--ink);
+  }
+
+  .mini__step:hover {
+    background: var(--pink);
+  }
+
+  .mini__step svg {
+    width: 0.85rem;
+    height: 0.85rem;
+    fill: currentColor;
   }
 
   .mini__toggle {

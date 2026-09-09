@@ -1,9 +1,23 @@
 export const song = {
   title: 'Just Show Up',
-  file: '/audio/just-show-up.mp3',
-  duration: '3:50',
-  note: 'The club song. Written for Run Baby Run, made with Suno.',
+  note: 'The club song. Written for Run Baby Run, made with Suno — four takes of it.',
 };
+
+export interface Track {
+  /** What the take is, beyond its number. */
+  label: string;
+  file: string;
+  /** As a fallback until the browser reads the real duration. */
+  duration: string;
+}
+
+/** Four builds of the same song. Same words, different arrangements. */
+export const tracks: Track[] = [
+  { label: 'Full take', file: '/audio/just-show-up-1.mp3', duration: '3:50' },
+  { label: 'Second build', file: '/audio/just-show-up-2.mp3', duration: '3:42' },
+  { label: 'Short cut', file: '/audio/just-show-up-3.mp3', duration: '1:00' },
+  { label: 'Short cut, take two', file: '/audio/just-show-up-4.mp3', duration: '1:00' },
+];
 
 /** Blank lines separate stanzas. */
 export const lyrics = [
