@@ -67,6 +67,17 @@ import { song, lyrics, tracks } from '../data/song';
           />
           <p class="player__times">
             <span data-current>0:00</span>
+            <a
+              class="player__download"
+              data-download
+              href={tracks[0].file}
+              download={`Run Baby Run — Just Show Up (${tracks[0].label}).mp3`}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3v10m0 0-4-4m4 4 4-4M5 19h14" />
+              </svg>
+              Download
+            </a>
             <span data-duration>{tracks[0].duration}</span>
           </p>
         </div>
@@ -282,11 +293,44 @@ import { song, lyrics, tracks } from '../data/song';
 
   .player__times {
     display: flex;
+    align-items: center;
     justify-content: space-between;
+    gap: 0.75rem;
     margin: 0.4rem 0 0;
     font-size: 0.8125rem;
     font-variant-numeric: tabular-nums;
     color: var(--ink-soft);
+  }
+
+  .player__download {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.15rem 0.6rem;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink);
+    transition: background-color 0.15s ease;
+  }
+
+  .player__download:hover {
+    background: var(--pink);
+  }
+
+  .player__download svg {
+    width: 0.8rem;
+    height: 0.8rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
   /* ---- lyrics ---- */

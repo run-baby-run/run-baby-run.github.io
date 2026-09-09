@@ -45,6 +45,26 @@ import { song, tracks } from '../data/song';
     current: HTMLElement;
     duration: HTMLElement;
     take: HTMLElement | null;
+    download: HTMLAnchorElement | null;
+  }
+
+  /** Keeps the take label, duration and download link on the loaded track. */
+  function labelTrack(i: number) {
+    const list = trackList();
+    if (!list[i]) return;
+    const label = `${i + 1} / ${list.length}`;
+
+    const miniTake = document.querySelector<HTMLElement>('[data-mini-take]');
+    if (miniTake) miniTake.textContent = label;
+
+    const page = w.__rbrPage;
+    if (!page) return;
+    if (page.take) page.take.textContent = `${label} · ${list[i].label}`;
+    page.duration.textContent = list[i].duration;
+    if (page.download) {
+      page.download.href = list[i].file;
+      page.download.download = `Run Baby Run — Just Show Up (${list[i].label}).mp3`;
+    }
   }
 
   const w = window as typeof window & { __rbrPage?: PageUi | null };
@@ -99,13 +119,7 @@ import { song, tracks } from '../data/song';
     // fetches the file even under preload="none", so stepping through the
     // takes while paused would download all four.
 
-    const label = `${i + 1} / ${list.length}`;
-    const take = mini()?.querySelector<HTMLElement>('[data-mini-take]');
-    if (take) take.textContent = label;
-    const page = w.__rbrPage;
-    if (page?.take) page.take.textContent = `${label} · ${list[i].label}`;
-    if (page) page.duration.textContent = list[i].duration;
-
+    labelTrack(i);
     paint();
     if (play) a.play().catch(() => {});
   }
@@ -170,9 +184,19 @@ import { song, tracks } from '../data/song';
 
     a.addEventListener('play', () => setPlaying(true));
     a.addEventListener('pause', () => setPlaying(false));
+    // Roll on to the next take. This is not autoplay — playback was already
+    // started by hand — so it only ever continues an existing session. At the
+    // end of the last take it stops and rewinds to the first, rather than
+    // looping the same song round for ever.
     a.addEventListener('ended', () => {
+      const next = currentTrack() + 1;
+      if (next < trackList().length) {
+        loadTrack(next, true);
+        return;
+      }
       setPlaying(false);
       m.hidden = true;
+      loadTrack(0, false);
     });
     a.addEventListener('timeupdate', paint);
     a.addEventListener('loadedmetadata', paint);
@@ -202,19 +226,12 @@ import { song, tracks } from '../data/song';
       current,
       duration,
       take: root.querySelector<HTMLElement>('[data-take]'),
+      download: root.querySelector<HTMLAnchorElement>('[data-download]'),
     };
 
     // Whichever take is loaded may not be the first — the audio persists
     // across navigations, so the freshly rendered labels need syncing.
-    const list = trackList();
-    const i = currentTrack();
-    if (list[i]) {
-      const label = `${i + 1} / ${list.length}`;
-      const take = w.__rbrPage.take;
-      if (take) take.textContent = `${label} · ${list[i].label}`;
-      const miniTake = mini()?.querySelector<HTMLElement>('[data-mini-take]');
-      if (miniTake) miniTake.textContent = label;
-    }
+    labelTrack(currentTrack());
 
     // astro:page-load also fires on the initial load, so binding must be
     // idempotent — a second click handler would pause playback the instant
