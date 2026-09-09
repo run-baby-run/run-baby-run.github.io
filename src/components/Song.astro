@@ -73,17 +73,25 @@ const first = playlist[0];
           />
           <p class="player__times">
             <span data-current>0:00</span>
-            <a
-              class="player__download"
-              data-download
-              href={first.file}
-              download={`Run Baby Run — ${first.song} (${first.label}).mp3`}
-            >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M12 3v10m0 0-4-4m4 4 4-4M5 19h14" />
-              </svg>
-              Download
-            </a>
+            <span class="player__actions">
+              <button class="player__act" type="button" data-share>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 16V4m0 0L8 8m4-4 4 4M5 14v4.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V14" />
+                </svg>
+                <span data-share-label>Share</span>
+              </button>
+              <a
+                class="player__act"
+                data-download
+                href={first.file}
+                download={`Run Baby Run — ${first.song} (${first.label}).mp3`}
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3v10m0 0-4-4m4 4 4-4M5 19h14" />
+                </svg>
+                Download
+              </a>
+            </span>
             <span data-duration>{first.duration}</span>
           </p>
         </div>
@@ -320,7 +328,12 @@ const first = playlist[0];
     color: var(--ink-soft);
   }
 
-  .player__download {
+  .player__actions {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .player__act {
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
@@ -335,13 +348,15 @@ const first = playlist[0];
     text-decoration: none;
     color: var(--ink);
     transition: background-color 0.15s ease;
+    background: none;
+    cursor: pointer;
   }
 
-  .player__download:hover {
+  .player__act:hover {
     background: var(--pink);
   }
 
-  .player__download svg {
+  .player__act svg {
     width: 0.8rem;
     height: 0.8rem;
     fill: none;
@@ -404,31 +419,15 @@ const first = playlist[0];
     line-height: 1.5;
   }
 
+  /* On a phone the three buttons leave the text beside them only ~100px, which
+     is not enough for the seek bar, both times and the two pills — the duration
+     ended up outside the card. Put the controls on their own line and give the
+     rest the full width beneath them. */
   @media (max-width: 560px) {
-    .player__ui {
-      gap: 0.85rem;
-    }
-
-    /* The download pill plus both times will not fit a phone's width, and
-       space-between pushed the duration off the edge of the card. Drop the
-       pill onto its own line and let the two times keep the ends. */
-    .player__times {
-      row-gap: 0.6rem;
-    }
-
-    .player__download {
-      order: 1;
-      flex-basis: 100%;
-      justify-content: center;
-    }
-  }
-
-  /* Below ~380px the three buttons leave the body barely 60px, too narrow even
-     for the download pill. Give the body the full width under the controls. */
-  @media (max-width: 380px) {
     .player__ui {
       flex-wrap: wrap;
       justify-content: center;
+      gap: 0.85rem;
     }
 
     .player__body {
@@ -439,5 +438,16 @@ const first = playlist[0];
       width: 3.25rem;
       height: 3.25rem;
     }
+
+    .player__times {
+      row-gap: 0.6rem;
+    }
+
+    .player__actions {
+      order: 1;
+      flex-basis: 100%;
+      justify-content: center;
+    }
   }
+
 </style>

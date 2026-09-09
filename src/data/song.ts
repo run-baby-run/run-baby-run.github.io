@@ -132,6 +132,11 @@ export interface PlaylistEntry extends Track {
   take: number;
   /** How many takes that song has, for "2 / 4". */
   takes: number;
+  /**
+   * What a shared link names this take by — the file's own basename, so the
+   * link stays readable and stable as long as the file does.
+   */
+  slug: string;
 }
 
 /**
@@ -145,5 +150,6 @@ export const playlist: PlaylistEntry[] = songs.flatMap((s) =>
     song: s.title,
     take: i + 1,
     takes: s.tracks.length,
+    slug: track.file.replace(/^.*\//, '').replace(/\.mp3$/, ''),
   }))
 );

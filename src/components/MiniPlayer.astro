@@ -47,6 +47,7 @@ import { playlist } from '../data/song';
     song: HTMLElement | null;
     take: HTMLElement | null;
     download: HTMLAnchorElement | null;
+    share: HTMLButtonElement | null;
   }
 
   /**
@@ -113,11 +114,34 @@ import { playlist } from '../data/song';
     song: string;
     take: number;
     takes: number;
+    /** Names this take in a shared link: ?take=run-baby-run-2 */
+    slug: string;
   }
 
   const trackList = (): Track[] => {
     const raw = mini()?.dataset.tracks;
     return raw ? (JSON.parse(raw) as Track[]) : [];
+  };
+
+  /** Says what happened on the share button itself, then puts it back. */
+  let shareTimer = 0;
+  function flashShare(message: string) {
+    const label = document.querySelector<HTMLElement>('[data-share-label]');
+    if (!label) return;
+    label.textContent = message;
+    clearTimeout(shareTimer);
+    shareTimer = window.setTimeout(() => {
+      label.textContent = 'Share';
+    }, 2000);
+  }
+
+  /** The link that opens the site on this take, scrolled to the player. */
+  const shareUrl = (i: number) => {
+    const entry = trackList()[i];
+    const url = new URL('/', location.origin);
+    if (entry) url.search = `?take=${entry.slug}`;
+    url.hash = 'song';
+    return url.toString();
   };
 
   /** Which take is loaded. Kept on the <audio> so it survives navigation with
@@ -245,6 +269,7 @@ import { playlist } from '../data/song';
       song: root.querySelector<HTMLElement>('[data-song]'),
       take: root.querySelector<HTMLElement>('[data-take]'),
       download: root.querySelector<HTMLAnchorElement>('[data-download]'),
+      share: root.querySelector<HTMLButtonElement>('[data-share]'),
     };
 
     // Whichever take is loaded may not be the first — the audio persists
@@ -268,6 +293,31 @@ import { playlist } from '../data/song';
       .querySelector('[data-next]')
       ?.addEventListener('click', () => loadTrack(currentTrack() + 1, !a.paused));
 
+    root.querySelector('[data-share]')?.addEventListener('click', async () => {
+      const url = shareUrl(currentTrack());
+      const entry = trackList()[currentTrack()];
+      const title = entry ? `${entry.song} — Run Baby Run` : 'Run Baby Run';
+
+      // The share sheet where there is one (phones, mostly); the clipboard
+      // everywhere else. Either can be refused — a dismissed sheet rejects,
+      // and the clipboard needs permission — so neither is allowed to throw.
+      if (navigator.share) {
+        try {
+          await navigator.share({ title, url });
+          return;
+        } catch {
+          return; // Dismissed. Saying "copied" would be a lie.
+        }
+      }
+
+      try {
+        await navigator.clipboard.writeText(url);
+        flashShare('Link copied');
+      } catch {
+        flashShare('Copy failed');
+      }
+    });
+
     seek.addEventListener('input', () => {
       const pct = Number(seek.value) / 10;
       seek.style.setProperty('--progress', `${pct}%`);
@@ -282,9 +332,26 @@ import { playlist } from '../data/song';
     paint();
   }
 
+  /**
+   * A shared link carries ?take=<slug>. Load that take — but never start it:
+   * arriving at a page is not the visitor asking to hear anything, and a
+   * browser would refuse the autoplay anyway. Only the first page load is
+   * considered, so navigating away from a shared link doesn't re-apply it.
+   */
+  let deepLinkDone = false;
+  function applyDeepLink() {
+    if (deepLinkDone) return;
+    deepLinkDone = true;
+    const slug = new URLSearchParams(location.search).get('take');
+    if (!slug) return;
+    const i = trackList().findIndex((t) => t.slug === slug);
+    if (i > 0) loadTrack(i, false);
+  }
+
   function init() {
     bindGlobal();
     bindPage();
+    applyDeepLink();
     const a = audio();
     const m = mini();
     // No play/pause event fires across a navigation, so restore the icon and
