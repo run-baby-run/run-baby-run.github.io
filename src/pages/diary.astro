@@ -1,0 +1,424 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Lightbox from '../components/Lightbox.astro';
+import DiaryPhotos from '../components/DiaryPhotos.astro';
+import Runner from '../components/Runner.astro';
+import { diary, type Entry } from '../data/diary';
+import { photos } from '../data/library';
+import { races } from '../data/races';
+
+/** Photographs taken on a given day, in the order they were sent. */
+const shotsOn = (date: string) => photos.filter((p) => p.date === date);
+
+// Entries are numbered from the beginning, so the number climbs as you scroll
+// back in time — the first run is 001 whichever end you start from.
+const oldestFirst = [...diary].sort((a, b) => a.date.localeCompare(b.date));
+const numberOf = new Map(oldestFirst.map((e, i) => [e.date + e.title, i + 1]));
+
+/** Grouped into months, newest month first, for the markers down the page. */
+const byMonth: { month: string; entries: Entry[] }[] = [];
+for (const entry of diary) {
+  const month = entry.date.slice(0, 7);
+  if (byMonth.at(-1)?.month !== month) byMonth.push({ month, entries: [] });
+  byMonth.at(-1)!.entries.push(entry);
+}
+
+const monthName = (m: string) =>
+  new Date(m + '-01T12:00:00Z').toLocaleDateString('en-GB', {
+    month: 'long', year: 'numeric', timeZone: 'UTC',
+  });
+
+const dayName = (iso: string) =>
+  new Date(iso + 'T12:00:00Z').toLocaleDateString('en-GB', {
+    weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC',
+  });
+
+const KIND_LABEL: Record<Entry['kind'], string> = {
+  run: 'Run',
+  milestone: 'Milestone',
+  race: 'Race',
+  pr: 'Personal record',
+  quote: 'Said out loud',
+  place: 'A place',
+};
+
+const raceOf = (slug?: string) => races.find((r) => r.slug === slug);
+const photoTotal = photos.length;
+---
+
+<Base
+  title="Diary — Run Baby Run Club"
+  description="Everything that happened, run by run, from the group chat and the photos: Yerevan's Run Baby Run club since February 2026."
+>
+  <Nav current="diary" />
+  <main>
+    <PageHeader
+      eyebrow="Everything that happened"
+      title="The diary."
+      tone="cream"
+    >
+      <p>
+        Since the twelfth of February 2026, told through what people wrote in the
+        group and the {photoTotal} photographs they sent. Scroll down and the year
+        runs backwards.
+      </p>
+    </PageHeader>
+
+    <div class="timeline">
+      <div class="timeline__spine" aria-hidden="true">
+        <span class="timeline__runner" data-spine-runner>
+          <Runner shirt="#e8608c" shorts="#141414" legs="#f7f6f4" shoe="#141414" head="bun" />
+        </span>
+      </div>
+
+      <p class="timeline__sticky" aria-hidden="true" data-sticky-month>{monthName(byMonth[0].month)}</p>
+
+      {
+        byMonth.map(({ month, entries }) => (
+          <section class="month" data-month={monthName(month)}>
+            <h2 class="month__mark">
+              <span>{monthName(month)}</span>
+              <small>{entries.length} {entries.length === 1 ? 'entry' : 'entries'}</small>
+            </h2>
+
+            {entries.map((entry) => {
+              const shots = entry.photos ? shotsOn(entry.date).slice(0, entry.photos) : [];
+              const race = raceOf(entry.race);
+              return (
+                <article
+                  class={`entry entry--${entry.kind}`}
+                  id={entry.date}
+                  data-entry
+                >
+                  <p class="entry__meta">
+                    <span class="entry__no">{String(numberOf.get(entry.date + entry.title)).padStart(3, '0')}</span>
+                    <time datetime={entry.date}>{dayName(entry.date)}</time>
+                    <span class="entry__kind">{KIND_LABEL[entry.kind]}</span>
+                  </p>
+
+                  <h3 class="entry__title">{entry.title}</h3>
+
+                  {entry.stat && (
+                    <p class="entry__stat">
+                      <strong>{entry.stat.value}</strong>
+                      <span>{entry.stat.label}</span>
+                    </p>
+                  )}
+
+                  {entry.quote && (
+                    <blockquote class="entry__quote">
+                      <p>{entry.quote.text}</p>
+                      {entry.quote.who && <cite>{entry.quote.who}</cite>}
+                    </blockquote>
+                  )}
+
+                  {entry.story && <p class="entry__story">{entry.story}</p>}
+
+                  {race && (
+                    <p class="entry__race">
+                      <a href={`/races#${race.slug}`}>{race.name} →</a>
+                    </p>
+                  )}
+
+                  <DiaryPhotos photos={shots} label={entry.title} />
+                </article>
+              );
+            })}
+          </section>
+        ))
+      }
+    </div>
+
+    <Lightbox />
+  </main>
+  <Footer />
+</Base>
+
+<script>
+  // The runner rides the spine: scroll position in, vertical position out.
+  // Nothing else on the page depends on scroll, so this stays cheap.
+  function initSpine() {
+    const timeline = document.querySelector<HTMLElement>('.timeline');
+    const runner = document.querySelector<HTMLElement>('[data-spine-runner]');
+    const sticky = document.querySelector<HTMLElement>('[data-sticky-month]');
+    if (!timeline || !runner) return;
+
+    // The sticky label names the month you are currently inside: the last one
+    // whose marker has passed the middle of the screen. An IntersectionObserver
+    // was tried first and got this wrong — a tall month can be barely visible by
+    // ratio while filling the whole screen.
+    const months = [...document.querySelectorAll<HTMLElement>('.month')];
+    const label = () => {
+      if (!sticky) return;
+      const middle = window.innerHeight / 2;
+      let current = months[0];
+      for (const m of months) if (m.getBoundingClientRect().top <= middle) current = m;
+      sticky.textContent = current?.dataset.month ?? '';
+    };
+
+    let ticking = false;
+    const place = () => {
+      ticking = false;
+      const box = timeline.getBoundingClientRect();
+      const middle = window.innerHeight / 2;
+      const travelled = Math.min(Math.max(middle - box.top, 0), box.height);
+      runner.style.transform = `translate(-50%, ${travelled}px)`;
+      label();
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(place);
+    };
+
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll, { passive: true });
+    place();
+
+  }
+
+  initSpine();
+  document.addEventListener('astro:page-load', initSpine);
+</script>
+
+<style>
+  .timeline {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: clamp(2rem, 6vw, 4rem) 1.25rem clamp(3rem, 8vw, 6rem);
+  }
+
+  /* The line everything hangs off. On phones it sits at the left margin; from
+     the tablet breakpoint up it runs down the middle. */
+  .timeline__spine {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 1.6rem;
+    width: 0;
+    border-left: var(--line) dashed var(--ink);
+    opacity: 0.35;
+  }
+
+  .timeline__runner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4rem;
+    display: block;
+    transform: translate(-50%, 0);
+    will-change: transform;
+  }
+
+  .timeline__sticky {
+    position: sticky;
+    top: 4.5rem;
+    z-index: 3;
+    float: right;
+    margin: 0;
+    padding: 0.3rem 0.8rem;
+    border: var(--line) solid var(--ink);
+    border-radius: 999px;
+    background: var(--cream);
+    box-shadow: var(--shadow-sm);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .month {
+    position: relative;
+    padding-left: 3.5rem;
+  }
+
+  .month__mark {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin: 2.5rem 0 1.25rem -3.5rem;
+    padding: 0.4rem 1rem;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--ink);
+    color: var(--cream);
+    font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+    width: fit-content;
+  }
+
+  .month__mark small {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .entry {
+    position: relative;
+    margin: 0 0 1.25rem;
+    padding: 1.1rem 1.25rem 1.25rem;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--cream);
+    box-shadow: var(--shadow-sm);
+    scroll-margin-top: 5rem;
+  }
+
+  /* The dot that pins an entry to the line. */
+  .entry::before {
+    content: '';
+    position: absolute;
+    top: 1.5rem;
+    left: -2.05rem;
+    width: 0.7rem;
+    height: 0.7rem;
+    border: 3px solid var(--ink);
+    border-radius: 50%;
+    background: var(--cream);
+  }
+
+  .entry--milestone { background: var(--pink); }
+  .entry--race { background: color-mix(in srgb, var(--pink) 45%, var(--cream)); }
+  .entry--pr { background: var(--ink); color: var(--cream); }
+  .entry--pr::before { background: var(--pink); }
+  .entry--quote { background: color-mix(in srgb, var(--cream) 60%, var(--pink)); }
+
+  .entry__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin: 0 0 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .entry--pr .entry__meta { color: color-mix(in srgb, var(--cream) 70%, transparent); }
+
+  .entry__no {
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    color: var(--pink-text);
+  }
+
+  .entry--pr .entry__no { color: var(--pink); }
+
+  .entry__kind {
+    padding: 0.1rem 0.5rem;
+    border: 2px solid currentColor;
+    border-radius: 999px;
+    font-size: 0.625rem;
+  }
+
+  .entry__title {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.15rem, 3vw, 1.5rem);
+  }
+
+  .entry__stat {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin: 0.75rem 0;
+  }
+
+  .entry__stat strong {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 7vw, 3rem);
+    line-height: 1;
+    color: var(--pink-text);
+  }
+
+  .entry--pr .entry__stat strong { color: var(--pink); }
+
+  .entry__stat span {
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+  }
+
+  .entry--pr .entry__stat span { color: color-mix(in srgb, var(--cream) 70%, transparent); }
+
+  .entry__quote {
+    margin: 0.75rem 0;
+    padding-left: 0.9rem;
+    border-left: 4px solid var(--pink-text);
+    font-size: clamp(1rem, 2.4vw, 1.15rem);
+    line-height: 1.45;
+  }
+
+  .entry--pr .entry__quote { border-color: var(--pink); }
+
+  .entry__quote p { margin: 0; }
+
+  .entry__quote cite {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.75rem;
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .entry__story { margin: 0.6rem 0 0; }
+
+  .entry__race { margin: 0.75rem 0 0; }
+
+  .entry__race a {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* Entries stay in one column at every width. Alternating them left and right
+     of the spine looks better in a mock-up and worse in practice: cards differ
+     in height, so one side runs ahead and the page fills with holes. */
+  @media (min-width: 780px) {
+    .timeline {
+      padding-left: 2.5rem;
+    }
+
+    .timeline__spine {
+      left: 4rem;
+    }
+
+    .month {
+      padding-left: 5.5rem;
+    }
+
+    .month__mark {
+      margin-left: -5.5rem;
+    }
+
+    .entry {
+      padding: 1.4rem 1.6rem 1.6rem;
+    }
+
+    .entry::before {
+      left: -2.15rem;
+      width: 0.85rem;
+      height: 0.85rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .timeline__runner { display: none; }
+  }
+</style>

@@ -1,0 +1,144 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Lightbox from '../components/Lightbox.astro';
+import DiaryPhotos from '../components/DiaryPhotos.astro';
+import { racesByDate } from '../data/races';
+import { photos } from '../data/library';
+
+const shotsOn = (date: string) => photos.filter((p) => p.date === date);
+
+const pretty = (iso: string) =>
+  new Date(iso + 'T12:00:00Z').toLocaleDateString('en-GB', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
+  });
+---
+
+<Base
+  title="Races — Run Baby Run Club"
+  description="Every race Run Baby Run has gone to together, from the Gorge Run in March to Yerevan Run in August."
+>
+  <Nav current="races" />
+  <main>
+    <PageHeader eyebrow="Bibs, medals, early alarms" title="The races." tone="pink">
+      <p>
+        Not the club's own weekly runs — these are the days a group of us signed up
+        for something, met at dawn, and went together.
+      </p>
+    </PageHeader>
+
+    <div class="wrap races">
+      <p class="races__count">
+        <strong>{racesByDate.length}</strong> races together, so far.
+      </p>
+
+      {
+        racesByDate.map((race) => (
+          <article class="race" id={race.slug}>
+            <div class="race__head">
+              <h2>{race.name}</h2>
+              <p class="race__when">
+                <time datetime={race.date}>{pretty(race.date)}</time> · {race.where}
+              </p>
+              <ul class="race__distances">
+                {race.distances.map((d) => (
+                  <li>{d}</li>
+                ))}
+              </ul>
+            </div>
+            {race.note && <p class="race__note">{race.note}</p>}
+            <DiaryPhotos photos={race.photos ? shotsOn(race.date).slice(0, race.photos) : []} label={race.name} />
+            <p class="race__link">
+              <a href={`/diary#${race.date}`}>That day in the diary →</a>
+            </p>
+          </article>
+        ))
+      }
+    </div>
+
+    <Lightbox />
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .races {
+    padding-block: clamp(2rem, 6vw, 3.5rem);
+    max-width: 860px;
+  }
+
+  .races__count {
+    margin: 0 0 1.5rem;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+
+  .races__count strong {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--pink-text);
+  }
+
+  .race {
+    margin: 0 0 1.25rem;
+    padding: 1.25rem;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--cream);
+    box-shadow: var(--shadow-sm);
+    scroll-margin-top: 5rem;
+  }
+
+  .race h2 {
+    margin: 0 0 0.3rem;
+    font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+  }
+
+  .race__when {
+    margin: 0 0 0.6rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .race__distances {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .race__distances li {
+    padding: 0.1rem 0.6rem;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .race__note {
+    margin: 0.9rem 0 0;
+  }
+
+  .race__link {
+    margin: 1rem 0 0;
+  }
+
+  .race__link a {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+</style>

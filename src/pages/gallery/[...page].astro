@@ -4,14 +4,17 @@ import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import PageHeader from '../../components/PageHeader.astro';
-import GalleryGrid from '../../components/GalleryGrid.astro';
+import PhotoWall from '../../components/PhotoWall.astro';
+import Lightbox from '../../components/Lightbox.astro';
 import Pagination from '../../components/Pagination.astro';
-import { shots } from '../../data/gallery';
+import { photos } from '../../data/library';
 
 // getStaticPaths is hoisted out of the component scope, so it cannot close over
-// anything declared here — the page size is inlined deliberately.
+// anything declared here — the page size is inlined deliberately. Newest first,
+// which means the top of the gallery is the last run.
 export const getStaticPaths = (({ paginate }) => {
-  return paginate(shots, { pageSize: 9 });
+  const newest = [...photos].sort((a, b) => b.date.localeCompare(a.date) || a.id.localeCompare(b.id));
+  return paginate(newest, { pageSize: 60 });
 }) satisfies GetStaticPaths;
 
 const { page } = Astro.props;
@@ -20,7 +23,7 @@ const suffix = page.currentPage > 1 ? ` — page ${page.currentPage}` : '';
 
 <Base
   title={`Gallery${suffix} — Run Baby Run Club`}
-  description="Photos from Run Baby Run's weekly runs around Yerevan."
+  description="Every photo from Run Baby Run's runs around Yerevan, by the day it was taken."
 >
   <Nav current="gallery" />
   <main>
@@ -31,16 +34,20 @@ const suffix = page.currentPage > 1 ? ` — page ${page.currentPage}` : '';
       meta={`Page ${page.currentPage} of ${page.lastPage} · showing ${page.data.length} of ${page.total}`}
     >
       <p>
-        Every run ends the same way — someone shouts “photo!” and we all squint into it. {page.total} of them, so far.
+        Every run ends the same way — someone shouts “photo!” and we all squint into
+        it. {page.total} of them since February, by the day they were taken. Any date
+        here takes you to that day in the <a href="/diary/">diary</a>.
       </p>
     </PageHeader>
 
     <section class="section gallery-page">
       <div class="wrap">
-        <GalleryGrid shots={page.data} offset={page.start} />
+        <PhotoWall photos={page.data} />
         <Pagination page={page} />
       </div>
     </section>
+
+    <Lightbox />
   </main>
   <Footer />
 </Base>

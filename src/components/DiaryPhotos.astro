@@ -1,0 +1,97 @@
+---
+import type { Photo } from '../data/library';
+
+interface Props {
+  photos: Photo[];
+  /** Used in the alt text and the lightbox caption. */
+  label: string;
+}
+
+const { photos, label } = Astro.props;
+
+const pretty = (iso: string) =>
+  new Date(iso + 'T12:00:00Z').toLocaleDateString('en-GB', {
+    day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
+  });
+---
+
+{
+  photos.length > 0 && (
+    <ul class={`shots shots--${Math.min(photos.length, 4)}`}>
+      {photos.map((photo) => (
+        <li class={photo.tall ? 'shots__item shots__item--tall' : 'shots__item'}>
+          {/* Same data attributes the gallery uses, so the shared viewer picks
+              these up with no extra wiring. */}
+          <a
+            class="shot__link"
+            href={`/photos/${photo.month}/${photo.id}.webp`}
+            data-zoom={`/photos/${photo.month}/${photo.id}.webp`}
+            data-zoom-srcset={`/photos/${photo.month}/${photo.id}.webp ${photo.width}w`}
+            data-zoom-w={photo.width}
+            data-zoom-h={photo.height}
+            data-caption={`${label} · ${pretty(photo.date)}`}
+            data-alt={`Run Baby Run, ${pretty(photo.date)}`}
+            aria-label={`Open photo from ${pretty(photo.date)}`}
+          >
+            <img
+              src={`/photos/${photo.month}/${photo.id}-t.webp`}
+              alt={`Run Baby Run, ${pretty(photo.date)}`}
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            />
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .shots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.5rem;
+    margin: 1.1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .shots__item {
+    margin: 0;
+  }
+
+  /* One photo should not become a poster the width of the card. */
+  .shots--1 { max-width: 260px; }
+  .shots--2 { max-width: 420px; }
+  .shots--3 { max-width: 580px; }
+
+  .shots__item a {
+    display: block;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--cream);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.15s ease;
+  }
+
+  .shots__item a:hover {
+    transform: translate(-2px, -2px);
+  }
+
+  .shots__item img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .shots__item a {
+      transition: none;
+    }
+  }
+</style>

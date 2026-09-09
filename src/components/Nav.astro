@@ -3,7 +3,7 @@ import { site } from '../data/site';
 
 interface Props {
   /** Which top-level page is showing, so the nav can mark it. */
-  current?: 'home' | 'gallery' | 'members' | 'leaderboard';
+  current?: 'home' | 'diary' | 'gallery' | 'races' | 'members' | 'leaderboard';
 }
 
 const { current = 'home' } = Astro.props;
@@ -11,8 +11,9 @@ const { current = 'home' } = Astro.props;
 // Absolute hrefs so the section anchors also work from /gallery.
 const links = [
   { href: '/#schedule', label: 'Schedule' },
-  { href: '/#club', label: 'The club' },
+  { href: '/diary/', label: 'Diary', key: 'diary' },
   { href: '/gallery/', label: 'Gallery', key: 'gallery' },
+  { href: '/races/', label: 'Races', key: 'races' },
   { href: '/members/', label: 'Members', key: 'members' },
   { href: '/leaderboard/', label: 'Leaderboard', key: 'leaderboard' },
 ];

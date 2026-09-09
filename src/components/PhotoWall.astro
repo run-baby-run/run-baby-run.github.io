@@ -1,0 +1,135 @@
+---
+import type { Photo } from '../data/library';
+
+interface Props {
+  photos: Photo[];
+}
+
+const { photos } = Astro.props;
+
+const day = (iso: string) =>
+  new Date(iso + 'T12:00:00Z').toLocaleDateString('en-GB', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
+  });
+
+// Grouped by the day they were taken: a gallery of a year of runs reads far
+// better as days than as one undifferentiated wall.
+const days: { date: string; photos: Photo[] }[] = [];
+for (const photo of photos) {
+  if (days.at(-1)?.date !== photo.date) days.push({ date: photo.date, photos: [] });
+  days.at(-1)!.photos.push(photo);
+}
+---
+
+{
+  days.map((group) => (
+    <section class="wall__day">
+      <h2 class="wall__date">
+        <a href={`/diary#${group.date}`}>
+          <time datetime={group.date}>{day(group.date)}</time>
+        </a>
+        <small>{group.photos.length} {group.photos.length === 1 ? 'photo' : 'photos'}</small>
+      </h2>
+
+      <ul class="wall">
+        {group.photos.map((photo, i) => (
+          <li class={`wall__item${photo.tall ? ' wall__item--tall' : ''}`} style={`--tilt:${(i % 3) - 1}deg`}>
+            <a
+              class="shot__link"
+              href={`/photos/${photo.month}/${photo.id}.webp`}
+              data-zoom={`/photos/${photo.month}/${photo.id}.webp`}
+              data-zoom-srcset={`/photos/${photo.month}/${photo.id}.webp ${photo.width}w`}
+              data-zoom-w={photo.width}
+              data-zoom-h={photo.height}
+              data-caption={day(photo.date)}
+              data-alt={`Run Baby Run, ${day(photo.date)}`}
+              aria-label={`Open photo from ${day(photo.date)}`}
+            >
+              <img
+                src={`/photos/${photo.month}/${photo.id}-t.webp`}
+                alt={`Run Baby Run, ${day(photo.date)}`}
+                width="400"
+                height="400"
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))
+}
+
+<style>
+  .wall__day {
+    margin-bottom: clamp(2rem, 5vw, 3rem);
+  }
+
+  .wall__date {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin: 0 0 0.9rem;
+    font-size: clamp(1rem, 2.6vw, 1.25rem);
+  }
+
+  .wall__date a {
+    text-decoration: none;
+    color: inherit;
+    border-bottom: 3px solid var(--pink-text);
+  }
+
+  .wall__date small {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .wall {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .wall__item {
+    margin: 0;
+  }
+
+  .wall__item a {
+    display: block;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--cream);
+    box-shadow: var(--shadow-sm);
+    transform: rotate(var(--tilt, 0deg));
+    transition: transform 0.18s ease;
+  }
+
+  .wall__item a:hover,
+  .wall__item a:focus-visible {
+    transform: rotate(0deg) translate(-2px, -2px);
+  }
+
+  .wall__item img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wall__item a {
+      transform: none;
+      transition: none;
+    }
+  }
+</style>

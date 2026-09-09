@@ -11,3 +11,9 @@ npm-debug.log*
 /jebid.jpg
 /harhov.jpg
 /members/
+
+# The WhatsApp export: a private group chat and 745MB of originals. Never
+# committed — only chosen, resized derivatives under src/assets/ go in.
+/WhatsApp Chat with*
+
+diary/
