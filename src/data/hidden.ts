@@ -31,8 +31,6 @@ export const hiddenFromDiary = new Set<string>([
   '2026-07-16-04', // a concert poster
   '2026-08-24-01', // Tricolor Gyumri Run, one month to go
   '2026-08-24-02', // the Gyumri programme
-  '2026-09-01-01', // a Strava "Day 01/121" card
-  '2026-09-08-01', // a Strava "Day 08/121" card
 
   // The same moment, twice
   '2026-04-04-02', // as -01
@@ -57,4 +55,14 @@ export const hiddenFromDiary = new Set<string>([
   '2026-08-07-03', // more leaves
   '2026-08-13-03', // a doorway
   '2026-06-30-02', // an empty escalator hall
+
+  // One member posts his own training from India — a 121-day challenge of a
+  // half marathon a day — into the group. Good luck to him, but none of it
+  // happened on one of our runs.
+  '2026-06-27-03', // geese at a lake, not ours
+  '2026-06-27-04', // the same lake
+  '2026-09-01-01', // Day 01/121
+  '2026-09-03-04', // Day 03/121
+  '2026-09-04-01', // Day 04/121
+  '2026-09-08-01', // Day 08/121
 ]);
