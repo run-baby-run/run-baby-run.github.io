@@ -59,7 +59,13 @@ const pretty = (iso: string) =>
             </div>
             {race.note && <p class="race__note">{race.note}</p>}
             <DiaryPhotos
-              photos={race.photos ? shotsOn(race.date, race.photosAfter).slice(0, race.photos) : []}
+              photos={
+                race.photoIds
+                  ? race.photoIds.map((id) => photos.find((p) => p.id === id)!).filter(Boolean)
+                  : race.photos
+                    ? shotsOn(race.date, race.photosAfter).slice(0, race.photos)
+                    : []
+              }
               label={race.name}
             />
             <p class="race__link">

@@ -25,6 +25,13 @@ export interface Race {
    * that evening.
    */
   photosAfter?: string;
+  /**
+   * Named photographs, when a date alone will not do. The Spring Run and Wings
+   * for Life were both on 10 May and everybody posted afterwards, so the send
+   * times cannot tell them apart — but the pictures can: the Spring Run has a
+   * FINISH gate, Wings for Life a white arch and yellow bibs. Split by eye.
+   */
+  photoIds?: string[];
 }
 
 export const races: Race[] = [
@@ -52,7 +59,10 @@ export const races: Race[] = [
     where: 'Yerevan',
     distances: ['5 km', '10 km', '21.1 km'],
     note: 'Sold out before some of us got to the form. Ten in the morning, and then Wings for Life the same afternoon.',
-    photos: 8,
+    photoIds: [
+      '2026-05-10-01', '2026-05-10-02', '2026-05-10-03', '2026-05-10-04',
+      '2026-05-10-06', '2026-05-10-07', '2026-05-10-08', '2026-05-10-17',
+    ],
   },
   {
     slug: 'wings-for-life',
@@ -61,7 +71,10 @@ export const races: Race[] = [
     where: 'Yerevan',
     distances: ['until the car catches you'],
     note: 'Three in the afternoon, caps and medals, and the second race of the same day for anyone who had signed up twice.',
-    photos: 6,
+    photoIds: [
+      '2026-05-10-11', '2026-05-10-13', '2026-05-10-14', '2026-05-10-20',
+      '2026-05-10-26', '2026-05-10-29', '2026-05-10-33',
+    ],
   },
   {
     slug: 'one-run',

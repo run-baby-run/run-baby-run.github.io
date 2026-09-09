@@ -65,4 +65,6 @@ export const hiddenFromDiary = new Set<string>([
   '2026-09-03-04', // Day 03/121
   '2026-09-04-01', // Day 04/121
   '2026-09-08-01', // Day 08/121
+
+  '2026-05-10-16', // India Gate — a different race, on a different continent
 ]);
