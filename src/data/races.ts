@@ -98,8 +98,8 @@ export const races: Race[] = [
     name: 'Vanadzor Half Marathon',
     date: '2026-08-23',
     where: 'Vanadzor',
-    distances: ['21.1 km'],
-    note: 'Out of the city for once, with a club discount code that was just the club’s name in capitals. One of us finished 34th of 106 and took twenty minutes off their own best.',
+    distances: ['10 km', '21.1 km'],
+    note: 'Out of the city for once, with a discount code that was just our name in capitals. Some of us took the 10K and some the half; one of us finished 34th of 106 and took twenty minutes off his own best. Six medals in the photo, held up together.',
     photos: 4,
   },
 ];
