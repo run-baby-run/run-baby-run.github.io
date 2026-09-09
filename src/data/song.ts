@@ -11,12 +11,17 @@ export interface Track {
   duration: string;
 }
 
-/** Four builds of the same song. Same words, different arrangements. */
+/**
+ * Four builds of the same song — same words, different arrangements.
+ *
+ * "Build" is our word for them, not the visitor's: the labels below are what
+ * shows on the site, so keep them plain.
+ */
 export const tracks: Track[] = [
-  { label: 'Full take', file: '/audio/just-show-up-1.mp3', duration: '3:50' },
-  { label: 'Second build', file: '/audio/just-show-up-2.mp3', duration: '3:42' },
-  { label: 'Short cut', file: '/audio/just-show-up-3.mp3', duration: '1:00' },
-  { label: 'Short cut, take two', file: '/audio/just-show-up-4.mp3', duration: '1:00' },
+  { label: 'First full song', file: '/audio/just-show-up-1.mp3', duration: '3:50' },
+  { label: 'Second full song', file: '/audio/just-show-up-2.mp3', duration: '3:42' },
+  { label: 'First short version', file: '/audio/just-show-up-3.mp3', duration: '1:00' },
+  { label: 'Second short version', file: '/audio/just-show-up-4.mp3', duration: '1:00' },
 ];
 
 /** Blank lines separate stanzas. */
