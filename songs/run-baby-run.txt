@@ -1,0 +1,111 @@
+RUN BABY RUN — club song #2
+Late-night house. Written for the Tuesday 22:00 run.
+
+Suno has two boxes. Paste the first block into Style, the second into Lyrics.
+
+
+================================================================
+1. STYLE  (paste into the "Style of Music" box)
+================================================================
+
+late-night disco house, 126 bpm, four-on-the-floor kick, filtered disco strings,
+funky muted guitar, deep sub bass, hand claps on 2 and 4, big filter sweeps,
+chanted crowd vocals, female lead with vocoder stabs, euphoric night-drive energy
+
+
+================================================================
+2. LYRICS  (paste into the "Lyrics" box, tags and all)
+================================================================
+
+[Intro — spoken over a filter sweep]
+Ten o'clock. Yerevan.
+Lights on. Watch on.
+Run.
+
+[Build]
+Run baby — run baby —
+Run baby — run baby —
+Run baby — run baby —
+RUN
+
+[Drop / Hook]
+Run baby run, run baby run
+Under the streetlight, out past the square
+Run baby run, run baby run
+Nobody's counting, nobody cares
+Run baby run, run baby run
+Front of the pack or back of the line
+Run baby run, run baby run
+Everybody's finishing fine
+
+[Verse 1]
+Tuesday, ten, the city's still awake
+Cold on the arms and the pavement shakes
+Somebody's laughing, somebody's late
+Somebody's stretching against the gate
+We don't ask how far, we don't ask how fast
+We just ask are you coming — that's the whole class
+
+[Pre]
+Feet on the stone, breath in the dark
+One more lap of the park
+Run — run — run
+
+[Drop / Hook]
+Run baby run, run baby run
+Past the fountain where the dog gets a drink
+Run baby run, run baby run
+Legs keep going while you stop and think
+Run baby run, run baby run
+Hrazdan wind and the bridge lights on
+Run baby run, run baby run
+Look up once and the hard part's gone
+
+[Breakdown — filtered, almost whispered]
+Run baby run...
+Run baby run...
+(just show up)
+Run baby run...
+(we'll take it from there)
+
+[Final Drop — full crowd]
+RUN BABY RUN, RUN BABY RUN
+RUN BABY RUN, RUN BABY RUN
+Coffee at the corner when the work is done
+RUN BABY RUN, RUN BABY RUN
+
+[Outro]
+Same corner. Same time.
+Run.
+
+
+================================================================
+NOTES
+================================================================
+
+- The club name lands 32 times. That is the point of the track: anyone who
+  hears it once should know what the club is called.
+
+- Keep [Breakdown] sparse. If Suno fills it in, it becomes a fourth chorus and
+  the last drop stops meaning anything. Adding "(sparse, drums out)" next to
+  the tag usually fixes it.
+
+- Generate 4-6 takes. House lives or dies on whether the drop actually lands,
+  and Suno is inconsistent there. Judge takes on the first drop and the
+  breakdown; the verses will be fine either way.
+
+- If a take is good but the intro drags, regenerate with "no long intro" added
+  to the style box.
+
+
+================================================================
+FOR REFERENCE — song #1, "Just Show Up"
+================================================================
+
+Style used:
+
+indie pop anthem, 124 bpm, driving four-on-the-floor kick, bright palm-muted
+guitar, warm analog synth bass, handclaps, gang vocals on the chorus,
+female lead with male harmonies, euphoric build, hopeful, slightly breathless
+
+Lyrics are in src/data/song.ts, which is also what the website displays.

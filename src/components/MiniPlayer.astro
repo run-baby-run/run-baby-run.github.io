@@ -1,8 +1,8 @@
 ---
-import { song, tracks } from '../data/song';
+import { playlist } from '../data/song';
 ---
 
-<div class="mini" id="rbr-mini" hidden data-tracks={JSON.stringify(tracks)}>
+<div class="mini" id="rbr-mini" hidden data-tracks={JSON.stringify(playlist)}>
   <button class="mini__step" type="button" data-mini-prev aria-label="Previous take">
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M16 5.5v13L7 12zM6 5h2.2v14H6z" />
@@ -25,8 +25,8 @@ import { song, tracks } from '../data/song';
   </button>
 
   <a class="mini__text" href="/#song">
-    <span class="mini__title">{song.title}</span>
-    <span class="mini__time"><span data-mini-take>1 / {tracks.length}</span> · <span data-mini-time>0:00</span></span>
+    <span class="mini__title" data-mini-song>{playlist[0].song}</span>
+    <span class="mini__time"><span data-mini-take>{playlist[0].take} / {playlist[0].takes}</span> · <span data-mini-time>0:00</span></span>
   </a>
 
   <button class="mini__close" type="button" data-mini-close aria-label="Stop the club song">✕</button>
@@ -44,26 +44,39 @@ import { song, tracks } from '../data/song';
     seek: HTMLInputElement;
     current: HTMLElement;
     duration: HTMLElement;
+    song: HTMLElement | null;
     take: HTMLElement | null;
     download: HTMLAnchorElement | null;
   }
 
-  /** Keeps the take label, duration and download link on the loaded track. */
+  /**
+   * Keeps the song name, take label, duration and download link on the loaded
+   * track. The count is within the SONG — "2 / 4" of Just Show Up — not the
+   * position in the flat playlist, which would keep climbing as songs are added.
+   */
   function labelTrack(i: number) {
     const list = trackList();
-    if (!list[i]) return;
-    const label = `${i + 1} / ${list.length}`;
+    const entry = list[i];
+    if (!entry) return;
+    const count = `${entry.take} / ${entry.takes}`;
 
     const miniTake = document.querySelector<HTMLElement>('[data-mini-take]');
-    if (miniTake) miniTake.textContent = label;
+    if (miniTake) miniTake.textContent = count;
+    const miniSong = document.querySelector<HTMLElement>('[data-mini-song]');
+    if (miniSong) miniSong.textContent = entry.song;
 
     const page = w.__rbrPage;
     if (!page) return;
-    if (page.take) page.take.textContent = `${label} · ${list[i].label}`;
-    page.duration.textContent = list[i].duration;
+    if (page.song) page.song.textContent = entry.song;
+    if (page.take) page.take.textContent = `${count} · ${entry.label}`;
+    page.duration.textContent = entry.duration;
     if (page.download) {
-      page.download.href = list[i].file;
-      page.download.download = `Run Baby Run — Just Show Up (${list[i].label}).mp3`;
+      page.download.href = entry.file;
+      // The club name prefixes the file, unless the song is already called it.
+      const base = entry.song.startsWith('Run Baby Run')
+        ? entry.song
+        : `Run Baby Run — ${entry.song}`;
+      page.download.download = `${base} (${entry.label}).mp3`;
     }
   }
 
@@ -96,6 +109,10 @@ import { song, tracks } from '../data/song';
     label: string;
     file: string;
     duration: string;
+    /** Which song the take belongs to, so the counter can reset per song. */
+    song: string;
+    take: number;
+    takes: number;
   }
 
   const trackList = (): Track[] => {
@@ -225,6 +242,7 @@ import { song, tracks } from '../data/song';
       seek,
       current,
       duration,
+      song: root.querySelector<HTMLElement>('[data-song]'),
       take: root.querySelector<HTMLElement>('[data-take]'),
       download: root.querySelector<HTMLAnchorElement>('[data-download]'),
     };

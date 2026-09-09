@@ -1,5 +1,7 @@
 ---
-import { song, lyrics, tracks } from '../data/song';
+import { songs, playlist } from '../data/song';
+
+const first = playlist[0];
 ---
 
 <section class="song" id="song">
@@ -8,8 +10,12 @@ import { song, lyrics, tracks } from '../data/song';
   <div class="wrap song__inner">
     <div class="song__intro">
       <p class="eyebrow song__eyebrow">Turn it up</p>
-      <h2>We wrote<br />a club song.</h2>
-      <p class="song__note">{song.note}</p>
+      <h2>We wrote<br />club songs.</h2>
+      <p class="song__note">
+        Two of them, written for the Tuesday ten o’clock run. Each has a few takes —
+        same words, different arrangements. Play them all the way through and they roll
+        on from one to the next.
+      </p>
     </div>
 
     <div class="player sticker" data-player>
@@ -17,10 +23,10 @@ import { song, lyrics, tracks } from '../data/song';
            navigation; this is only the fallback for a scriptless browser. -->
       <noscript>
         {
-          tracks.map((track, i) => (
+          playlist.map((track) => (
             <p class="player__fallback">
               <strong>
-                {i + 1} / {tracks.length} · {track.label}
+                {track.song} · {track.take} / {track.takes} · {track.label}
               </strong>
               <audio class="player__audio" src={track.file} preload="none" controls />
             </p>
@@ -35,7 +41,7 @@ import { song, lyrics, tracks } from '../data/song';
           </svg>
         </button>
 
-        <button class="player__toggle" type="button" data-toggle aria-label={`Play ${song.title}`}>
+        <button class="player__toggle" type="button" data-toggle aria-label="Play the club song">
           <svg class="player__icon player__icon--play" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M8 5.5v13l11-6.5z" />
           </svg>
@@ -52,8 +58,8 @@ import { song, lyrics, tracks } from '../data/song';
 
         <div class="player__body">
           <p class="player__title">
-            {song.title}
-            <span class="player__take" data-take>1 / {tracks.length} · {tracks[0].label}</span>
+            <span data-song>{first.song}</span>
+            <span class="player__take" data-take>{first.take} / {first.takes} · {first.label}</span>
           </p>
           <input
             class="player__seek"
@@ -70,37 +76,48 @@ import { song, lyrics, tracks } from '../data/song';
             <a
               class="player__download"
               data-download
-              href={tracks[0].file}
-              download={`Run Baby Run — Just Show Up (${tracks[0].label}).mp3`}
+              href={first.file}
+              download={`Run Baby Run — ${first.song} (${first.label}).mp3`}
             >
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 3v10m0 0-4-4m4 4 4-4M5 19h14" />
               </svg>
               Download
             </a>
-            <span data-duration>{tracks[0].duration}</span>
+            <span data-duration>{first.duration}</span>
           </p>
         </div>
       </div>
     </div>
 
-    <details class="lyrics">
-      <summary>Lyrics</summary>
-      <div class="lyrics__body">
-        {
-          lyrics.map((stanza) => (
-            <p>
-              {stanza.map((line, i) => (
-                <>
-                  {i > 0 && <br />}
-                  {line}
-                </>
+    <div class="lyrics-set">
+      {
+        songs.map((s) => (
+          <details class="lyrics">
+            <summary>
+              {s.title}
+              <span class="lyrics__meta">
+                {s.tracks.length > 0
+                  ? `${s.tracks.length} take${s.tracks.length > 1 ? 's' : ''} · lyrics`
+                  : 'Lyrics · not recorded yet'}
+              </span>
+            </summary>
+            <div class="lyrics__body">
+              {s.lyrics.map((stanza) => (
+                <p>
+                  {stanza.map((line, i) => (
+                    <>
+                      {i > 0 && <br />}
+                      {line}
+                    </>
+                  ))}
+                </p>
               ))}
-            </p>
-          ))
-        }
-      </div>
-    </details>
+            </div>
+          </details>
+        ))
+      }
+    </div>
   </div>
 </section>
 
@@ -293,6 +310,7 @@ import { song, lyrics, tracks } from '../data/song';
 
   .player__times {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
@@ -334,14 +352,23 @@ import { song, lyrics, tracks } from '../data/song';
   }
 
   /* ---- lyrics ---- */
-  .lyrics {
+  .lyrics-set {
+    display: grid;
+    gap: 0.75rem;
     margin-top: 1.75rem;
+  }
+
+  .lyrics {
     border: var(--line) solid var(--ink);
     border-radius: var(--radius);
     background: color-mix(in srgb, var(--cream) 55%, transparent);
   }
 
   .lyrics summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.6rem;
     padding: 0.85rem 1.25rem;
     font-family: var(--font-display);
     font-weight: 800;
@@ -355,6 +382,14 @@ import { song, lyrics, tracks } from '../data/song';
     outline: 3px solid var(--ink);
     outline-offset: -3px;
     border-radius: var(--radius);
+  }
+
+  .lyrics__meta {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
   }
 
   .lyrics__body {
@@ -372,6 +407,32 @@ import { song, lyrics, tracks } from '../data/song';
   @media (max-width: 560px) {
     .player__ui {
       gap: 0.85rem;
+    }
+
+    /* The download pill plus both times will not fit a phone's width, and
+       space-between pushed the duration off the edge of the card. Drop the
+       pill onto its own line and let the two times keep the ends. */
+    .player__times {
+      row-gap: 0.6rem;
+    }
+
+    .player__download {
+      order: 1;
+      flex-basis: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* Below ~380px the three buttons leave the body barely 60px, too narrow even
+     for the download pill. Give the body the full width under the controls. */
+  @media (max-width: 380px) {
+    .player__ui {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .player__body {
+      flex-basis: 100%;
     }
 
     .player__toggle {
