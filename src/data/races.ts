@@ -19,6 +19,12 @@ export interface Race {
   note?: string;
   /** How many of that day's photographs to show. */
   photos?: number;
+  /**
+   * Only photographs sent after this time (HH:MM), for a day that held more
+   * than one thing — 14 June was a trail race at lunchtime and the Beat Run
+   * that evening.
+   */
+  photosAfter?: string;
 }
 
 export const races: Race[] = [
@@ -72,6 +78,7 @@ export const races: Race[] = [
     date: '2026-06-14',
     where: 'Shahumyan Square, Yerevan',
     distances: ['5 km'],
+    photosAfter: '18:00',
     note: 'An evening fun run, 19:30 start, no finisher medal and nobody minded. Newcomers were told they would recognise us afterwards, which turned out to be true.',
     photos: 8,
   },

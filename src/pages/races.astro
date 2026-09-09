@@ -58,7 +58,10 @@ const pretty = (iso: string) =>
               </ul>
             </div>
             {race.note && <p class="race__note">{race.note}</p>}
-            <DiaryPhotos photos={race.photos ? shotsOn(race.date).slice(0, race.photos) : []} label={race.name} />
+            <DiaryPhotos
+              photos={race.photos ? shotsOn(race.date, race.photosAfter).slice(0, race.photos) : []}
+              label={race.name}
+            />
             <p class="race__link">
               <a href={`/diary#${race.date}`}>That day in the diary →</a>
             </p>
