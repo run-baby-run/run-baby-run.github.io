@@ -7,8 +7,10 @@ import Lightbox from '../components/Lightbox.astro';
 import DiaryPhotos from '../components/DiaryPhotos.astro';
 import { racesByDate } from '../data/races';
 import { photos } from '../data/library';
+import { hiddenFromDiary } from '../data/hidden';
 
-const shotsOn = (date: string) => photos.filter((p) => p.date === date);
+const shotsOn = (date: string) =>
+  photos.filter((p) => p.date === date && !hiddenFromDiary.has(p.id));
 
 const pretty = (iso: string) =>
   new Date(iso + 'T12:00:00Z').toLocaleDateString('en-GB', {
