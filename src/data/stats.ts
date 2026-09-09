@@ -519,6 +519,30 @@ export const stats: AthleteStats[] = [
     highlight: 'Marathon best of 4:24:12',
   },
   {
+    member: 'Georgii',
+    stravaName: 'Georgii Ponomarev',
+    recent: { activitiesPerWeek: 8, distancePerWeekKm: 52.6, timePerWeek: '5h 23m', elevationPerWeekM: 867 },
+    bests: [
+      { label: '400m', time: '46s' },
+      { label: '½ mile', time: '1:48' },
+      { label: '1K', time: '2:59' },
+      // Strava also reports a 3:58 mile and a 9:24 two mile. Both are GPS
+      // artefacts — they are quicker than his 5K pace, which is already 6:20
+      // a mile — so they are left out rather than shown as bests.
+      { label: '5K', time: '19:43' },
+      { label: '10K', time: '40:37' },
+      { label: '15K', time: '1:03:37' },
+      { label: '10 mile', time: '1:08:34' },
+      { label: '20K', time: '1:26:18' },
+      { label: 'Half-Marathon', time: '1:31:34' },
+      { label: '30K', time: '2:21:51' },
+      { label: 'Marathon', time: '3:37:19' },
+    ],
+    thisYear: { activities: 295, distanceKm: 2035.5, time: '208h 40m', elevationM: 30535 },
+    allTime: { activities: 677, distanceKm: 4764.7, time: '482h 45m', elevationM: 64376 },
+    highlight: 'Eight runs a week, and 30,535m of climbing this year',
+  },
+  {
     member: 'Sevag',
     stravaName: 'Sevag Sulahian',
     location: 'Yerevan',
