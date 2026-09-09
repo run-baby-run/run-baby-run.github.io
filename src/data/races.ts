@@ -4,9 +4,9 @@
  * Everything here is drawn from the group chat, so a race is listed only where
  * the archive actually shows people going. Dates are the day of the race.
  *
- * Not listed yet, for want of a confirmed date: the Vanadzor Half Marathon,
- * whose registrations were confirmed on 20 August, and the October half
- * marathon people have been training for.
+ * Still to come at the time of writing: the Yerevan Marathon on 17-18 October,
+ * which the club has a discount code for and at least one person has signed up
+ * to run the full 42.2 km of.
  */
 
 export interface Race {
@@ -67,22 +67,40 @@ export const races: Race[] = [
     photos: 8,
   },
   {
+    slug: 'beat-run',
+    name: 'Tricolor Beat Run',
+    date: '2026-06-14',
+    where: 'Shahumyan Square, Yerevan',
+    distances: ['5 km'],
+    note: 'An evening fun run, 19:30 start, no finisher medal and nobody minded. Newcomers were told they would recognise us afterwards, which turned out to be true.',
+    photos: 8,
+  },
+  {
     slug: 'night-race',
-    name: 'The night race',
+    name: 'Tricolor Night Race',
     date: '2026-07-04',
-    where: 'Yerevan',
-    distances: ['—'],
-    note: 'Bibs collected the day before, photos posted at one in the morning.',
-    photos: 5,
+    where: 'Republic Square, Yerevan',
+    distances: ['5 km', '10 km'],
+    note: 'Half past nine at night, through the middle of the city, for the Day of State Symbols. Bibs the day before, T-shirts on site, congratulations until about one in the morning.',
+    photos: 6,
   },
   {
     slug: 'yerevan-run',
-    name: 'Yerevan Run',
+    name: 'HamaliRun × Run Baby Run',
     date: '2026-08-01',
-    where: 'Yerevan',
-    distances: ['—'],
-    note: 'The one the club helped put on rather than only turning up to. Photos and video in a shared folder by the evening.',
-    photos: 8,
+    where: 'Hrazdan Gorge, Yerevan',
+    distances: ['5 km'],
+    note: 'The first race with the club’s name on it rather than only its runners in it. Small finisher medals, water and snacks, and a start you could roll straight into from the 8:00 breakfast run.',
+    photos: 10,
+  },
+  {
+    slug: 'vanadzor-half',
+    name: 'Vanadzor Half Marathon',
+    date: '2026-08-23',
+    where: 'Vanadzor',
+    distances: ['21.1 km'],
+    note: 'Out of the city for once, with a club discount code that was just the club’s name in capitals. One of us finished 34th of 106 and took twenty minutes off their own best.',
+    photos: 4,
   },
 ];
 
