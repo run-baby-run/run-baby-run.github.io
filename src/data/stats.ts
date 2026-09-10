@@ -1,6 +1,6 @@
 /**
  * Strava figures for the club, transcribed from each athlete's side-by-side
- * comparison view on 8 September 2026.
+ * comparison view on 8 September 2026, and Agnesa's on 10 September.
  *
  * A snapshot, not a live feed: Strava's API only exposes an athlete's own
  * detailed stats, so these cannot be refreshed automatically. Best efforts are
@@ -625,6 +625,23 @@ export const stats: AthleteStats[] = [
     ],
     thisYear: { activities: 13, distanceKm: 77.3, time: '8h 35m', elevationM: 591 },
     allTime: { activities: 13, distanceKm: 77.3, time: '8h 35m', elevationM: 591 },
+  },
+  {
+    member: 'Agnesa',
+    stravaName: 'Agnesa Galstyan',
+    location: 'Yerevan',
+    recent: { activitiesPerWeek: 5, distancePerWeekKm: 19.1, timePerWeek: '2h 19m', elevationPerWeekM: 194 },
+    bests: [
+      { label: '400m', time: '1:45' },
+      { label: '½ mile', time: '4:07' },
+      { label: '1K', time: '5:15' },
+      { label: '1 mile', time: '9:00' },
+      { label: '2 mile', time: '18:35' },
+      { label: '5K', time: '34:17' },
+    ],
+    thisYear: { activities: 67, distanceKm: 320.9, time: '41h 41m', elevationM: 2751 },
+    allTime: { activities: 67, distanceKm: 320.9, time: '41h 41m', elevationM: 2751 },
+    highlight: 'Third-fastest ever up Saryan from Mashtots (2:28)',
   },
 ];
 
