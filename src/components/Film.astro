@@ -1,0 +1,100 @@
+---
+/**
+ * The club film: sixty seconds of our own footage under our own song.
+ *
+ * Never autoplays, for the same reason the music does not — arriving on a page
+ * is not a request to hear anything. It carries a poster so the player is not a
+ * black box, and preload="none" so a visitor who never presses it pays nothing.
+ */
+import { songs } from '../data/song';
+
+const song = songs[0];
+---
+
+<section class="film" id="film">
+  <div class="wrap film__inner">
+    <div class="film__intro">
+      <p class="eyebrow film__eyebrow">Sixty seconds</p>
+      <h2>We made<br />a film.</h2>
+      <p class="film__note">
+        Forty-nine clips from our own phones, March to September, cut to
+        “{song.title}”. The dogs are in it. So is the tunnel.
+      </p>
+    </div>
+
+    <div class="film__frame sticker">
+      <video
+        class="film__video"
+        src="/video/run-baby-run.mp4"
+        poster="/video/run-baby-run.jpg"
+        preload="none"
+        controls
+        playsinline
+        width="1280"
+        height="720"
+      >
+        <p>
+          Your browser cannot play this.
+          <a href="/video/run-baby-run.mp4">Download the film</a> instead.
+        </p>
+      </video>
+    </div>
+  </div>
+</section>
+
+<script>
+  // The film has the song in it, and the site has a music player that follows
+  // you around. Two copies of Just Show Up at once is nobody's idea of a good
+  // time, so starting one stops the other.
+  function initFilm() {
+    const film = document.querySelector<HTMLVideoElement>('.film__video');
+    if (!film || film.dataset.bound === 'true') return;
+    film.dataset.bound = 'true';
+
+    film.addEventListener('play', () => {
+      const audio = document.getElementById('rbr-audio') as HTMLAudioElement | null;
+      if (audio && !audio.paused) audio.pause();
+    });
+  }
+
+  initFilm();
+  document.addEventListener('astro:page-load', initFilm);
+</script>
+
+<style>
+  .film {
+    background: var(--ink);
+    color: var(--cream);
+    border-block: var(--line) solid var(--ink);
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+  }
+
+  .film__inner {
+    max-width: 980px;
+  }
+
+  .film__eyebrow {
+    background: var(--pink);
+    color: var(--ink);
+  }
+
+  .film__note {
+    margin: 1.25rem 0 2rem;
+    max-width: 42ch;
+    color: color-mix(in srgb, var(--cream) 80%, transparent);
+  }
+
+  .film__frame {
+    padding: 0;
+    overflow: hidden;
+    background: #000;
+    line-height: 0;
+  }
+
+  .film__video {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+</style>
