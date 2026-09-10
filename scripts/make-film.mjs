@@ -44,14 +44,34 @@ const W = 576, H = 1024, FPS = 30;
  * Three were dropped for being 200 pixels across — 23, 163 and 171, all dogs.
  * Nothing can be done with a 200px source on a 1024px canvas; 111 keeps a dog
  * in the film.
+ *
+ * A fourth, 240, was dropped as the closing shot: half of it is a tree trunk,
+ * and alone among these it has a hashed filename rather than a dated one, so
+ * there is no date to caption it with. The film now ends where it should, on
+ * the whole club lined up on the road at the end of August.
  */
 const PICKS = [
   3, 8, 11, 13, 17, 34, 38, 44, 47,
   50, 53, 63, 66, 74, 77, 79, 85, 91,
   106, 111, 113, 114, 119, 121, 122, 126, 130, 136, 138,
   149, 153, 154, 166, 168, 174, 187, 189,
-  194, 197, 201, 205, 210, 217, 226, 233, 240,
+  194, 197, 201, 205, 210, 217, 226, 233,
 ];
+
+const FONT = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf';
+const MONTHS = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
+
+/**
+ * The date of a clip, from its own filename. WhatsApp names every file
+ * VID-YYYYMMDD-WAnnnn, which is the one piece of provenance that survives its
+ * re-encoding — the files carry no usable metadata otherwise.
+ */
+function dateOf(stem) {
+  const m = stem.match(/-(20\d{2})(\d{2})(\d{2})-/);
+  if (!m) return null;
+  return `${Number(m[3])} ${MONTHS[Number(m[2]) - 1].toUpperCase()}`;
+}
 
 const index = JSON.parse(readFileSync('diary/vindex.json', 'utf8'));
 const meta = JSON.parse(readFileSync('diary/videos.json', 'utf8'));
@@ -80,6 +100,12 @@ clips.forEach((stem, n) => {
   const start = Math.max(0, source.dur / 2 - segment / 2);
   // Displayed orientation, which is not the stored one for 69 of these clips.
   const portrait = (source.dh ?? source.h) > (source.dw ?? source.w);
+
+  // The date, burnt into the corner, so an unbroken run of clips reads as the
+  // seven months it actually was rather than one long evening.
+  const caption =
+    `drawtext=fontfile=${FONT}:text='${dateOf(stem)}':x=32:y=h-78:fontsize=34:` +
+    `fontcolor=0xf7f6f4:shadowcolor=0x141414:shadowx=2:shadowy=2`;
   const part = join(TMP, `${String(n).padStart(3, '0')}.mp4`);
 
   execFileSync('ffmpeg', [
@@ -88,11 +114,11 @@ clips.forEach((stem, n) => {
     // six landscape ones would lose two thirds of their width to a 9:16 crop,
     // so those alone are fitted whole against a blurred blow-up of themselves.
     ...(portrait
-      ? ['-vf', `scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},fps=${FPS},setsar=1`]
+      ? ['-vf', `scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},fps=${FPS},setsar=1,${caption}`]
       : ['-filter_complex',
          `[0:v]scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},gblur=sigma=26[bg];` +
            `[0:v]scale=${W}:${H}:force_original_aspect_ratio=decrease[fg];` +
-           `[bg][fg]overlay=(W-w)/2:(H-h)/2,fps=${FPS},setsar=1[v]`,
+           `[bg][fg]overlay=(W-w)/2:(H-h)/2,fps=${FPS},setsar=1,${caption}[v]`,
          '-map', '[v]']),
     // Near-lossless: these are thrown away after the concat, and every bit of
     // quality lost here is lost again in the final encode.
