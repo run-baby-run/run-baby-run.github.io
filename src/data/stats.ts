@@ -644,10 +644,10 @@ export const stats: AthleteStats[] = [
     highlight: 'Third-fastest ever up Saryan from Mashtots (2:28)',
   },
   {
-    member: 'Ellie',
+    // The club calls her Aliya; Strava has all three of her names.
+    member: 'Aliya',
     stravaName: 'Ellie • Aliya • Hands',
     location: 'Seattle, Washington',
-    strava: '41543857',
     recent: { activitiesPerWeek: 0, distancePerWeekKm: 0, timePerWeek: '0h 0m', elevationPerWeekM: 0 },
     bests: [
       { label: '400m', time: '54s' },
