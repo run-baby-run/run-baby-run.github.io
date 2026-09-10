@@ -30,7 +30,7 @@ const song = songs[0];
         preload="none"
         controls
         playsinline
-        width="1280"
+        width="720"
         height="720"
       >
         <p>
@@ -85,6 +85,10 @@ const song = songs[0];
   }
 
   .film__frame {
+    /* Square, because the footage is: 175 of the 241 clips were filmed
+       portrait. Capped so it does not tower over a desktop page. */
+    max-width: 620px;
+    margin-inline: auto;
     padding: 0;
     overflow: hidden;
     background: #000;
@@ -95,6 +99,6 @@ const song = songs[0];
     display: block;
     width: 100%;
     height: auto;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 1 / 1;
   }
 </style>

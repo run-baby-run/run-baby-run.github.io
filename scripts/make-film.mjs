@@ -20,14 +20,34 @@ import { join } from 'node:path';
 const SONG = 'public/audio/just-show-up-3.mp3';
 const OUT = 'public/video';
 const TMP = 'diary/filmtmp';
-const W = 1280, H = 720, FPS = 30;
+/**
+ * Square, and 720 because of what the footage actually is.
+ *
+ * Two things had to be learned the hard way. First, ffprobe's width and height
+ * are the CODED size and ignore rotation metadata: 69 of these clips are stored
+ * landscape and played portrait, so an early count of "139 landscape" was
+ * simply wrong. On screen it is 175 portrait to 66 landscape — it is phone
+ * footage, and 16:9 was never the right shape for it.
+ *
+ * Second, a 1280x720 canvas upscaled 47 of 49 clips, median 1.5x, and the film
+ * looked soft; fitting them inside it instead left a small picture in a sea of
+ * blur. Square crops both orientations gently — a 576x1024 clip keeps its full
+ * width — and 720 keeps the upscale to 1.25x on the commonest source.
+ */
+const W = 720, H = 720, FPS = 30;
 
-/** Chosen by eye from diary/vpick/*.jpg — see diary/vindex.json for the map. */
+/**
+ * Chosen by eye from diary/vpick/*.jpg — see diary/vindex.json for the map.
+ *
+ * Three were dropped for being 200 pixels across — 23, 163 and 171, all dogs.
+ * Nothing can be done with a 200px source on a 1024px canvas; 111 keeps a dog
+ * in the film.
+ */
 const PICKS = [
-  3, 8, 11, 13, 17, 23, 34, 38, 44, 47,
+  3, 8, 11, 13, 17, 34, 38, 44, 47,
   50, 53, 63, 66, 74, 77, 79, 85, 91,
   106, 111, 113, 114, 119, 121, 122, 126, 130, 136, 138,
-  149, 153, 154, 163, 166, 168, 171, 174, 187, 189,
+  149, 153, 154, 166, 168, 174, 187, 189,
   194, 197, 201, 205, 210, 217, 226, 233, 240,
 ];
 
@@ -60,10 +80,13 @@ clips.forEach((stem, n) => {
 
   execFileSync('ffmpeg', [
     '-v', 'error', '-ss', String(start), '-t', String(segment), '-i', source.file,
-    // Fill the frame and centre-crop rather than pillarbox: 112 of these are
-    // portrait, and bars down both sides for half a film looks like a mistake.
+    // Fill the square and centre-crop. A portrait clip keeps its whole width
+    // and loses only top and bottom, which is where phone footage has least;
+    // a landscape one loses its edges. No blurred fill, no bars.
     '-vf', `scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},fps=${FPS},setsar=1`,
-    '-an', '-c:v', 'libx264', '-preset', 'medium', '-crf', '20', '-pix_fmt', 'yuv420p',
+    // Near-lossless: these are thrown away after the concat, and every bit of
+    // quality lost here is lost again in the final encode.
+    '-an', '-c:v', 'libx264', '-preset', 'medium', '-crf', '14', '-pix_fmt', 'yuv420p',
     part, '-y',
   ]);
   parts.push(part);
@@ -77,7 +100,7 @@ const film = join(OUT, 'run-baby-run.mp4');
 execFileSync('ffmpeg', [
   '-v', 'error', '-f', 'concat', '-safe', '0', '-i', join(TMP, 'list.txt'), '-i', SONG,
   '-map', '0:v', '-map', '1:a',
-  '-c:v', 'libx264', '-preset', 'slow', '-crf', '25', '-pix_fmt', 'yuv420p',
+  '-c:v', 'libx264', '-preset', 'slow', '-crf', '19', '-pix_fmt', 'yuv420p',
   '-c:a', 'aac', '-b:a', '128k',
   // Ends with the song, in case rounding leaves a frame over.
   '-shortest', '-movflags', '+faststart',

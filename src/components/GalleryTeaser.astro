@@ -1,9 +1,24 @@
 ---
-import GalleryGrid from './GalleryGrid.astro';
-import { shots } from '../data/gallery';
+import { photos } from '../data/library';
+import { hiddenFromDiary } from '../data/hidden';
+import { similarToOthers } from '../data/similar';
 
-// Landscape only, so the teaser row stays a clean single height.
-const preview = shots.filter((shot) => !shot.tall).slice(0, 3);
+// The three most recent landscape frames, so the teaser row stays one clean
+// height. Drawn from the same library the gallery uses, so the count on the
+// button is the real one — it used to read "See all 30 photos" from a curated
+// set that the gallery outgrew by a factor of thirty.
+//
+// Screened the same way the diary is: the first version of this picked up a
+// promotional card for somebody else's race as one of its three.
+const preview = photos
+  .filter((p) => !p.tall && !hiddenFromDiary.has(p.id) && !similarToOthers.has(p.id))
+  .slice(-3)
+  .reverse();
+
+const day = (iso: string) =>
+  new Date(iso + 'T12:00:00Z').toLocaleDateString('en-GB', {
+    day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
+  });
 ---
 
 <section class="section teaser" id="gallery">
@@ -14,11 +29,28 @@ const preview = shots.filter((shot) => !shot.tall).slice(0, 3);
         <h2>Every run ends<br />with a photo.</h2>
       </div>
       <a class="btn btn--ghost teaser__cta" href="/gallery/">
-        See all {shots.length} photos →
+        See all {photos.length} photos →
       </a>
     </div>
 
-    <GalleryGrid shots={preview} />
+    <ul class="teaser__row">
+      {
+        preview.map((photo, i) => (
+          <li class="teaser__shot" style={`--tilt:${(i % 3) - 1}deg`}>
+            <a href="/gallery/" aria-label={`The gallery — ${photos.length} photos`}>
+              <img
+                src={`/photos/${photo.month}/${photo.id}.webp`}
+                alt={`Run Baby Run, ${day(photo.date)}`}
+                width={photo.width}
+                height={photo.height}
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
   </div>
 </section>
 
@@ -26,25 +58,49 @@ const preview = shots.filter((shot) => !shot.tall).slice(0, 3);
   .teaser__head {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-end;
+    align-items: end;
     justify-content: space-between;
-    gap: 1.5rem 2rem;
-    margin-bottom: 3rem;
+    gap: 1.25rem;
+    margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
   }
 
-  .teaser__cta {
-    flex: none;
-  }
-
-  /* One clean row on the home page, whatever the column rules say. */
-  .teaser :global(.gallery) {
-    columns: auto;
+  .teaser__row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: clamp(1.25rem, 3vw, 2.25rem);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
-  .teaser :global(.gallery .shot) {
-    margin-bottom: 0;
+  .teaser__shot a {
+    display: block;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--cream);
+    box-shadow: var(--shadow-sm);
+    transform: rotate(var(--tilt, 0deg));
+    transition: transform 0.18s ease;
+  }
+
+  .teaser__shot a:hover,
+  .teaser__shot a:focus-visible {
+    transform: rotate(0deg) translate(-2px, -2px);
+  }
+
+  .teaser__shot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .teaser__shot a {
+      transform: none;
+      transition: none;
+    }
   }
 </style>
