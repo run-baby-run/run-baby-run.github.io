@@ -1,0 +1,84 @@
+---
+/**
+ * The Kond tunnel — where the Saturday long run starts, and the one bit of the
+ * route that looks like nowhere else: a low road tunnel with a line of lamps
+ * down the ceiling, graffiti along the walls and a bright mouth at the far end.
+ *
+ * Drawn to be stood in front of the pack, so the runners come out of it.
+ */
+
+const ink = '#141414';
+const stone = '#cfc7bb';
+const stoneDark = '#a9a094';
+const dark = '#241f1c';
+const darker = '#151110';
+const lamp = '#ffe6ad';
+const farLight = '#e8dcc0';
+const tagPink = '#e8608c';
+const tagGreen = '#8fb37f';
+const tagBlue = '#6f9bc4';
+
+/**
+ * Ceiling lamps in one receding line down the middle of the roof — smaller and
+ * closer together towards the far end, which is what gives the tunnel its
+ * length. Two mirrored rows were tried and read as a scattered cluster.
+ */
+const lamps = [
+  { x: 148, y: 60, r: 6 },
+  { x: 148, y: 74, r: 4.4 },
+  { x: 148, y: 84, r: 3.2 },
+  { x: 148, y: 92, r: 2.3 },
+  { x: 148, y: 98, r: 1.6 },
+];
+---
+
+<svg class="tunnel" viewBox="0 0 200 150" role="img" aria-label="The Kond tunnel">
+  <!-- The wall the tunnel is cut into. It stops short of the top of the band:
+       drawn full height it was a pale slab over a quarter of the street. -->
+  <rect x="0" y="34" width="200" height="106" fill={stone} stroke={ink} stroke-width="4" />
+  <path d="M0 52 L200 52" stroke={stoneDark} stroke-width="2.4" opacity="0.7" />
+
+  <!-- The portal, hard against the right edge, so the pack runs out of the
+       mouth rather than out from behind the wall. -->
+  <path
+    d="M96 140 L96 64 Q148 14 200 60 L200 140 Z"
+    fill={dark}
+    stroke={ink}
+    stroke-width="5"
+    stroke-linejoin="round"
+  />
+
+  <!-- inside, receding: a second arch set back, then daylight at the far end -->
+  <path d="M112 140 L112 76 Q148 42 184 74 L184 140 Z" fill={darker} />
+  <path d="M134 140 L134 108 Q148 96 162 108 L162 140 Z" fill={farLight} opacity="0.45" />
+  <path d="M140 140 L140 114 Q148 106 156 114 L156 140 Z" fill={farLight} opacity="0.9" />
+
+  <!-- the lamps down the ceiling -->
+  {
+    lamps.map((l) => (
+      <>
+        <ellipse cx={l.x} cy={l.y} rx={l.r * 1.9} ry={l.r * 1.1} fill={lamp} opacity="0.22" />
+        <ellipse cx={l.x} cy={l.y} rx={l.r} ry={l.r * 0.6} fill={lamp} />
+      </>
+    ))
+  }
+
+  <!-- graffiti along the wall, which is most of what it is -->
+  <g opacity="0.85">
+    <path d="M14 104 Q24 92 34 104 Q24 114 14 104 Z" fill={tagPink} stroke={ink} stroke-width="2.4" />
+    <rect x="12" y="118" width="22" height="9" rx="3.5" fill={tagBlue} stroke={ink} stroke-width="2.4" />
+    <path d="M48 100 L70 100 L62 114 L40 114 Z" fill={tagGreen} stroke={ink} stroke-width="2.4" stroke-linejoin="round" />
+    <circle cx="76" cy="122" r="7.5" fill={tagPink} stroke={ink} stroke-width="2.4" />
+    <path d="M44 128 L86 128" stroke={ink} stroke-width="3" stroke-linecap="round" opacity="0.45" />
+  </g>
+
+  <!-- kerb -->
+  <path d="M0 140 L200 140" stroke={ink} stroke-width="4" />
+</svg>
+
+<style>
+  .tunnel {
+    width: 100%;
+    height: auto;
+  }
+</style>

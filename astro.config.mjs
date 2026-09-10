@@ -6,5 +6,5 @@ import sitemap from '@astrojs/sitemap';
 // domain root, so no `base` is needed here.
 export default defineConfig({
   site: 'https://runbabyrun.fun',
-  integrations: [sitemap()],
+  integrations: [sitemap({ filter: (page) => !page.includes('/preview/') })],
 });

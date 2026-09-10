@@ -5,11 +5,13 @@ import Pulpulak from './Pulpulak.astro';
 import Park from './Park.astro';
 import RepublicSquare from './RepublicSquare.astro';
 import Cafes from './Cafes.astro';
+import KondTunnel from './KondTunnel.astro';
 ---
 
 <div class="band" aria-hidden="true">
   <div class="band__track">
     <!-- Scenery first, so everything else runs in front of it. -->
+    <span class="band__tunnel"><KondTunnel /></span>
     <span class="band__square"><RepublicSquare /></span>
     <span class="band__cafes"><Cafes /></span>
     <span class="band__park"><Park /></span>
@@ -36,7 +38,19 @@ import Cafes from './Cafes.astro';
        the two move at different speeds, so the stop is what decides whether
        their spans ever intersect. The pack is proportionally much wider on a
        phone, so this moves further left there. */
+    /*
+     * Where the dog pulls up — and through it where the fountain sits.
+     *
+     * vw, and it has to be: Dog.astro moves the dog with translateX, where a
+     * percentage would resolve against the dog's own width rather than the
+     * street, and the dog would stop a few pixels from where it started. The
+     * band is full-bleed on the page, so vw and % of the track agree anyway.
+     *
+     * The tiers are for the tunnel: the dog has to pull up clear of its mouth,
+     * and the mouth is a much bigger share of a narrow street.
+     */
     --dog-stop: 18vw;
+    --enter: calc(var(--pack) * -1.1);
     position: relative;
     overflow: hidden;
     background: var(--cream);
@@ -96,14 +110,28 @@ import Cafes from './Cafes.astro';
     width: min(28%, 360px);
   }
 
+  /* Between the tunnel mouth and the cafés. */
   .band__park {
-    left: 1%;
-    width: min(22%, 260px);
+    left: 20%;
+    width: min(17%, 210px);
   }
 
   .band__square {
     right: 2%;
     width: min(26%, 340px);
+  }
+
+  /* The mouth of the Kond tunnel, at the start of the street. Drawn at full
+     strength rather than faded back with the other landmarks — it is a hole in
+     a wall, and a translucent one reads as a smudge. The pack runs in front of
+     it: the mouth faces the road, so runners coming out of it would be heading
+     towards the viewer, which this side-on street cannot show. */
+  .band__tunnel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: block;
+    width: min(20%, 250px);
   }
 
   .band__ground {
@@ -114,16 +142,37 @@ import Cafes from './Cafes.astro';
 
   @keyframes cross {
     from {
-      transform: translateX(calc(var(--pack) * -1.1));
+      transform: translateX(var(--enter));
     }
     to {
       transform: translateX(100vw);
     }
   }
 
+  /* A phone has about 390px of street to hold all of this, and measuring it
+     settles what fits: the tunnel, the pulpulak, the cafés and the square do,
+     with the fountain pushed right so it clears the tunnel mouth. The park is
+     the one that does not, and squeezing it in puts it on top of a neighbour. */
   @media (max-width: 700px) {
     .band {
+      --dog-stop: 13vw;
+    }
+
+    .band__park {
+      display: none;
+    }
+  }
+
+  /* Below this the tunnel is a thumbnail and there is no longer room between
+     it and the cafés for the fountain, so it goes and the street starts at the
+     pulpulak. */
+  @media (max-width: 430px) {
+    .band {
       --dog-stop: 4vw;
+    }
+
+    .band__tunnel {
+      display: none;
     }
   }
 

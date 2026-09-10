@@ -1,0 +1,104 @@
+---
+/**
+ * A workbench for the street scene — not linked from anywhere and kept out of
+ * the sitemap and search results. It shows the band at a few sizes at once so
+ * a change can be judged without scrolling the home page, and holds the
+ * landmarks on their own, large, where their detail is actually visible.
+ */
+import Base from '../../layouts/Base.astro';
+import RunnersBand from '../../components/RunnersBand.astro';
+import Cafes from '../../components/Cafes.astro';
+import RepublicSquare from '../../components/RepublicSquare.astro';
+import Park from '../../components/Park.astro';
+import Pulpulak from '../../components/Pulpulak.astro';
+import KondTunnel from '../../components/KondTunnel.astro';
+---
+
+<Base title="Street scene — preview" description="Workbench for the street animation." noindex>
+  <main class="preview">
+    <h1>Street scene</h1>
+    <p class="preview__note">
+      Not linked from the site. Reload to restart the loop.
+    </p>
+
+    <h2>The band, as it appears on the page</h2>
+    <div class="preview__band"><RunnersBand /></div>
+
+    <h2>Landmarks, large</h2>
+    <div class="preview__grid">
+      <figure><Cafes /><figcaption>Coffee House · Prépa</figcaption></figure>
+      <figure><RepublicSquare /><figcaption>Republic Square</figcaption></figure>
+      <figure><Park /><figcaption>Seasons Park</figcaption></figure>
+      <figure><KondTunnel /><figcaption>Kond tunnel</figcaption></figure>
+      <figure class="preview__narrow"><Pulpulak /><figcaption>Pulpulak</figcaption></figure>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .preview {
+    padding: 2rem 1.25rem 5rem;
+    max-width: 1400px;
+    margin-inline: auto;
+  }
+
+  .preview h1 {
+    margin: 0 0 0.25rem;
+  }
+
+  .preview h2 {
+    margin: 2.5rem 0 0.75rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+
+  .preview__note {
+    margin: 0;
+    color: var(--ink-soft);
+  }
+
+  /* Full-bleed, like the band is on the page. Inset by a border and padding it
+     measured differently from the real thing — the band positions its
+     landmarks in % of its own width but the dog in vw — and sent me chasing an
+     overlap that only existed here. */
+  .preview__band {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    border-block: var(--line) solid var(--ink);
+    overflow: hidden;
+  }
+
+  .preview__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.25rem;
+    align-items: end;
+  }
+
+  .preview__grid figure {
+    margin: 0;
+    padding: 1rem;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--cream);
+  }
+
+  .preview__grid svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .preview__narrow svg {
+    width: 90px;
+  }
+
+  .preview__grid figcaption {
+    margin-top: 0.6rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+</style>

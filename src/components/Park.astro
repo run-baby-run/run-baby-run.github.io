@@ -1,43 +1,80 @@
 ---
 /**
- * Seasons Park — the clipped conifers and low hedge the club runs past.
- * Scenery, so it is drawn lighter than the figures and sits behind them.
+ * Seasons Park — the paved square by the Yerevan City underground where the
+ * Tuesday run gathers.
+ *
+ * It was drawn as clipped conifers on a bank, which is a forest, not this: the
+ * real place is a city park with broadleaf trees, a paved path, benches under
+ * lamps and a low fountain. Scenery, so it stays lighter than the figures and
+ * sits behind them.
  */
 
 const ink = '#141414';
 const sage = '#a9c4a0';
 const sageDeep = '#79a06c';
+const sageLight = '#c6dcbd';
 const trunk = '#9b8468';
+const trunkDark = '#7d6950';
+const paving = '#e0dcd4';
+const pavingLine = '#c8c3b8';
+const water = '#bcd7e0';
+const bench = '#c08b52';
 ---
 
 <svg class="park" viewBox="0 0 260 150" role="img" aria-label="Seasons Park">
-  <!-- back row, paler so it reads as depth -->
-  <g opacity="0.55">
-    <path d="M40 128 L58 74 L76 128 Z" fill={sage} stroke={ink} stroke-width="3.5" stroke-linejoin="round" />
-    <path d="M186 128 L202 80 L218 128 Z" fill={sage} stroke={ink} stroke-width="3.5" stroke-linejoin="round" />
+  <!-- paving, with the joints that give the square its scale -->
+  <rect x="0" y="120" width="260" height="20" fill={paving} />
+  <path
+    d="M0 120 L260 120 M0 130 L260 130 M26 120 L26 140 M64 120 L64 140 M104 120 L104 140
+       M146 120 L146 140 M188 120 L188 140 M226 120 L226 140"
+    stroke={pavingLine}
+    stroke-width="2"
+  />
+  <path d="M0 120 L260 120" stroke={ink} stroke-width="3.5" />
+
+  <!-- the far row of trees, paler, so the square has depth -->
+  <g opacity="0.5">
+    <path d="M46 120 L46 96" stroke={trunk} stroke-width="6" stroke-linecap="round" />
+    <circle cx="46" cy="82" r="18" fill={sage} stroke={ink} stroke-width="3" />
+    <path d="M150 120 L150 98" stroke={trunk} stroke-width="6" stroke-linecap="round" />
+    <circle cx="150" cy="84" r="16" fill={sage} stroke={ink} stroke-width="3" />
   </g>
 
-  <!-- clipped conifers -->
-  <path d="M12 130 L34 62 L56 130 Z" fill={sageDeep} stroke={ink} stroke-width="4" stroke-linejoin="round" />
-  <path d="M20 130 L34 96 L48 130 Z" fill={sage} opacity="0.6" />
+  <!-- plane trees: round crowns, clipped flat underneath the way street trees are -->
+  <g>
+    <path d="M22 122 L22 88" stroke={trunkDark} stroke-width="9" stroke-linecap="round" />
+    <circle cx="22" cy="68" r="26" fill={sageDeep} stroke={ink} stroke-width="4" />
+    <circle cx="13" cy="60" r="11" fill={sageLight} opacity="0.55" />
+  </g>
+  <g>
+    <path d="M112 122 L112 84" stroke={trunkDark} stroke-width="10" stroke-linecap="round" />
+    <circle cx="112" cy="60" r="30" fill={sageDeep} stroke={ink} stroke-width="4" />
+    <circle cx="101" cy="50" r="13" fill={sageLight} opacity="0.55" />
+  </g>
+  <g>
+    <path d="M232 122 L232 90" stroke={trunkDark} stroke-width="9" stroke-linecap="round" />
+    <circle cx="232" cy="70" r="25" fill={sageDeep} stroke={ink} stroke-width="4" />
+    <circle cx="223" cy="62" r="10" fill={sageLight} opacity="0.55" />
+  </g>
 
-  <path d="M96 130 L120 48 L144 130 Z" fill={sageDeep} stroke={ink} stroke-width="4" stroke-linejoin="round" />
-  <path d="M106 130 L120 88 L134 130 Z" fill={sage} opacity="0.6" />
+  <!-- a lamp, and a bench under it -->
+  <g>
+    <path d="M172 122 L172 74" stroke={ink} stroke-width="4" stroke-linecap="round" />
+    <circle cx="172" cy="69" r="7" fill={sageLight} stroke={ink} stroke-width="3.5" />
+    <rect x="150" y="106" width="44" height="7" rx="3.5" fill={bench} stroke={ink} stroke-width="3" />
+    <path d="M156 113 L156 121 M188 113 L188 121" stroke={ink} stroke-width="3.5" stroke-linecap="round" />
+    <path d="M150 100 Q172 94 194 100" stroke={bench} stroke-width="6" fill="none" stroke-linecap="round" />
+    <path d="M150 100 Q172 94 194 100" stroke={ink} stroke-width="2.6" fill="none" stroke-linecap="round" />
+  </g>
 
-  <path d="M164 130 L182 70 L200 130 Z" fill={sageDeep} stroke={ink} stroke-width="4" stroke-linejoin="round" />
-
-  <!-- a round-headed tree, like the ones by the square -->
-  <path d="M228 130 L228 104" stroke={trunk} stroke-width="8" stroke-linecap="round" />
-  <circle cx="228" cy="88" r="22" fill={sage} stroke={ink} stroke-width="4" />
-
-  <!-- low clipped hedge along the front -->
-  <path
-    d="M0 132 Q0 120 14 120 L246 120 Q260 120 260 132 L260 138 L0 138 Z"
-    fill={sage}
-    stroke={ink}
-    stroke-width="4"
-    stroke-linejoin="round"
-  />
+  <!-- the low round fountain -->
+  <g>
+    <ellipse cx="66" cy="116" rx="30" ry="9" fill={water} stroke={ink} stroke-width="3.5" />
+    <ellipse cx="66" cy="114" rx="18" ry="5" fill={sageLight} opacity="0.7" />
+    <path d="M66 112 L66 100" stroke={water} stroke-width="4" stroke-linecap="round" />
+    <path d="M66 112 L66 100" stroke={ink} stroke-width="2" stroke-linecap="round" opacity="0.5" />
+    <circle cx="66" cy="97" r="4" fill={water} stroke={ink} stroke-width="2.4" />
+  </g>
 </svg>
 
 <style>

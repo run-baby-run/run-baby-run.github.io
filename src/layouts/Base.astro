@@ -8,11 +8,14 @@ import { playlist } from '../data/song';
 interface Props {
   title?: string;
   description?: string;
+  /** Keeps a page out of search results and the sitemap — preview pages only. */
+  noindex?: boolean;
 }
 
 const {
   title = `${site.name} Club — ${site.city}`,
   description = `A running club in ${site.city}. ${site.tagline} Tuesdays 22:00, Thursdays 07:45, Saturdays 06:30.`,
+  noindex = false,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -27,6 +30,7 @@ const ogImage = new URL('/images/logo.jpg', Astro.site);
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

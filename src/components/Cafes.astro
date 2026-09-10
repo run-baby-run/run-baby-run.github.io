@@ -32,6 +32,11 @@ const ivy = '#4a6b3f';
 const ivyLight = '#6f8f5c';
 const interior = '#f0d9b0';
 const peachTea = '#f0a54e';
+const steel = '#c9ced2';
+const steelDark = '#9aa3a8';
+const menuDark = '#14181a';
+const canopy = '#3a3f42';
+const signRed = '#d2322c';
 ---
 
 <svg class="cafes" viewBox="0 0 430 200" role="img" aria-label="Coffee House and Prépa">
@@ -101,105 +106,150 @@ const peachTea = '#f0a54e';
   <rect x="92" y="108" width="94" height="58" fill={glass} stroke={ink} stroke-width="4" />
 
   <!-- ============ PRÉPA ============ -->
+  <!-- Drawn from the real frontage: a service window under a dark canopy with
+       the menu board above it and a steel counter below, the wordmark on the
+       wall rather than on an awning, and the produce crates and the old
+       weighing scale out on the pavement. -->
   <rect x="218" y="14" width="210" height="176" fill={tuff} stroke={ink} stroke-width="4" />
 
-  <!-- shopfront. No wordmark on the glass: the awning already says it, and at
-       this size a second one just fights the terrace for room. -->
-  <rect x="230" y="70" width="186" height="112" fill={dark} stroke={ink} stroke-width="4" />
-  <!-- doorway -->
-  <rect x="374" y="86" width="36" height="96" fill="#2f2a26" stroke={ink} stroke-width="3" />
-
-  <!-- awning -->
-  <path
-    d="M218 34 L428 34 L428 66 L218 66 Z"
-    fill={prepaRed}
-    stroke={ink}
-    stroke-width="4"
-    stroke-linejoin="round"
-  />
+  <!-- wordmark, high on the wall to the right -->
   <text
-    x="323"
-    y="57"
+    x="420"
+    y="38"
     fill={cream}
     font-family="'Baloo 2', system-ui, sans-serif"
-    font-size="19"
+    font-size="17"
     font-weight="800"
-    text-anchor="middle"
-    letter-spacing="2"
+    text-anchor="end"
+    letter-spacing="1.5"
   >PRÉPA</text>
 
-  <!-- terrace: orange tables under an orange parasol, white chairs -->
+  <!-- the glass door on the left, pastry case inside -->
+  <rect x="224" y="72" width="46" height="110" fill={dark} stroke={ink} stroke-width="3.5" />
+  <rect x="229" y="78" width="36" height="98" fill={interior} />
+  <rect x="232" y="116" width="30" height="30" fill={cream} stroke={ink} stroke-width="2" />
+  <path d="M232 126 L262 126 M232 136 L262 136" stroke={woodDark} stroke-width="1.6" />
+  <path d="M247 72 L247 182" stroke={ink} stroke-width="2.5" />
+
+  <!-- canopy over the window -->
+  <rect x="266" y="46" width="162" height="13" fill={canopy} stroke={ink} stroke-width="3" />
+
+  <!-- the service window -->
+  <rect x="270" y="59" width="156" height="92" fill={menuDark} stroke={ink} stroke-width="3.5" />
+
+  <!-- menu board: three columns of items and prices. Drawn as bars rather
+       than type — at the size this renders on the page, real text would be a
+       grey smudge, and bars read as a menu at any size. -->
+  <rect x="274" y="63" width="148" height="27" fill="#0d1012" />
+  {
+    [0, 1, 2].map((col) =>
+      [0, 1, 2, 3].map((row) => (
+        <>
+          <rect x={278 + col * 49} y={67 + row * 5.4} width={20 - (row % 3) * 3} height="2.4" fill={cream} opacity="0.86" />
+          <rect x={310 + col * 49} y={67 + row * 5.4} width="9" height="2.4" fill={cream} opacity="0.55" />
+        </>
+      ))
+    )
+  }
+
+  <!-- the opening, and what is going on behind it -->
+  <rect x="274" y="92" width="148" height="33" fill={interior} />
+  <!-- coffee machine -->
+  <rect x="336" y="99" width="28" height="21" fill={steelDark} stroke={ink} stroke-width="2" />
+  <path d="M343 120 L343 113 M357 120 L357 113" stroke={ink} stroke-width="2" />
+  <circle cx="350" cy="105" r="3.5" fill={cream} stroke={ink} stroke-width="1.6" />
+  <!-- cups stacked beside it -->
+  <rect x="370" y="108" width="7" height="12" fill={cream} stroke={ink} stroke-width="1.6" />
+  <rect x="380" y="108" width="7" height="12" fill={cream} stroke={ink} stroke-width="1.6" />
+  <!-- the barista -->
+  <circle cx="400" cy="102" r="6.5" fill={skin} stroke={ink} stroke-width="2.2" />
+  <path d="M392 125 Q392 110 400 110 Q408 110 408 125 Z" fill={cream} stroke={ink} stroke-width="2.2" stroke-linejoin="round" />
+
+  <!-- FROZEN YOGURT, in red on the counter end -->
+  <rect x="279" y="97" width="36" height="23" rx="3" fill={signRed} stroke={ink} stroke-width="2.2" />
+  <rect x="284" y="103" width="26" height="3" fill={cream} />
+  <rect x="284" y="109" width="20" height="3" fill={cream} />
+
+  <!-- steel counter -->
+  <rect x="266" y="125" width="162" height="26" fill={steel} stroke={ink} stroke-width="3.5" />
+  <path d="M268 133 L426 133" stroke={steelDark} stroke-width="2.5" />
+
+  <!-- one person at the counter, back to us -->
+  <circle cx="352" cy="149" r="6.5" fill={skin} stroke={ink} stroke-width="2.4" />
+  <path d="M343 182 Q343 157 352 157 Q361 157 361 182 Z" fill="#5b93c4" stroke={ink} stroke-width="2.4" stroke-linejoin="round" />
+
+  <!-- the chairs out front, which is where the club ends up. Rounded backs,
+       drawn ink-first then orange over it, so the outline stays heavy at the
+       size this renders. -->
   <g>
-    <!-- parasol -->
-    <path
-      d="M206 108 Q262 74 318 108 Q290 100 262 100 Q234 100 206 108 Z"
-      fill={orange}
-      stroke={ink}
-      stroke-width="4"
-      stroke-linejoin="round"
-    />
-    <path d="M262 78 L262 176" stroke={ink} stroke-width="4.5" stroke-linecap="round" />
+    <g stroke={ink} stroke-width="10" stroke-linecap="round" fill="none">
+      <path d="M300 176 L300 160" />
+      <path d="M296 160 Q304 153 312 160" />
+    </g>
+    <g stroke={orange} stroke-width="6" stroke-linecap="round" fill="none">
+      <path d="M300 176 L300 160" />
+      <path d="M296 160 Q304 153 312 160" />
+    </g>
+    <path d="M297 184 L297 174 M308 174 L308 184" stroke={ink} stroke-width="3.2" stroke-linecap="round" />
 
-    <!-- the orange chairs, rounded backs like the row along the pavement -->
-    <g stroke={ink} stroke-width="10.5" stroke-linecap="round" fill="none">
-      <path d="M226 172 L226 154" />
-      <path d="M222 154 Q231 146 240 154" />
-    </g>
-    <g stroke={orange} stroke-width="6.5" stroke-linecap="round" fill="none">
-      <path d="M226 172 L226 154" />
-      <path d="M222 154 Q231 146 240 154" />
-    </g>
-    <path d="M224 182 L224 170 M236 170 L236 182" stroke={ink} stroke-width="3.5" stroke-linecap="round" />
+    <rect x="314" y="158" width="34" height="10" rx="5" fill={orange} stroke={ink} stroke-width="3.4" />
+    <path d="M326 184 L340 184" stroke={ink} stroke-width="3.4" stroke-linecap="round" />
+    <path d="M331 168 L331 184" stroke={ink} stroke-width="3.4" />
 
-    <g stroke={ink} stroke-width="10.5" stroke-linecap="round" fill="none">
-      <path d="M298 172 L298 154" />
-      <path d="M290 154 Q299 146 308 154" />
+    <g stroke={ink} stroke-width="10" stroke-linecap="round" fill="none">
+      <path d="M362 176 L362 160" />
+      <path d="M358 160 Q366 153 374 160" />
     </g>
-    <g stroke={orange} stroke-width="6.5" stroke-linecap="round" fill="none">
-      <path d="M298 172 L298 154" />
-      <path d="M290 154 Q299 146 308 154" />
+    <g stroke={orange} stroke-width="6" stroke-linecap="round" fill="none">
+      <path d="M362 176 L362 160" />
+      <path d="M358 160 Q366 153 374 160" />
     </g>
-    <path d="M292 182 L292 170 M304 170 L304 182" stroke={ink} stroke-width="3.5" stroke-linecap="round" />
-
-    <!-- tabletop -->
-    <rect x="238" y="150" width="50" height="13" rx="6.5" fill={orange} stroke={ink} stroke-width="4" />
-    <path d="M252 176 L272 176" stroke={ink} stroke-width="4" stroke-linecap="round" />
+    <path d="M359 184 L359 174 M370 174 L370 184" stroke={ink} stroke-width="3.2" stroke-linecap="round" />
   </g>
 
-  <!-- crates of produce by the door, and the flower basket beside them -->
+  <!-- the old weighing scale, and the crates of produce -->
   <g>
-    <!-- lower crate -->
-    <rect x="322" y="158" width="52" height="24" fill={wood} stroke={ink} stroke-width="3.5" />
-    <path d="M322 166 L374 166 M322 174 L374 174" stroke={woodDark} stroke-width="2.5" />
-    <!-- upper crate, set back a little -->
-    <rect x="328" y="136" width="46" height="22" fill={wood} stroke={ink} stroke-width="3.5" />
-    <path d="M328 144 L374 144 M328 151 L374 151" stroke={woodDark} stroke-width="2.5" />
-    <!-- produce heaped on top -->
-    <circle cx="336" cy="131" r="6" fill={tomato} stroke={ink} stroke-width="2.5" />
-    <circle cx="349" cy="129" r="6.5" fill={pepperGreen} stroke={ink} stroke-width="2.5" />
-    <circle cx="362" cy="131" r="6" fill={tomato} stroke={ink} stroke-width="2.5" />
-    <circle cx="369" cy="133" r="5" fill={pepperGreen} stroke={ink} stroke-width="2.5" />
-    <circle cx="343" cy="123" r="5.5" fill={tomato} stroke={ink} stroke-width="2.5" />
-    <circle cx="356" cy="122" r="5.5" fill={tomato} stroke={ink} stroke-width="2.5" />
+    <rect x="272" y="158" width="26" height="10" fill={cream} stroke={ink} stroke-width="2.4" />
+    <circle cx="285" cy="150" r="9" fill={cream} stroke={ink} stroke-width="2.4" />
+    <path d="M285 150 L289 145" stroke={ink} stroke-width="2" stroke-linecap="round" />
+    <rect x="277" y="168" width="16" height="14" fill={wood} stroke={ink} stroke-width="2.4" />
 
-    <!-- one white PRÉPA bucket of dried flowers; more than that and the
-         frontage turns to soup at this size -->
-    <path d="M312 182 L310 166 L328 166 L326 182 Z" fill={cream} stroke={ink} stroke-width="3.5" stroke-linejoin="round" />
-    <circle cx="315" cy="160" r="5" fill={bloom} stroke={ink} stroke-width="2.5" />
-    <circle cx="324" cy="158" r="5" fill={bloomDeep} stroke={ink} stroke-width="2.5" />
+    <rect x="374" y="158" width="50" height="24" fill={wood} stroke={ink} stroke-width="3.2" />
+    <path d="M374 166 L424 166 M374 174 L424 174" stroke={woodDark} stroke-width="2.2" />
+    <text
+      x="399"
+      y="171"
+      fill={ink}
+      font-family="'Baloo 2', system-ui, sans-serif"
+      font-size="7"
+      font-weight="800"
+      text-anchor="middle"
+      opacity="0.55"
+    >PRÉPA</text>
+    <rect x="380" y="138" width="42" height="20" fill={wood} stroke={ink} stroke-width="3.2" />
+    <circle cx="388" cy="133" r="5.5" fill={tomato} stroke={ink} stroke-width="2.2" />
+    <circle cx="399" cy="131" r="6" fill={peachTea} stroke={ink} stroke-width="2.2" />
+    <circle cx="410" cy="133" r="5.5" fill={pepperGreen} stroke={ink} stroke-width="2.2" />
+    <circle cx="394" cy="125" r="5" fill={tomato} stroke={ink} stroke-width="2.2" />
+    <circle cx="405" cy="124" r="5" fill={tomato} stroke={ink} stroke-width="2.2" />
+
+    <!-- flowers by the door -->
+    <path d="M256 182 L254 168 L270 168 L268 182 Z" fill={cream} stroke={ink} stroke-width="3" stroke-linejoin="round" />
+    <circle cx="259" cy="163" r="4.5" fill={bloom} stroke={ink} stroke-width="2.2" />
+    <circle cx="267" cy="161" r="4.5" fill={bloomDeep} stroke={ink} stroke-width="2.2" />
   </g>
 
-  <!-- the red-and-white tiled entrance -->
+  <!-- the red-and-white tiled entrance, at the door where it really is -->
   <g>
     {
-      Array.from({ length: 17 }, (_, i) => (
+      Array.from({ length: 7 }, (_, i) => (
         <>
-          <rect x={296 + i * 8} y="182" width="8" height="4" fill={i % 2 ? prepaRed : cream} />
-          <rect x={296 + i * 8} y="186" width="8" height="4" fill={i % 2 ? cream : prepaRed} />
+          <rect x={222 + i * 8} y="182" width="8" height="4" fill={i % 2 ? prepaRed : cream} />
+          <rect x={222 + i * 8} y="186" width="8" height="4" fill={i % 2 ? cream : prepaRed} />
         </>
       ))
     }
-    <path d="M296 182 L432 182 M296 190 L432 190" stroke={ink} stroke-width="2.5" />
+    <path d="M222 182 L278 182 M222 190 L278 190" stroke={ink} stroke-width="2.5" />
   </g>
 
   <!-- ============ someone with an iced coffee, out front of Prépa ============ -->
