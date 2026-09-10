@@ -13,6 +13,7 @@ export interface ResolvedMember extends Member {
 }
 
 const entries: Member[] = [
+  { name: 'Agnesa', file: 'agnesa.jpg', strava: '207341284' },
   { name: 'Akshy', file: 'akshy.jpg', strava: '199874896' },
   { name: 'Aram', file: 'aram.jpg', strava: '169364936' },
   { name: 'Arman', file: 'arman.jpg', strava: '1921973238' },
