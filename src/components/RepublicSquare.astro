@@ -88,8 +88,10 @@ const rightArches = [0, 1, 2, 3].map((i) => 216 + i * 30);
   <rect x="160" y="88" width="12" height="14" rx="1.5" fill={glow} stroke={ink} stroke-width="2.4" />
   <rect x="178" y="88" width="12" height="14" rx="1.5" fill={glow} stroke={ink} stroke-width="2.4" />
 
-  <!-- cornice and colonnade line -->
-  <path d="M6 96 L344 96" stroke={ink} stroke-width="4" stroke-linecap="round" />
+  <!-- Cornice and colonnade line. The cornice stops at the tower rather than
+       running through it — it was crossing the two lit windows under the clock,
+       and on the real building the tower breaks the line anyway. -->
+  <path d="M6 96 L148 96 M202 96 L344 96" stroke={ink} stroke-width="4" stroke-linecap="round" />
   <path d="M6 118 L148 118 M202 118 L344 118" stroke={ink} stroke-width="3" stroke-linecap="round" />
 </svg>
 
