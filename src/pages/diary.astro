@@ -6,6 +6,7 @@ import PageHeader from '../components/PageHeader.astro';
 import Lightbox from '../components/Lightbox.astro';
 import DiaryPhotos from '../components/DiaryPhotos.astro';
 import Runner from '../components/Runner.astro';
+import Film from '../components/Film.astro';
 import { diary, type Entry } from '../data/diary';
 import { photos } from '../data/library';
 import { hiddenFromDiary } from '../data/hidden';
@@ -73,9 +74,12 @@ const photoTotal = photos.length;
     >
       <p>
         Since the twelfth of February 2026, in our own words and our own
-        {' '}{photoTotal} photographs. Scroll down and the year runs backwards.
+        {' '}{photoTotal} photographs. Watch the minute-long version first, or
+        scroll down and the year runs backwards.
       </p>
     </PageHeader>
+
+    <Film />
 
     <div class="timeline">
       <div class="timeline__spine" aria-hidden="true">

@@ -28,9 +28,10 @@ const day = (iso: string) =>
         <p class="eyebrow">Most weeks look like this</p>
         <h2>Every run ends<br />with a photo.</h2>
       </div>
-      <a class="btn btn--ghost teaser__cta" href="/gallery/">
-        See all {photos.length} photos →
-      </a>
+      <p class="teaser__ctas">
+        <a class="btn btn--ghost" href="/gallery/">See all {photos.length} photos →</a>
+        <a class="btn teaser__film" href="/diary/#film">Watch the film →</a>
+      </p>
     </div>
 
     <ul class="teaser__row">
@@ -62,6 +63,13 @@ const day = (iso: string) =>
     justify-content: space-between;
     gap: 1.25rem;
     margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .teaser__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 0;
   }
 
   .teaser__row {
