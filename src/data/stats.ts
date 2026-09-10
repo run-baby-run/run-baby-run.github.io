@@ -643,6 +643,32 @@ export const stats: AthleteStats[] = [
     allTime: { activities: 67, distanceKm: 320.9, time: '41h 41m', elevationM: 2751 },
     highlight: 'Third-fastest ever up Saryan from Mashtots (2:28)',
   },
+  {
+    member: 'Ellie',
+    stravaName: 'Ellie • Aliya • Hands',
+    location: 'Seattle, Washington',
+    strava: '41543857',
+    recent: { activitiesPerWeek: 0, distancePerWeekKm: 0, timePerWeek: '0h 0m', elevationPerWeekM: 0 },
+    bests: [
+      { label: '400m', time: '54s' },
+      { label: '½ mile', time: '3:00' },
+      { label: '1K', time: '4:24' },
+      { label: '1 mile', time: '4:57' },
+      { label: '2 mile', time: '14:56' },
+      { label: '5K', time: '23:25' },
+      { label: '10K', time: '48:22' },
+      { label: '15K', time: '1:39:46' },
+      { label: '10 mile', time: '1:48:35' },
+      { label: '20K', time: '2:17:53' },
+      { label: 'Half-Marathon', time: '2:25:07' },
+      { label: '30K', time: '3:36:17' },
+      { label: 'Marathon', time: '5:10:26' },
+      { label: '50K', time: '9:51:09' },
+    ],
+    thisYear: { activities: 0, distanceKm: 0, time: '0h 0m', elevationM: 0 },
+    allTime: { activities: 39, distanceKm: 542.1, time: '73h 57m', elevationM: 26047 },
+    highlight: 'A 50K in 9:51:09, and 1,006 m of climbing in one morning',
+  },
 ];
 
 /** "1:58:58" / "24:11" / "45s" -> seconds, for ranking. */
