@@ -8,6 +8,8 @@ import DiaryPhotos from '../components/DiaryPhotos.astro';
 import { racesByDate } from '../data/races';
 import { photos } from '../data/library';
 import { hiddenFromDiary } from '../data/hidden';
+import { weather } from '../data/weather';
+import WeatherChip from '../components/WeatherChip.astro';
 import { similarToOthers } from '../data/similar';
 
 const shotsOn = (date: string, after?: string) =>
@@ -50,6 +52,7 @@ const pretty = (iso: string) =>
               <h2>{race.name}</h2>
               <p class="race__when">
                 <time datetime={race.date}>{pretty(race.date)}</time> · {race.where}
+                {' '}<WeatherChip weather={weather[race.date]} />
               </p>
               <ul class="race__distances">
                 {race.distances.map((d) => (

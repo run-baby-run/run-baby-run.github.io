@@ -1,0 +1,57 @@
+---
+import type { Weather } from '../data/weather';
+
+interface Props {
+  weather?: Weather;
+}
+
+const { weather } = Astro.props;
+
+/**
+ * What the chip says. The hour's own reading first, and then — only when the
+ * two differ — that something fell earlier: on 8 March it snowed at five in
+ * the morning and was merely overcast by the time we ran, on a route that was
+ * still white. That is the detail worth keeping.
+ */
+function label(w: Weather) {
+  if (w.sky === 'snow') return 'snowing';
+  if (w.snowedThatDay) return `${w.sky}, snow earlier`;
+  if (w.sky === 'clear' || w.sky === 'fair' || w.sky === 'overcast') {
+    return w.rainedThatDay ? `${w.sky}, rain earlier` : w.sky;
+  }
+  return w.sky;
+}
+---
+
+{
+  weather && (
+    <span class="weather" title={`At ${weather.at}, wind ${weather.wind} km/h`}>
+      <span class="weather__temp">{weather.tempC}°</span>
+      <span class="weather__sky">{label(weather)}</span>
+    </span>
+  )
+}
+
+<style>
+  .weather {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    padding: 0.1rem 0.5rem;
+    border: 2px solid currentColor;
+    border-radius: 999px;
+    font-size: 0.625rem;
+    white-space: nowrap;
+  }
+
+  .weather__temp {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+  }
+
+  .weather__sky {
+    opacity: 0.75;
+    text-transform: lowercase;
+    letter-spacing: 0.04em;
+  }
+</style>
