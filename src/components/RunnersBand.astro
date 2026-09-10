@@ -30,14 +30,18 @@ import KondTunnel from './KondTunnel.astro';
      chases after them. Decorative, so it is hidden from assistive tech — the
      schedule and CTA already say everything this says. */
   .band {
-    --pack: clamp(110px, 21vw, 250px);
-    --dog: clamp(76px, 13vw, 160px);
-    --fountain: clamp(44px, 7vw, 86px);
-    /* Where the dog pulls up — and, through it, where the fountain sits. Far
-       enough left that the dog trails the pack instead of running through it:
-       the two move at different speeds, so the stop is what decides whether
-       their spans ever intersect. The pack is proportionally much wider on a
-       phone, so this moves further left there. */
+    /*
+     * The figures, sized against the street rather than against the screen.
+     *
+     * The px floors used to be 110/76/44, which on a 390px phone made the pack
+     * 28% of the street instead of the 21% it is on a desktop — and that extra
+     * width is what left no room for the tunnel and the park, so both were
+     * being hidden. Lower floors keep the phone close to the proportions the
+     * wide layout has, and everything fits.
+     */
+    --pack: clamp(88px, 21vw, 250px);
+    --dog: clamp(56px, 13vw, 160px);
+    --fountain: clamp(30px, 7vw, 86px);
     /*
      * Where the dog pulls up — and through it where the fountain sits.
      *
@@ -149,30 +153,13 @@ import KondTunnel from './KondTunnel.astro';
     }
   }
 
-  /* A phone has about 390px of street to hold all of this, and measuring it
-     settles what fits: the tunnel, the pulpulak, the cafés and the square do,
-     with the fountain pushed right so it clears the tunnel mouth. The park is
-     the one that does not, and squeezing it in puts it on top of a neighbour. */
+  /* The dog pulls up further along on a narrow street, so the fountain clears
+     the tunnel mouth: the mouth is a fifth of the width whatever the screen,
+     but the gap between the dog's stop and its muzzle is set by the dog's own
+     size, which has a floor. */
   @media (max-width: 700px) {
     .band {
-      --dog-stop: 13vw;
-    }
-
-    .band__park {
-      display: none;
-    }
-  }
-
-  /* Below this the tunnel is a thumbnail and there is no longer room between
-     it and the cafés for the fountain, so it goes and the street starts at the
-     pulpulak. */
-  @media (max-width: 430px) {
-    .band {
-      --dog-stop: 4vw;
-    }
-
-    .band__tunnel {
-      display: none;
+      --dog-stop: 14vw;
     }
   }
 
