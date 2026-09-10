@@ -21,20 +21,22 @@ const SONG = 'public/audio/just-show-up-3.mp3';
 const OUT = 'public/video';
 const TMP = 'diary/filmtmp';
 /**
- * Square, and 720 because of what the footage actually is.
+ * 576x1024 — nine by sixteen, and the exact size most of these clips already
+ * are. This is phone footage: 40 of the 46 chosen clips were filmed portrait,
+ * and on a 9:16 canvas the median clip keeps 100% of its frame and is not
+ * scaled at all. Nothing is invented and nothing is thrown away.
  *
- * Two things had to be learned the hard way. First, ffprobe's width and height
- * are the CODED size and ignore rotation metadata: 69 of these clips are stored
- * landscape and played portrait, so an early count of "139 landscape" was
- * simply wrong. On screen it is 175 portrait to 66 landscape — it is phone
- * footage, and 16:9 was never the right shape for it.
+ * Three earlier attempts, for the record. 1280x720 upscaled 47 of 49 clips by a
+ * median of 1.5x and cropped portrait shots to a third of their height: soft.
+ * Fitting them inside 16:9 instead was sharp but left a small picture in a sea
+ * of blur. Square at 720 was sharp and full-frame but still discarded 44% of
+ * the median clip — the sky went missing from Republic Square.
  *
- * Second, a 1280x720 canvas upscaled 47 of 49 clips, median 1.5x, and the film
- * looked soft; fitting them inside it instead left a small picture in a sea of
- * blur. Square crops both orientations gently — a 576x1024 clip keeps its full
- * width — and 720 keeps the upscale to 1.25x on the commonest source.
+ * ffprobe's width and height are the CODED size and ignore rotation metadata,
+ * which is what sent the first two attempts wrong: 69 clips are stored
+ * landscape and played portrait.
  */
-const W = 720, H = 720, FPS = 30;
+const W = 576, H = 1024, FPS = 30;
 
 /**
  * Chosen by eye from diary/vpick/*.jpg — see diary/vindex.json for the map.
@@ -76,14 +78,22 @@ clips.forEach((stem, n) => {
   // Take from the middle: the start of a phone clip is usually the moment
   // somebody was still raising the camera.
   const start = Math.max(0, source.dur / 2 - segment / 2);
+  // Displayed orientation, which is not the stored one for 69 of these clips.
+  const portrait = (source.dh ?? source.h) > (source.dw ?? source.w);
   const part = join(TMP, `${String(n).padStart(3, '0')}.mp4`);
 
   execFileSync('ffmpeg', [
     '-v', 'error', '-ss', String(start), '-t', String(segment), '-i', source.file,
-    // Fill the square and centre-crop. A portrait clip keeps its whole width
-    // and loses only top and bottom, which is where phone footage has least;
-    // a landscape one loses its edges. No blurred fill, no bars.
-    '-vf', `scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},fps=${FPS},setsar=1`,
+    // Portrait clips fill the frame exactly — same shape, nothing cropped. The
+    // six landscape ones would lose two thirds of their width to a 9:16 crop,
+    // so those alone are fitted whole against a blurred blow-up of themselves.
+    ...(portrait
+      ? ['-vf', `scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},fps=${FPS},setsar=1`]
+      : ['-filter_complex',
+         `[0:v]scale=${W}:${H}:force_original_aspect_ratio=increase,crop=${W}:${H},gblur=sigma=26[bg];` +
+           `[0:v]scale=${W}:${H}:force_original_aspect_ratio=decrease[fg];` +
+           `[bg][fg]overlay=(W-w)/2:(H-h)/2,fps=${FPS},setsar=1[v]`,
+         '-map', '[v]']),
     // Near-lossless: these are thrown away after the concat, and every bit of
     // quality lost here is lost again in the final encode.
     '-an', '-c:v', 'libx264', '-preset', 'medium', '-crf', '14', '-pix_fmt', 'yuv420p',
@@ -100,7 +110,7 @@ const film = join(OUT, 'run-baby-run.mp4');
 execFileSync('ffmpeg', [
   '-v', 'error', '-f', 'concat', '-safe', '0', '-i', join(TMP, 'list.txt'), '-i', SONG,
   '-map', '0:v', '-map', '1:a',
-  '-c:v', 'libx264', '-preset', 'slow', '-crf', '19', '-pix_fmt', 'yuv420p',
+  '-c:v', 'libx264', '-preset', 'slow', '-crf', '20', '-pix_fmt', 'yuv420p',
   '-c:a', 'aac', '-b:a', '128k',
   // Ends with the song, in case rounding leaves a frame over.
   '-shortest', '-movflags', '+faststart',

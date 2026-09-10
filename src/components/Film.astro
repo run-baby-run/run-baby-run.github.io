@@ -17,8 +17,9 @@ const song = songs[0];
       <p class="eyebrow film__eyebrow">Sixty seconds</p>
       <h2>We made<br />a film.</h2>
       <p class="film__note">
-        Forty-nine clips from our own phones, March to September, cut to
-        “{song.title}”. The dogs are in it. So is the tunnel.
+        Forty-six clips from our own phones, March to September, cut to
+        “{song.title}”. Shot portrait, shown portrait. The dog is in it, and so
+        is the tunnel.
       </p>
     </div>
 
@@ -30,8 +31,8 @@ const song = songs[0];
         preload="none"
         controls
         playsinline
-        width="720"
-        height="720"
+        width="576"
+        height="1024"
       >
         <p>
           Your browser cannot play this.
@@ -85,9 +86,11 @@ const song = songs[0];
   }
 
   .film__frame {
-    /* Square, because the footage is: 175 of the 241 clips were filmed
-       portrait. Capped so it does not tower over a desktop page. */
-    max-width: 620px;
+    /* Nine by sixteen, because the footage is: 40 of the 46 clips in the film
+       were filmed portrait on a phone. Capped at 420px so it displays at or
+       below its native 576 rather than being stretched, and so it does not
+       tower over a desktop page. */
+    max-width: 420px;
     margin-inline: auto;
     padding: 0;
     overflow: hidden;
@@ -99,6 +102,6 @@ const song = songs[0];
     display: block;
     width: 100%;
     height: auto;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 9 / 16;
   }
 </style>
