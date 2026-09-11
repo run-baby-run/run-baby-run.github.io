@@ -144,9 +144,17 @@ execFileSync('ffmpeg', [
 ]);
 
 // A poster, so the player is never an empty black box before it is pressed.
+// Chosen by eye from a contact sheet of the finished cut: the whole club lined
+// up along a sunlit street on 2 July. It has to be a daylight, full-frame,
+// portrait moment — a night clip reads as a black box on a phone, and the
+// landscape clips sit on a blurred blow-up that reads as a smudge when frozen.
+// Re-check this second whenever PICKS changes; the cut moves under it.
+const POSTER_AT = '40.5';
 execFileSync('ffmpeg', [
-  '-v', 'error', '-ss', '3.5', '-i', film, '-frames:v', '1',
-  join(OUT, 'run-baby-run.jpg'), '-y',
+  '-v', 'error', '-ss', POSTER_AT, '-i', film, '-frames:v', '1',
+  // A daylight frame costs more bytes than the old night one, and the poster is
+  // fetched even under preload="none". q5 is ~100 kB and shows no artefacts here.
+  '-q:v', '5', join(OUT, 'run-baby-run.jpg'), '-y',
 ]);
 
 const size = (f) => (readFileSync(f).length / 1e6).toFixed(1);
