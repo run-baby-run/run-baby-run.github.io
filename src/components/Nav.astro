@@ -305,7 +305,11 @@ const mark = (link: { key?: string }) => (link.key === current ? 'is-current' : 
     flex-direction: column;
     gap: 0;
     min-width: 12.5rem;
-    padding: 0.35rem 0;
+    /* No vertical padding, and clipped: a link's hover fill is a square, so at
+       the first and last item it would otherwise poke out through the corner
+       curve. Small padding does not save it — the curve is deeper than that. */
+    padding: 0;
+    overflow: hidden;
     border: var(--line) solid var(--ink);
     border-radius: var(--radius);
     background: var(--cream);
