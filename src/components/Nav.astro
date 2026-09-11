@@ -3,7 +3,7 @@ import { site } from '../data/site';
 
 interface Props {
   /** Which top-level page is showing, so the nav can mark it. */
-  current?: 'home' | 'diary' | 'gallery' | 'races' | 'training' | 'members' | 'leaderboard';
+  current?: 'home' | 'diary' | 'gallery' | 'races' | 'training' | 'blog' | 'members' | 'leaderboard';
 }
 
 const { current = 'home' } = Astro.props;
@@ -15,6 +15,7 @@ const links = [
   { href: '/gallery/', label: 'Gallery', key: 'gallery' },
   { href: '/races/', label: 'Races', key: 'races' },
   { href: '/training/', label: 'Training', key: 'training' },
+  { href: '/blog/', label: 'Explained', key: 'blog' },
   { href: '/members/', label: 'Members', key: 'members' },
   { href: '/leaderboard/', label: 'Leaderboard', key: 'leaderboard' },
 ];
@@ -125,10 +126,10 @@ const links = [
   /* Phone widths: with five destinations the links no longer fit beside the
      CTA, so they wrap onto their own row rather than running off the edge. */
   /* The links drop to their own full-width row well before a phone. With seven
-     of them, brand + links + CTA stop fitting on one line at about 1000px —
-     measured, not guessed: at 900 the "Join us" button was hanging off the
-     edge, and 768 was pushing three things off at once. */
-  @media (max-width: 1000px) {
+     of them — eight, since the blog — brand, links and CTA stop fitting on one
+     line at about 1100px. Measured, not guessed: 1024 was pushing the "Join us"
+     button off the edge. */
+  @media (max-width: 1120px) {
     .nav__inner {
       flex-wrap: wrap;
       gap: 0.5rem;
@@ -153,13 +154,22 @@ const links = [
       width: 100%;
       flex-wrap: nowrap;
       justify-content: space-between;
-      gap: clamp(0.25rem, 1.3vw, 0.9rem);
+      gap: clamp(0.2rem, 1.1vw, 0.9rem);
       padding-top: 0.5rem;
       border-top: 1.5px solid color-mix(in srgb, var(--ink) 14%, transparent);
+      /* The safety net. The row shrinks to fit at any width worth having, but
+         on a 320px phone with eight links it is a couple of pixels over — so it
+         scrolls rather than clipping, and nothing is ever out of reach. */
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .nav__links::-webkit-scrollbar {
+      display: none;
     }
 
     .nav__links a:not(.btn) {
-      font-size: clamp(0.6875rem, 3.1vw, 0.875rem);
+      font-size: clamp(0.625rem, 2.7vw, 0.875rem);
       white-space: nowrap;
     }
 

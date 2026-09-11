@@ -1,0 +1,117 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+
+export const getStaticPaths = (async () => {
+  const { getCollection } = await import('astro:content');
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const all = (await getCollection('posts')).sort((a, b) => a.data.order - b.data.order);
+const here = all.findIndex((p) => p.id === post.id);
+const previous = all[here - 1];
+const next = all[here + 1];
+---
+
+<Base title={`${post.data.title} — Run Baby Run Club`} description={post.data.blurb}>
+  <Nav current="blog" />
+  <main>
+    <PageHeader eyebrow="Running, explained" title={post.data.title} tone="cream" />
+
+    <article class="wrap article">
+      <p class="article__takeaway">{post.data.takeaway}</p>
+      <div class="prose"><Content /></div>
+
+      <nav class="article__more">
+        {previous && <a href={`/blog/${previous.id}/`}>← {previous.data.title}</a>}
+        {next && <a class="article__next" href={`/blog/${next.id}/`}>{next.data.title} →</a>}
+      </nav>
+      <p class="article__back"><a href="/blog/">All of them</a></p>
+    </article>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .article {
+    padding-block: clamp(2rem, 6vw, 3.5rem);
+    max-width: 680px;
+  }
+
+  /* The one sentence to take away, before the argument for it. */
+  .article__takeaway {
+    margin: 0 0 1.75rem;
+    padding: 0.9rem 1.15rem;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--pink);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1rem, 2.6vw, 1.2rem);
+    line-height: 1.35;
+  }
+
+  .prose :global(h2) {
+    margin: 2rem 0 0.6rem;
+    font-size: clamp(1.1rem, 3vw, 1.35rem);
+  }
+
+  .prose :global(p) {
+    margin: 0 0 1rem;
+    line-height: 1.65;
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin: 0 0 1rem;
+    padding-left: 1.2rem;
+    line-height: 1.65;
+  }
+
+  .prose :global(li) {
+    margin-bottom: 0.4rem;
+  }
+
+  .prose :global(strong) {
+    background: color-mix(in srgb, var(--pink) 45%, transparent);
+    padding: 0 0.15em;
+  }
+
+  .prose :global(blockquote) {
+    margin: 0 0 1rem;
+    padding-left: 1rem;
+    border-left: 4px solid var(--pink-text);
+    color: var(--ink-soft);
+  }
+
+  .article__more {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: space-between;
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: var(--line) solid var(--ink);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 0.875rem;
+  }
+
+  .article__next {
+    margin-left: auto;
+    text-align: right;
+  }
+
+  .article__back {
+    margin: 1rem 0 0;
+    font-size: 0.8125rem;
+  }
+</style>
