@@ -1,7 +1,7 @@
 ---
 import { meetUps } from '../data/library';
 import { stats as athletes } from '../data/stats';
-import { joined, left, EARTH_CIRCUMFERENCE_KM, EVEREST_M } from '../data/club';
+import { inTheGroup, EARTH_CIRCUMFERENCE_KM, EVEREST_M } from '../data/club';
 
 // Summed from the Strava figures rather than written down, so these move on
 // their own whenever the numbers are next refreshed.
@@ -22,12 +22,18 @@ const en = new Intl.NumberFormat('en-GB');
  * `value` is rendered as the final number, so it is right with no JavaScript;
  * `count` is what the script counts up to when the band scrolls into view.
  */
+/*
+ * The wording matters here. These are sums of what each of us has logged on
+ * Strava, which is mostly running done on our own — saying "together" of a
+ * number that counts everybody's solo miles is simply untrue. They are
+ * everyone's running added up, and that is what they now say.
+ */
 const stats = [
-  { value: en.format(Math.round(total.km)), count: Math.round(total.km), label: `km together — ${aroundTheEarth}% of the way round the Earth` },
-  { value: en.format(total.metres), count: total.metres, label: `metres climbed — ${everests} times up Everest` },
-  { value: en.format(total.activities), count: total.activities, label: 'runs recorded between us' },
+  { value: en.format(Math.round(total.km)), count: Math.round(total.km), label: `km on our Strava, added up — ${aroundTheEarth}% of the way round the Earth` },
+  { value: en.format(total.metres), count: total.metres, label: `metres climbed, added up — ${everests} times up Everest` },
+  { value: en.format(total.activities), count: total.activities, label: 'runs logged between us' },
   { value: String(meetUps), count: meetUps, label: 'times we have met' },
-  { value: String(joined), count: joined, label: `people have joined — ${left} have left` },
+  { value: String(inTheGroup), count: inTheGroup, label: 'of us in the group chat' },
   { value: '0', label: 'to join, forever' },
 ];
 ---
