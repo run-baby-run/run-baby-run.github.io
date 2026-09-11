@@ -1,0 +1,78 @@
+---
+/**
+ * What the club is, in the form a search engine reads.
+ *
+ * Without this a search engine has to infer from prose that this is a running
+ * club in Yerevan; with it, that is stated — the name, the city, the coordinates
+ * of the meeting point, that it is free, when it runs, and which other profiles
+ * are the same club.
+ *
+ * Only on the home page: repeating an organisation on every page tells a
+ * crawler nothing new.
+ */
+import { site, runs } from '../data/site';
+
+const url = 'https://runbabyrun.fun';
+
+/** Saryan street, where the Tuesday and Thursday runs start. */
+const meetingPoint = { latitude: 40.1858, longitude: 44.5045 };
+
+const club = {
+  '@context': 'https://schema.org',
+  '@type': 'SportsClub',
+  '@id': `${url}/#club`,
+  name: `${site.name} Club`,
+  alternateName: [site.name, 'Run Baby Run Yerevan', 'Run Baby Run running club'],
+  description:
+    'A free running club in Yerevan, Armenia. Three runs a week, all paces, no fee and no membership — just show up.',
+  slogan: site.tagline,
+  url,
+  logo: `${url}/images/logo.png`,
+  image: `${url}/images/logo.jpg`,
+  foundingDate: '2026-02-12',
+  isAccessibleForFree: true,
+  publicAccess: true,
+  sport: 'Running',
+  areaServed: { '@type': 'City', name: 'Yerevan', addressCountry: 'AM' },
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Yerevan',
+    addressCountry: 'AM',
+  },
+  geo: { '@type': 'GeoCoordinates', ...meetingPoint },
+  sameAs: [site.instagram, site.strava],
+  // The weekly runs, so the schedule can be read rather than inferred from a table.
+  event: runs.map((run) => ({
+    '@type': 'SportsEvent',
+    name: `${site.name} — ${run.label}`,
+    description: run.blurb,
+    sport: 'Running',
+    isAccessibleForFree: true,
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    eventStatus: 'https://schema.org/EventScheduled',
+    location: {
+      '@type': 'Place',
+      name: 'Yerevan',
+      address: { '@type': 'PostalAddress', addressLocality: 'Yerevan', addressCountry: 'AM' },
+      geo: { '@type': 'GeoCoordinates', ...meetingPoint },
+    },
+    organizer: { '@id': `${url}/#club` },
+    eventSchedule: {
+      '@type': 'Schedule',
+      repeatFrequency: 'P1W',
+      byDay: `https://schema.org/${run.day}`,
+      startTime: `${run.time}:00`,
+      scheduleTimezone: 'Asia/Yerevan',
+    },
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'AMD',
+      availability: 'https://schema.org/InStock',
+      url: site.whatsapp,
+    },
+  })),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(club)} />
