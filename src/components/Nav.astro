@@ -139,20 +139,28 @@ const links = [
       font-size: 1rem;
     }
 
-    /* Wrapping, because seven links do not fit on one row of a 320px phone
-       and space-between simply pushed the last one off the side. */
+    /*
+     * One row, always. Six links show at this width (Schedule is hidden) and
+     * they come to about 326px at the old size, in 350px of room on a 390px
+     * phone — so they wrapped, and "Leaderboard" sat alone on a second line.
+     *
+     * They shrink to fit instead of wrapping or hiding behind a button: the
+     * size and the gap both scale with the viewport, so the row stays one line
+     * from 320px up and nothing is put out of reach.
+     */
     .nav__links {
       order: 3;
       width: 100%;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.35rem 0.9rem;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      gap: clamp(0.25rem, 1.3vw, 0.9rem);
       padding-top: 0.5rem;
       border-top: 1.5px solid color-mix(in srgb, var(--ink) 14%, transparent);
     }
 
     .nav__links a:not(.btn) {
-      font-size: 0.875rem;
+      font-size: clamp(0.6875rem, 3.1vw, 0.875rem);
+      white-space: nowrap;
     }
 
     .nav__cta {
@@ -172,14 +180,9 @@ const links = [
       font-size: 0.9375rem;
     }
 
-    .nav__links {
-      gap: 0.6rem;
-    }
-
-    .nav__links a:not(.btn) {
-      font-size: 0.8125rem;
-    }
-
+    /* No font-size or gap here: both scale with the viewport in the rule
+       above, and pinning them at this width is what pushed "Leaderboard" off
+       the end of the row. */
     .nav__cta {
       padding: 0.45rem 0.75rem;
       font-size: 0.75rem;
