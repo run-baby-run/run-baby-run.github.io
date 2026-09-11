@@ -9,17 +9,24 @@ interface Props {
 const { current = 'home' } = Astro.props;
 
 /**
- * Five in the bar and three behind a button.
+ * The bar the site has always had, and the two newer sections behind a button.
  *
  * There is room for about 41 characters of label at a comfortable size on a
- * 390px phone. Eight links come to 51, which is why they had been shrinking to
- * 12px and getting hard to hit. These five come to 35 and fit at full size; the
- * rest are one tap away here and also listed in the footer, so nothing is only
- * reachable through the button.
+ * 390px phone. Adding the training plans and the blog took the bar to 51 and
+ * everything had to shrink to 11px to fit, which is too small to read and too
+ * small to hit. So those two moved; the original six stayed.
+ *
+ * Schedule is an anchor and is hidden on a phone, as it always was — it points
+ * at a section of the home page, and the five that remain come to 35
+ * characters, which fits at full size.
+ *
+ * Both of the links behind the button are in the footer too, so nothing is
+ * reachable only through it.
  *
  * Absolute hrefs, so the section anchors work from every page.
  */
 const primary = [
+  { href: '/#schedule', label: 'Schedule' },
   { href: '/diary/', label: 'Diary', key: 'diary' },
   { href: '/gallery/', label: 'Gallery', key: 'gallery' },
   { href: '/races/', label: 'Races', key: 'races' },
@@ -28,10 +35,8 @@ const primary = [
 ];
 
 const more = [
-  { href: '/#schedule', label: 'Schedule' },
   { href: '/training/', label: 'Training plans', key: 'training' },
   { href: '/blog/', label: 'Running, explained', key: 'blog' },
-  { href: '/#club', label: 'About the club' },
 ];
 
 const mark = (link: { key?: string }) => (link.key === current ? 'is-current' : '');
@@ -44,7 +49,11 @@ const mark = (link: { key?: string }) => (link.key === current ? 'is-current' : 
     <nav class="nav__links" aria-label="Main">
       {
         primary.map((link) => (
-          <a href={link.href} class={mark(link)} aria-current={link.key === current ? 'page' : undefined}>
+          <a
+            href={link.href}
+            class={[link.href.startsWith('/#') && 'nav__anchor', mark(link)].filter(Boolean).join(' ')}
+            aria-current={link.key === current ? 'page' : undefined}
+          >
             {link.label}
           </a>
         ))
@@ -327,8 +336,19 @@ const mark = (link: { key?: string }) => (link.key === current ? 'is-current' : 
     position: relative;
   }
 
-  /* Below this the five links take a row of their own, under the brand. */
-  @media (max-width: 860px) {
+  /* The anchor points at a section of the home page, and it is the one that
+     goes when the row gets tight — as it always did. */
+  @media (max-width: 720px) {
+    .nav__anchor {
+      display: none;
+    }
+  }
+
+  /* Below this the links take a row of their own, under the brand. Measured:
+     with Schedule back in the bar, six links plus the button plus the CTA stop
+     fitting on one line at about 960px — at 900 the "Join us" pill was hanging
+     off the edge. */
+  @media (max-width: 960px) {
     .nav__inner {
       flex-wrap: wrap;
       gap: 0.5rem;
