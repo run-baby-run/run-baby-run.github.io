@@ -8,40 +8,133 @@ interface Props {
 
 const { current = 'home' } = Astro.props;
 
-// Absolute hrefs so the section anchors also work from /gallery.
-const links = [
-  { href: '/#schedule', label: 'Schedule' },
+/**
+ * Five in the bar and three behind a button.
+ *
+ * There is room for about 41 characters of label at a comfortable size on a
+ * 390px phone. Eight links come to 51, which is why they had been shrinking to
+ * 12px and getting hard to hit. These five come to 35 and fit at full size; the
+ * rest are one tap away here and also listed in the footer, so nothing is only
+ * reachable through the button.
+ *
+ * Absolute hrefs, so the section anchors work from every page.
+ */
+const primary = [
   { href: '/diary/', label: 'Diary', key: 'diary' },
   { href: '/gallery/', label: 'Gallery', key: 'gallery' },
   { href: '/races/', label: 'Races', key: 'races' },
-  { href: '/training/', label: 'Training', key: 'training' },
-  { href: '/blog/', label: 'Explained', key: 'blog' },
   { href: '/members/', label: 'Members', key: 'members' },
   { href: '/leaderboard/', label: 'Leaderboard', key: 'leaderboard' },
 ];
+
+const more = [
+  { href: '/#schedule', label: 'Schedule' },
+  { href: '/training/', label: 'Training plans', key: 'training' },
+  { href: '/blog/', label: 'Running, explained', key: 'blog' },
+  { href: '/#club', label: 'About the club' },
+];
+
+const mark = (link: { key?: string }) => (link.key === current ? 'is-current' : '');
 ---
 
-<header class="nav">
+<header class="nav" data-nav>
   <div class="wrap nav__inner">
     <a class="nav__brand" href="/">Run Baby Run</a>
-    <nav class="nav__links">
+
+    <nav class="nav__links" aria-label="Main">
       {
-        links.map((link) => (
-          <a
-            href={link.href}
-            class={[link.href.startsWith('/#') && 'nav__anchor', link.key === current && 'is-current']
-              .filter(Boolean)
-              .join(' ')}
-            aria-current={link.key === current ? 'page' : undefined}
-          >
+        primary.map((link) => (
+          <a href={link.href} class={mark(link)} aria-current={link.key === current ? 'page' : undefined}>
             {link.label}
           </a>
         ))
       }
     </nav>
-    <a class="btn nav__cta" href={site.whatsapp} target="_blank" rel="noopener">Join us</a>
+
+    <div class="nav__end">
+      <!-- Without JavaScript this button does nothing useful, so it is hidden
+           until the script claims it and the extra links stay in the open. -->
+      <button
+        class="nav__more-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="nav-more"
+        hidden
+        data-nav-toggle
+      >
+        <span class="nav__bars" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+        <span class="nav__more-label">More</span>
+      </button>
+
+      <a class="btn nav__cta" href={site.whatsapp} target="_blank" rel="noopener">Join us</a>
+    </div>
+
+    <div class="nav__more" id="nav-more" data-nav-panel>
+      {
+        more.map((link) => (
+          <a href={link.href} class={mark(link)} aria-current={link.key === current ? 'page' : undefined}>
+            {link.label}
+          </a>
+        ))
+      }
+    </div>
   </div>
 </header>
+
+<script>
+  /**
+   * The "More" button. Progressive enhancement: the panel ships open and the
+   * button ships hidden, and this turns that round, so without JavaScript the
+   * extra links are simply part of the header.
+   */
+  function initNav() {
+    const nav = document.querySelector<HTMLElement>('[data-nav]');
+    const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+    if (!nav || !toggle) return;
+
+    toggle.hidden = false;
+    nav.classList.add('nav--has-toggle');
+
+    const set = (open: boolean) => {
+      nav.classList.toggle('is-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+    };
+
+    // Re-run on every navigation, but bind the listeners only once.
+    if (nav.dataset.bound === 'true') {
+      set(false);
+      return;
+    }
+    nav.dataset.bound = 'true';
+
+    toggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      set(!nav.classList.contains('is-open'));
+    });
+
+    // A link in the panel should close it — the anchors go to a section of the
+    // page already on screen, so nothing else would.
+    nav.querySelector('[data-nav-panel]')?.addEventListener('click', (event) => {
+      if ((event.target as HTMLElement).closest('a')) set(false);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && nav.classList.contains('is-open')) {
+        set(false);
+        toggle.focus();
+      }
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!nav.contains(event.target as Node)) set(false);
+    });
+  }
+
+  initNav();
+  document.addEventListener('astro:page-load', initNav);
+</script>
 
 <style>
   .nav {
@@ -56,7 +149,6 @@ const links = [
   .nav__inner {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 1rem;
     padding-block: 0.7rem;
   }
@@ -64,7 +156,7 @@ const links = [
   .nav__brand {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 1.25rem;
+    font-size: clamp(1rem, 2.6vw, 1.25rem);
     text-transform: uppercase;
     letter-spacing: -0.02em;
     text-decoration: none;
@@ -76,18 +168,22 @@ const links = [
   .nav__links {
     display: flex;
     align-items: center;
-    gap: clamp(0.9rem, 2.6vw, 2rem);
+    gap: clamp(0.65rem, 2.2vw, 2rem);
     font-weight: 500;
   }
 
-  .nav__links a:not(.btn) {
+  .nav__links a {
     position: relative;
     text-decoration: none;
     padding-block: 0.25rem;
+    white-space: nowrap;
+    /* Five labels come to 35 characters, which fits at a readable size on a
+       320px phone. That is the whole reason there are five. */
+    font-size: clamp(0.8125rem, 4.1vw, 1.0625rem);
   }
 
   /* Underline grows from the left on hover, and stays put on the current page. */
-  .nav__links a:not(.btn)::after {
+  .nav__links a::after {
     content: '';
     position: absolute;
     left: 0;
@@ -100,102 +196,178 @@ const links = [
     transition: transform 0.22s ease;
   }
 
-  .nav__links a:not(.btn):hover::after,
+  .nav__links a:hover::after,
   .nav__links a.is-current::after {
     transform: scaleX(1);
   }
 
+  .nav__end {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-left: auto;
+    flex: none;
+  }
+
+  .nav__more-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.75rem;
+    border: var(--line) solid var(--ink);
+    border-radius: 999px;
+    background: var(--cream);
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .nav__more-toggle:hover {
+    background: var(--pink);
+  }
+
+  .nav__bars {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .nav__bars span {
+    display: block;
+    width: 1rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--ink);
+    transition: transform 0.18s ease, opacity 0.18s ease;
+  }
+
+  /* Into an X, so the button says what pressing it again does. */
+  .nav.is-open .nav__bars span:nth-child(1) {
+    transform: translateY(5px) rotate(45deg);
+  }
+
+  .nav.is-open .nav__bars span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .nav.is-open .nav__bars span:nth-child(3) {
+    transform: translateY(-5px) rotate(-45deg);
+  }
+
   .nav__cta {
-    padding: 0.55rem 1.25rem;
-    font-size: 0.9375rem;
+    padding: 0.6rem 1.1rem;
+    font-size: clamp(0.75rem, 2.4vw, 0.9375rem);
     box-shadow: 3px 3px 0 var(--ink);
     white-space: nowrap;
     flex: none;
   }
 
-  @media (max-width: 720px) {
-    /* Section anchors are dropped on small screens; the real pages stay. */
-    .nav__anchor {
-      display: none;
-    }
-    .nav__brand {
-      font-size: 1.125rem;
-    }
+  /* The panel. Open by default so that it is there without JavaScript; the
+     script collapses it and reveals the button. */
+  .nav__more {
+    display: flex;
+    gap: clamp(0.65rem, 2.2vw, 1.5rem);
+    font-weight: 500;
   }
 
-  /* Phone widths: with five destinations the links no longer fit beside the
-     CTA, so they wrap onto their own row rather than running off the edge. */
-  /* The links drop to their own full-width row well before a phone. With seven
-     of them — eight, since the blog — brand, links and CTA stop fitting on one
-     line at about 1100px. Measured, not guessed: 1024 was pushing the "Join us"
-     button off the edge. */
-  @media (max-width: 1120px) {
+  .nav__more a {
+    text-decoration: none;
+    font-size: 0.9375rem;
+    white-space: nowrap;
+  }
+
+  .nav__more a:hover,
+  .nav__more a.is-current {
+    text-decoration: underline;
+    text-decoration-color: var(--pink-deep);
+    text-decoration-thickness: 2.5px;
+    text-underline-offset: 4px;
+  }
+
+  .nav--has-toggle .nav__more {
+    position: absolute;
+    right: clamp(0.85rem, 3vw, 1.5rem);
+    top: calc(100% - 0.35rem);
+    z-index: 31;
+    flex-direction: column;
+    gap: 0;
+    min-width: 12.5rem;
+    padding: 0.35rem 0;
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--cream);
+    box-shadow: var(--shadow-sm);
+    display: none;
+  }
+
+  .nav--has-toggle.is-open .nav__more {
+    display: flex;
+  }
+
+  .nav--has-toggle .nav__more a {
+    padding: 0.6rem 1rem;
+  }
+
+  .nav--has-toggle .nav__more a:hover,
+  .nav--has-toggle .nav__more a.is-current {
+    background: var(--pink);
+    text-decoration: none;
+  }
+
+  /* The panel is positioned against the header, not the page. */
+  .nav {
+    position: sticky;
+  }
+
+  .nav__inner {
+    position: relative;
+  }
+
+  /* Below this the five links take a row of their own, under the brand. */
+  @media (max-width: 860px) {
     .nav__inner {
       flex-wrap: wrap;
       gap: 0.5rem;
       padding-block: 0.6rem;
     }
 
-    .nav__brand {
-      font-size: 1rem;
-    }
-
-    /*
-     * One row, always. Six links show at this width (Schedule is hidden) and
-     * they come to about 326px at the old size, in 350px of room on a 390px
-     * phone — so they wrapped, and "Leaderboard" sat alone on a second line.
-     *
-     * They shrink to fit instead of wrapping or hiding behind a button: the
-     * size and the gap both scale with the viewport, so the row stays one line
-     * from 320px up and nothing is put out of reach.
-     */
     .nav__links {
       order: 3;
       width: 100%;
-      flex-wrap: nowrap;
       justify-content: space-between;
-      gap: clamp(0.2rem, 1.1vw, 0.9rem);
+      gap: 0.4rem;
       padding-top: 0.5rem;
       border-top: 1.5px solid color-mix(in srgb, var(--ink) 14%, transparent);
-      /* The safety net. The row shrinks to fit at any width worth having, but
-         on a 320px phone with eight links it is a couple of pixels over — so it
-         scrolls rather than clipping, and nothing is ever out of reach. */
-      overflow-x: auto;
-      scrollbar-width: none;
     }
 
-    .nav__links::-webkit-scrollbar {
-      display: none;
-    }
-
-    .nav__links a:not(.btn) {
-      font-size: clamp(0.625rem, 2.7vw, 0.875rem);
-      white-space: nowrap;
-    }
-
-    .nav__cta {
-      padding: 0.5rem 0.9rem;
-      font-size: 0.8125rem;
-      box-shadow: 2px 2px 0 var(--ink);
+    .nav--has-toggle .nav__more {
+      top: calc(100% - 0.3rem);
     }
   }
 
-  /* Very narrow phones: trim the row padding too, or the CTA runs off. */
-  @media (max-width: 380px) {
-    .nav__inner {
-      padding-inline: 0.85rem;
-    }
-
-    .nav__brand {
-      font-size: 0.9375rem;
-    }
-
-    /* No font-size or gap here: both scale with the viewport in the rule
-       above, and pinning them at this width is what pushed "Leaderboard" off
-       the end of the row. */
-    .nav__cta {
-      padding: 0.45rem 0.75rem;
+  @media (max-width: 420px) {
+    .nav__more-toggle {
+      padding: 0.35rem 0.6rem;
       font-size: 0.75rem;
+    }
+
+    .nav__more-label {
+      display: none;
+    }
+
+    .nav__cta {
+      padding: 0.5rem 0.85rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav__links a::after,
+    .nav__bars span {
+      transition: none;
     }
   }
 </style>
