@@ -1,7 +1,7 @@
 /**
  * Figures about the club itself, as opposed to its runs.
  *
- * `inTheGroup` is read off the WhatsApp group, because it cannot be derived.
+ * `members` is read off the WhatsApp group, because it cannot be derived.
  * Counting the export's own join and leave messages gives 452 people joining
  * and 26 leaving, which implies 440 — a hundred more than are actually there.
  * WhatsApp does not record every departure, so the arithmetic drifts upwards
@@ -12,9 +12,9 @@
  * link" line, so they were counted twice, and the fourteen "removed" lines were
  * not counted at all.)
  *
- * Read on 10 September 2026. Update it by looking.
+ * Read on 11 September 2026. Update it by looking.
  */
-export const inTheGroup = 340;
+export const members = 350;
 
 /** For scale. The club's summed distance is most of the way around one. */
 export const EARTH_CIRCUMFERENCE_KM = 40_075;

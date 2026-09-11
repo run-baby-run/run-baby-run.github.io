@@ -1,7 +1,7 @@
 ---
 import { meetUps } from '../data/library';
 import { stats as athletes } from '../data/stats';
-import { inTheGroup, EARTH_CIRCUMFERENCE_KM, EVEREST_M } from '../data/club';
+import { members, EARTH_CIRCUMFERENCE_KM, EVEREST_M } from '../data/club';
 
 // Summed from the Strava figures rather than written down, so these move on
 // their own whenever the numbers are next refreshed.
@@ -33,7 +33,7 @@ const stats = [
   { value: en.format(total.metres), count: total.metres, label: `metres climbed, added up — ${everests} times up Everest` },
   { value: en.format(total.activities), count: total.activities, label: 'runs logged between us' },
   { value: String(meetUps), count: meetUps, label: 'times we have met' },
-  { value: String(inTheGroup), count: inTheGroup, label: 'of us in the group chat' },
+  { value: String(members), count: members, label: 'members' },
   { value: '0', label: 'to join, forever' },
 ];
 ---
