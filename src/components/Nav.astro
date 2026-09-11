@@ -3,7 +3,7 @@ import { site } from '../data/site';
 
 interface Props {
   /** Which top-level page is showing, so the nav can mark it. */
-  current?: 'home' | 'diary' | 'gallery' | 'races' | 'members' | 'leaderboard';
+  current?: 'home' | 'diary' | 'gallery' | 'races' | 'training' | 'members' | 'leaderboard';
 }
 
 const { current = 'home' } = Astro.props;
@@ -14,6 +14,7 @@ const links = [
   { href: '/diary/', label: 'Diary', key: 'diary' },
   { href: '/gallery/', label: 'Gallery', key: 'gallery' },
   { href: '/races/', label: 'Races', key: 'races' },
+  { href: '/training/', label: 'Training', key: 'training' },
   { href: '/members/', label: 'Members', key: 'members' },
   { href: '/leaderboard/', label: 'Leaderboard', key: 'leaderboard' },
 ];
@@ -123,7 +124,11 @@ const links = [
 
   /* Phone widths: with five destinations the links no longer fit beside the
      CTA, so they wrap onto their own row rather than running off the edge. */
-  @media (max-width: 560px) {
+  /* The links drop to their own full-width row well before a phone. With seven
+     of them, brand + links + CTA stop fitting on one line at about 1000px —
+     measured, not guessed: at 900 the "Join us" button was hanging off the
+     edge, and 768 was pushing three things off at once. */
+  @media (max-width: 1000px) {
     .nav__inner {
       flex-wrap: wrap;
       gap: 0.5rem;
@@ -134,11 +139,14 @@ const links = [
       font-size: 1rem;
     }
 
+    /* Wrapping, because seven links do not fit on one row of a 320px phone
+       and space-between simply pushed the last one off the side. */
     .nav__links {
       order: 3;
       width: 100%;
-      justify-content: space-between;
-      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.35rem 0.9rem;
       padding-top: 0.5rem;
       border-top: 1.5px solid color-mix(in srgb, var(--ink) 14%, transparent);
     }

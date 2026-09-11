@@ -1,0 +1,211 @@
+---
+import type { Week } from '../data/plans';
+
+interface Props {
+  week: Week;
+}
+
+const { week } = Astro.props;
+
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const hours = (m: number) => (m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m}m`);
+---
+
+<section class="week">
+  <header class="week__head">
+    <h3>Week {week.n}</h3>
+    <p class="week__totals">
+      <span>{week.km} km</span>
+      <span>{hours(week.minutes)}</span>
+      <span>{week.workouts.length} {week.workouts.length === 1 ? 'run' : 'runs'}</span>
+    </p>
+  </header>
+
+  <ol class="week__runs">
+    {
+      week.workouts.map((w) => (
+        <li class="run">
+          <p class="run__day">{DAYS[w.day - 1]}</p>
+          <div class="run__body">
+            <p class="run__name">
+              {w.name}
+              <span class="run__figures">{w.km} km · {hours(w.minutes)}</span>
+            </p>
+            <ol class="steps">
+              {w.steps.map((s) => (
+                <>
+                  {/* A repeat introduces the steps after it, so it has to start
+                      a row — wrapped onto the end of the previous one it reads
+                      as though it belongs to the step before. */}
+                  {s.kind === 'repeat' && <li class="steps__break" aria-hidden="true" />}
+                <li class={`step step--${s.kind}`}>
+                  <span class="step__label">{s.label}</span>
+                  <span class="step__target">{s.target}</span>
+                  {s.effort && <span class="step__effort">{s.effort}</span>}
+                </li>
+                </>
+              ))}
+            </ol>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+</section>
+
+<style>
+  .week {
+    border: var(--line) solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--cream);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+
+  .week__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    padding: 0.8rem 1.1rem;
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  .week__head h3 {
+    margin: 0;
+    font-size: 1.0625rem;
+  }
+
+  .week__totals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--cream) 78%, transparent);
+  }
+
+  .week__runs {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .run {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    gap: 0 1rem;
+    padding: 0.85rem 1.1rem;
+    border-top: 2px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  }
+
+  .run:first-child {
+    border-top: 0;
+  }
+
+  .run__day {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .run__body {
+    min-width: 0;
+  }
+
+  .run__name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 0.75rem;
+    margin: 0 0 0.45rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1rem;
+  }
+
+  .run__figures {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--pink-text);
+  }
+
+  .steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .steps__break {
+    flex-basis: 100%;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .step {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding: 0.15rem 0.6rem;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    background: var(--cream);
+  }
+
+  /* The effort is the part worth reading, so the ends of a session are quieter
+     than its middle. */
+  .step--warmup,
+  .step--cooldown {
+    opacity: 0.62;
+  }
+
+  .step--work {
+    background: color-mix(in srgb, var(--pink) 40%, var(--cream));
+  }
+
+  /* A repeat introduces the steps after it, so it reads as a marker rather
+     than as another part of the session. */
+  .step--repeat {
+    background: var(--ink);
+    color: var(--cream);
+    font-family: var(--font-display);
+    font-weight: 800;
+  }
+
+  .step__label {
+    font-weight: 700;
+  }
+
+  .step__target {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .step__effort {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 560px) {
+    .run {
+      grid-template-columns: 1fr;
+      gap: 0.3rem;
+    }
+  }
+</style>

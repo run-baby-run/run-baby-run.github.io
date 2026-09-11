@@ -1,0 +1,139 @@
+---
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import { plans } from '../../data/plans';
+import { byPlan, notes } from '../../data/planNotes';
+
+const cards = notes.map((note) => {
+  const plan = plans.find((p) => p.slug === note.slug)!;
+  return {
+    ...note,
+    weeks: plan.weeks.length,
+    sessions: plan.weeks.reduce((t, w) => t + w.workouts.length, 0),
+    km: Math.round(plan.weeks.reduce((t, w) => t + w.km, 0)),
+  };
+});
+---
+
+<Base
+  title="Training plans — Run Baby Run Club"
+  description="Half marathon and marathon training plans, week by week, with the pace or heart rate for every run. From the Run Baby Run club in Yerevan."
+>
+  <Nav current="training" />
+  <main>
+    <PageHeader eyebrow="Twelve weeks or so" title="Training plans." tone="sage">
+      <p>
+        Four plans, written out run by run, with the distance and the pace or
+        heart rate for each one. Nothing to sign up to and nothing to install —
+        they are here to read.
+      </p>
+    </PageHeader>
+
+    <div class="wrap plans">
+      <ul class="plans__list">
+        {
+          cards.map((card) => (
+            <li class="plan sticker">
+              <a href={`/training/${card.slug}/`}>
+                <p class="plan__distance">{card.distance}</p>
+                <h2 class="plan__name">{card.name}</h2>
+                <p class="plan__blurb">{card.blurb}</p>
+                <p class="plan__figures">
+                  <span>{card.weeks} weeks</span>
+                  <span>{card.sessions} runs</span>
+                  <span>{card.km} km</span>
+                </p>
+                <span class="plan__go">See the plan →</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="plans__credit">
+        The plans are COROS's, reproduced here so they can be read without an
+        account or a watch. The words around them are ours.
+      </p>
+    </div>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .plans {
+    padding-block: clamp(2rem, 6vw, 3.5rem);
+    max-width: 940px;
+  }
+
+  .plans__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .plan {
+    padding: 0;
+    background: var(--cream);
+  }
+
+  .plan a {
+    display: block;
+    padding: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .plan__distance {
+    display: inline-block;
+    margin: 0 0 0.6rem;
+    padding: 0.1rem 0.6rem;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--pink);
+  }
+
+  .plan__name {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.15rem, 3vw, 1.4rem);
+  }
+
+  .plan__blurb {
+    margin: 0 0 1rem;
+    color: var(--ink-soft);
+  }
+
+  .plan__figures {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin: 0 0 1rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--pink-text);
+  }
+
+  .plan__go {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .plans__credit {
+    margin: 2rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--ink-soft);
+  }
+</style>

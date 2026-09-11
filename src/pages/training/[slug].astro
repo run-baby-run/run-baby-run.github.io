@@ -1,0 +1,105 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import PlanWeek from '../../components/PlanWeek.astro';
+import { plans } from '../../data/plans';
+import { notes } from '../../data/planNotes';
+
+export const getStaticPaths = (async () => {
+  const { plans } = await import('../../data/plans');
+  const { notes } = await import('../../data/planNotes');
+  return plans
+    .filter((plan) => notes.some((n) => n.slug === plan.slug))
+    .map((plan) => ({ params: { slug: plan.slug }, props: { plan } }));
+}) satisfies GetStaticPaths;
+
+const { plan } = Astro.props;
+const note = notes.find((n) => n.slug === plan.slug)!;
+
+const sessions = plan.weeks.reduce((t, w) => t + w.workouts.length, 0);
+const km = Math.round(plan.weeks.reduce((t, w) => t + w.km, 0));
+const biggest = Math.max(...plan.weeks.map((w) => w.km));
+const source = `https://training.coros.com/schedule-plan/share?planId=${plan.id}&region=1`;
+---
+
+<Base
+  title={`${note.name} — training plan — Run Baby Run Club`}
+  description={`${note.blurb} ${plan.weeks.length} weeks, ${sessions} runs, ${km} km, with the target for every session.`}
+>
+  <Nav current="training" />
+  <main>
+    <PageHeader eyebrow={note.distance} title={`${note.name}.`} tone="sage">
+      <p>{note.intro}</p>
+    </PageHeader>
+
+    <div class="wrap plan">
+      <ul class="plan__figures">
+        <li><strong>{plan.weeks.length}</strong> weeks</li>
+        <li><strong>{sessions}</strong> runs</li>
+        <li><strong>{km}</strong> km in total</li>
+        <li><strong>{biggest}</strong> km in the biggest week</li>
+      </ul>
+
+      {note.instead && <p class="plan__instead">{note.instead}</p>}
+
+      <p class="plan__howto">
+        Each run is broken into its parts: the quiet ends are the warm-up and
+        cool-down, the shaded middle is the work. Treat the targets as a guide
+        rather than a rule — they were written for a generic runner, and you are
+        not one.
+      </p>
+
+      {plan.weeks.map((week) => <PlanWeek week={week} />)}
+
+      <p class="plan__credit">
+        Plan by <a href={source} target="_blank" rel="noopener">COROS</a>, set out
+        here so it can be read without an account. The wording around it is ours.
+      </p>
+    </div>
+  </main>
+  <Footer />
+</Base>
+
+<style>
+  .plan {
+    padding-block: clamp(2rem, 6vw, 3.5rem);
+    max-width: 860px;
+  }
+
+  .plan__figures {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.75rem;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    list-style: none;
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+  }
+
+  .plan__figures strong {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--pink-text);
+    margin-right: 0.35rem;
+  }
+
+  .plan__instead,
+  .plan__howto {
+    margin: 0 0 1.25rem;
+    padding: 0.85rem 1.1rem;
+    border-left: 4px solid var(--pink-text);
+    background: color-mix(in srgb, var(--cream) 60%, transparent);
+  }
+
+  .plan__credit {
+    margin: 1.75rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--ink-soft);
+  }
+</style>
