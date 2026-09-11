@@ -41,10 +41,12 @@ const bench = '#c08b52';
   </g>
 
   <!-- plane trees: round crowns, clipped flat underneath the way street trees are -->
+  <!-- The near left crown is r26 with a 4-wide stroke, so its own centre cannot
+       sit closer to the edge than 28 or the viewBox cuts a flat side off it. -->
   <g>
-    <path d="M22 122 L22 88" stroke={trunkDark} stroke-width="9" stroke-linecap="round" />
-    <circle cx="22" cy="68" r="26" fill={sageDeep} stroke={ink} stroke-width="4" />
-    <circle cx="13" cy="60" r="11" fill={sageLight} opacity="0.55" />
+    <path d="M30 122 L30 88" stroke={trunkDark} stroke-width="9" stroke-linecap="round" />
+    <circle cx="30" cy="68" r="26" fill={sageDeep} stroke={ink} stroke-width="4" />
+    <circle cx="21" cy="60" r="11" fill={sageLight} opacity="0.55" />
   </g>
   <g>
     <path d="M112 122 L112 84" stroke={trunkDark} stroke-width="10" stroke-linecap="round" />
