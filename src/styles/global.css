@@ -209,3 +209,64 @@ img {
     animation-iteration-count: 1 !important;
   }
 }
+
+/*
+ * Navigation progress. See the comment in src/layouts/Base.astro for why this
+ * exists and why it is not a page-load spinner.
+ */
+.progress {
+  position: fixed;
+  inset: 0 0 auto;
+  height: 3px;
+  z-index: 120;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.progress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--pink-deep);
+}
+
+/*
+ * One transition, decelerating hard, to 92% — never to 100%, because the bar
+ * has no idea how long the fetch will take and a bar that fills and then waits
+ * is worse than one still moving. Six seconds is far longer than any real
+ * navigation, so what is actually seen is the fast opening of the curve.
+ */
+.progress.is-loading {
+  opacity: 1;
+}
+
+.progress.is-loading span {
+  width: 92%;
+  transition: width 6s cubic-bezier(0, 0.7, 0.2, 1);
+}
+
+/* Snap to full, then get out of the way. The width transition starts from
+   wherever the crawl had reached, because both states are transitions rather
+   than an animation holding a value. */
+.progress.is-done {
+  opacity: 0;
+  transition: opacity 0.3s ease 0.2s;
+}
+
+.progress.is-done span {
+  width: 100%;
+  transition: width 0.2s ease-out;
+}
+
+/* Still needed — it is feedback, not decoration — but held still. */
+@media (prefers-reduced-motion: reduce) {
+  .progress.is-loading span,
+  .progress.is-done span {
+    width: 100%;
+    transition: none;
+  }
+
+  .progress.is-done {
+    transition: none;
+  }
+}
