@@ -9,14 +9,17 @@ import Cafes from './Cafes.astro';
 import KondTunnel from './KondTunnel.astro';
 
 interface Props {
-  /** Draw the whole club rather than the three figures from the logo. */
-  pack?: boolean;
+  /**
+   * Draw the three figures from the club mark instead of the club. Only the
+   * workbench at /preview/street/ uses this, to compare the two side by side.
+   */
+  logo?: boolean;
 }
 
-const { pack = false } = Astro.props;
+const { logo = false } = Astro.props;
 ---
 
-<div class:list={['band', pack && 'band--pack']} aria-hidden="true">
+<div class:list={['band', !logo && 'band--pack']} aria-hidden="true">
   <div class="band__track">
     <!-- Scenery first, so everything else runs in front of it. -->
     <span class="band__tunnel"><KondTunnel /></span>
@@ -24,7 +27,7 @@ const { pack = false } = Astro.props;
     <span class="band__cafes"><Cafes /></span>
     <span class="band__park"><Park /></span>
     <span class="band__fountain"><Pulpulak /></span>
-    <span class="band__pack">{pack ? <Pack /> : <RunningTrio />}</span>
+    <span class="band__pack">{logo ? <RunningTrio /> : <Pack />}</span>
     <!-- After the pack, so the dog is nearest the viewer: any brush as it
          passes reads as depth rather than two things intersecting. -->
     <span class="band__dog"><Dog /></span>
