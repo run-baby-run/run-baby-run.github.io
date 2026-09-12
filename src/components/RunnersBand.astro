@@ -1,14 +1,22 @@
 ---
 import RunningTrio from './RunningTrio.astro';
+import Pack from './Pack.astro';
 import Dog from './Dog.astro';
 import Pulpulak from './Pulpulak.astro';
 import Park from './Park.astro';
 import RepublicSquare from './RepublicSquare.astro';
 import Cafes from './Cafes.astro';
 import KondTunnel from './KondTunnel.astro';
+
+interface Props {
+  /** Draw the whole club rather than the three figures from the logo. */
+  pack?: boolean;
+}
+
+const { pack = false } = Astro.props;
 ---
 
-<div class="band" aria-hidden="true">
+<div class:list={['band', pack && 'band--pack']} aria-hidden="true">
   <div class="band__track">
     <!-- Scenery first, so everything else runs in front of it. -->
     <span class="band__tunnel"><KondTunnel /></span>
@@ -16,7 +24,7 @@ import KondTunnel from './KondTunnel.astro';
     <span class="band__cafes"><Cafes /></span>
     <span class="band__park"><Park /></span>
     <span class="band__fountain"><Pulpulak /></span>
-    <span class="band__pack"><RunningTrio /></span>
+    <span class="band__pack">{pack ? <Pack /> : <RunningTrio />}</span>
     <!-- After the pack, so the dog is nearest the viewer: any brush as it
          passes reads as depth rather than two things intersecting. -->
     <span class="band__dog"><Dog /></span>
@@ -40,6 +48,11 @@ import KondTunnel from './KondTunnel.astro';
      * wide layout has, and everything fits.
      */
     --pack: clamp(88px, 21vw, 250px);
+    /* A runner's viewBox leaves empty space below the feet, so the pack is
+       pulled down by that much to stand ON the ground line rather than above
+       it. It is a share of the figure's height, which is a different share of
+       the pack's width depending on how many figures are across it. */
+    --pack-pull: -0.085;
     --dog: clamp(56px, 13vw, 160px);
     --fountain: clamp(30px, 7vw, 86px);
     /*
@@ -61,6 +74,15 @@ import KondTunnel from './KondTunnel.astro';
     padding-top: clamp(1.5rem, 4vw, 3rem);
   }
 
+  /* Six of us across instead of three, at close to the same figure size, so
+     the pack is wider. The floor keeps the same relationship to the viewport
+     that the trio's did — a floor set any higher inflates the figures on a
+     narrow screen, which is what used to crowd the tunnel and the park off it. */
+  .band--pack {
+    --pack: clamp(132px, 34vw, 400px);
+    --pack-pull: -0.064;
+  }
+
   /* No fixed height: the track takes its height from the pack, so nothing can
      be clipped at the top. Everything else is absolutely placed against it. */
   .band__track {
@@ -72,7 +94,7 @@ import KondTunnel from './KondTunnel.astro';
   .band__pack {
     display: block;
     width: var(--pack);
-    margin-bottom: calc(var(--pack) * -0.085);
+    margin-bottom: calc(var(--pack) * var(--pack-pull));
     animation: cross 17s linear infinite;
   }
 

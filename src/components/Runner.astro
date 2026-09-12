@@ -20,8 +20,13 @@ interface Props {
   shorts: string;
   legs: string;
   shoe: string;
-  /** The logo has two caps and one bun. */
-  head?: 'cap' | 'bun';
+  /**
+   * The logo has two caps and one bun. The pack needs more than that: the
+   * group photographs are mostly ponytails, with short hair and caps behind.
+   */
+  head?: 'cap' | 'bun' | 'ponytail' | 'short';
+  /** Hair colour. Ink for most of us; one of the Tuesday regulars is grey. */
+  hair?: string;
   /** Skin tone for the face. */
   skin?: string;
   /** Negative seconds, to stagger the trio out of phase. */
@@ -37,6 +42,7 @@ const {
   legs,
   shoe,
   head = 'cap',
+  hair = '#141414',
   skin = '#f7f6f4',
   delay = 0,
   watch = false,
@@ -163,22 +169,32 @@ const watchKeyframes = watch
       />
       <!-- eye -->
       <circle cx="80" cy="28" r="2.4" fill={ink} />
-      {
-        head === 'cap' ? (
+      {head === 'cap' && (
+        <path
+          d="M57 25 Q57 11 73 11 Q89 11 89 25 L103 26 Q105 31 96 31 L57 30 Z"
+          fill={capFill}
+          stroke={ink}
+          stroke-width="4"
+          stroke-linejoin="round"
+        />
+      )}
+      {head !== 'cap' && (
+        <path d="M57 27 Q56 12 73 12 Q89 12 88 27 Q80 20 72 20 Q63 20 57 27 Z" fill={hair} />
+      )}
+      {head === 'bun' && <circle cx="62" cy="9" r="8" fill={hair} stroke={ink} stroke-width="3" />}
+      {head === 'ponytail' && (
+        /* Hangs off the BACK of the skull, which for a figure facing right is
+           the left. Its own group, so it can swing against the head nod. */
+        <g class="runner__tail">
           <path
-            d="M57 25 Q57 11 73 11 Q89 11 89 25 L103 26 Q105 31 96 31 L57 30 Z"
-            fill={capFill}
+            d="M61 19 Q45 23 41 39 Q39 47 47 46 Q50 34 64 29 Z"
+            fill={hair}
             stroke={ink}
-            stroke-width="4"
+            stroke-width="3.5"
             stroke-linejoin="round"
           />
-        ) : (
-          <>
-            <path d="M57 27 Q56 12 73 12 Q89 12 88 27 Q80 20 72 20 Q63 20 57 27 Z" fill={ink} />
-            <circle cx="62" cy="9" r="8" fill={ink} stroke={ink} stroke-width="3" />
-          </>
-        )
-      }
+        </g>
+      )}
     </g>
     </g>
 
@@ -295,6 +311,14 @@ const watchKeyframes = watch
 
   .runner__arm--far .runner__forearm {
     animation-name: forearm-far;
+  }
+
+  /* Swings from where it is tied, at twice the leg rate — a ponytail bounces
+     on every footfall, not every stride. */
+  .runner__tail {
+    transform-origin: 61px 21px;
+    animation: tail 0.29s ease-in-out infinite;
+    animation-delay: var(--delay);
   }
 
   .runner__head {
@@ -449,6 +473,11 @@ const watchKeyframes = watch
     0%   { transform: rotate(-96deg); }
     50%  { transform: rotate(-72deg); }
     100% { transform: rotate(-96deg); }
+  }
+
+  @keyframes tail {
+    0%, 100% { transform: rotate(-7deg); }
+    50% { transform: rotate(9deg); }
   }
 
   @keyframes head-nod {

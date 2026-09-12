@@ -1,0 +1,118 @@
+---
+import Runner from './Runner.astro';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+
+/**
+ * The club, not the logo.
+ *
+ * RunningTrio draws the three figures from the club mark, in matching pink,
+ * white and black, evenly spaced. That is a logo. It is not what we look like
+ * on the street.
+ *
+ * Two things are read off the group photographs — the 16 July line-up in
+ * particular. First the kit: nobody matches anybody, and the real spread is
+ * orange, olive, lime, navy, white, grey and a great deal of black, with
+ * ponytails outnumbering caps and one regular who is grey. Second the shape of
+ * a bunch: it is ragged. People are at different distances, so they are
+ * different sizes and their feet are at different heights, and they are not
+ * evenly spaced — there are two together, then a gap, then three.
+ *
+ * Nobody here is a portrait, and deliberately so. These are flat stick figures
+ * wearing the right kit and the right hair. A group reads as itself through
+ * how it is arranged, not through faces at this size.
+ */
+
+const ink = '#141414';
+const cream = '#f7f6f4';
+
+type Person = {
+  shirt: string;
+  shorts: string;
+  legs: string;
+  shoe: string;
+  head: 'cap' | 'bun' | 'ponytail' | 'short';
+  hair?: string;
+  /** All three as a share of the pack's WIDTH — `bottom` is converted to a
+   * share of the height below, so the numbers here stay comparable. */
+  left: number;
+  width: number;
+  bottom: number;
+  /** Negative seconds, so no two of us are ever on the same foot. */
+  delay: number;
+  watch?: boolean;
+};
+
+/*
+ * Laid out by hand rather than by a loop, because a bunch is not a pattern.
+ * `bottom` and `width` carry the depth together: further up the street is both
+ * higher and smaller, and the two have to agree or a figure looks like a
+ * giant standing in a hole. Stacking order follows `bottom` — whoever is
+ * lowest is nearest the viewer and goes on top. Keep the spread in `bottom`
+ * small: this is a flat street seen side-on, so distance lifts the feet only
+ * slightly. A wide spread reads as a hill.
+ *
+ * The rightmost figure ends at exactly left + width = 100, so the pack is
+ * precisely as wide as it says it is and the band's maths still holds.
+ */
+const pack: Person[] = [
+  { shirt: cream, shorts: '#33426e', legs: '#d9a97e', shoe: ink, head: 'cap', left: 0, width: 30, bottom: 6, delay: -0.05 },
+  { shirt: '#e2653a', shorts: ink, legs: '#d9a97e', shoe: cream, head: 'short', left: 13, width: 36, bottom: 0, delay: -0.41 },
+  { shirt: '#c3d95e', shorts: ink, legs: '#b07f57', shoe: cream, head: 'ponytail', left: 30, width: 28, bottom: 8, delay: -0.46 },
+  { shirt: ink, shorts: '#3f9e8c', legs: '#f0d3bb', shoe: '#f6a8c4', head: 'ponytail', left: 40, width: 34, bottom: 2, delay: -0.17 },
+  { shirt: '#8b8f5a', shorts: '#cfcfc9', legs: '#f0d3bb', shoe: cream, head: 'short', hair: '#b3ada3', left: 57, width: 30, bottom: 5, delay: -0.23 },
+  { shirt: '#f6a8c4', shorts: '#cfcfc9', legs: ink, shoe: cream, head: 'ponytail', left: 68, width: 32, bottom: 0, delay: 0, watch: true },
+];
+
+/* Nearest on top. Ties keep their order, which puts the leader in front. */
+const order = pack
+  .map((p, i) => i)
+  .sort((a, b) => pack[b].bottom - pack[a].bottom || a - b);
+
+/* A runner is 130 x 170 in its own viewBox, and the tallest here sets how tall
+   the pack is. Everything else is placed against that height. */
+const TALLEST = Math.max(...pack.map((p) => p.width));
+const HEIGHT = (TALLEST * 170) / 130;
+---
+
+<div class:list={['pack', className]} style={`aspect-ratio:100/${HEIGHT.toFixed(2)}`}>
+  {
+    pack.map((p, i) => (
+      <span
+        class="pack__slot"
+        style={`left:${p.left}%;width:${p.width}%;bottom:${((p.bottom * 100) / HEIGHT).toFixed(2)}%;z-index:${order.indexOf(i) + 1}`}
+      >
+        <Runner
+          shirt={p.shirt}
+          shorts={p.shorts}
+          legs={p.legs}
+          shoe={p.shoe}
+          head={p.head}
+          hair={p.hair}
+          delay={p.delay}
+          watch={p.watch}
+        />
+      </span>
+    ))
+  }
+</div>
+
+<style>
+  /* Height comes from the aspect-ratio set above rather than from the content,
+     so every figure can be placed absolutely and none of them can make the
+     pack wider than 100% — which is what keeps the street's landmarks their
+     share of the band. */
+  .pack {
+    position: relative;
+    width: 100%;
+  }
+
+  .pack__slot {
+    position: absolute;
+    display: block;
+  }
+</style>
