@@ -17,9 +17,20 @@
 
     let dialog: HTMLDialogElement | null = null;
     let img: HTMLImageElement;
+    let figure: HTMLElement;
     let caption: HTMLElement;
     let counter: HTMLElement;
     let index = 0;
+    let spinTimer: number | undefined;
+
+    /*
+     * How long the full photograph may take before the viewer is told it is
+     * coming. Measured, throttled, cache cold: 364ms on Fast 4G, 941ms on
+     * Slow 4G, 3492ms on Slow 3G. 400ms is set just above the fast case, so a
+     * good connection never flashes a spinner for a tenth of a second — the
+     * same rule as the navigation bar in Base.astro.
+     */
+    const SPIN_AFTER = 400;
 
     const build = () => {
       const el = document.createElement('dialog');
@@ -38,6 +49,7 @@
       document.body.append(el);
 
       img = el.querySelector('.lightbox__img') as HTMLImageElement;
+      figure = el.querySelector('.lightbox__figure') as HTMLElement;
       caption = el.querySelector('.lightbox__text') as HTMLElement;
       counter = el.querySelector('.lightbox__count') as HTMLElement;
 
@@ -110,9 +122,24 @@
       img.srcset = link.dataset.zoomSrcset ?? '';
       img.src = link.dataset.zoom!;
 
-      const done = () => img.classList.remove('is-loading');
-      if (img.complete) done();
-      else img.addEventListener('load', done, { once: true });
+      clearTimeout(spinTimer);
+      figure.classList.remove('is-waiting');
+
+      const done = () => {
+        clearTimeout(spinTimer);
+        figure.classList.remove('is-waiting');
+        // Also on error: otherwise is-loading keeps the alt text hidden and a
+        // photograph that failed to load is an unexplained blank for ever.
+        img.classList.remove('is-loading');
+      };
+
+      if (img.complete) {
+        done();
+      } else {
+        spinTimer = window.setTimeout(() => figure.classList.add('is-waiting'), SPIN_AFTER);
+        img.addEventListener('load', done, { once: true });
+        img.addEventListener('error', done, { once: true });
+      }
 
       caption.textContent = link.dataset.caption ?? '';
       counter.textContent = `${index + 1} / ${links.length}`;
@@ -176,6 +203,7 @@
   }
 
   .lightbox__figure {
+    position: relative;
     margin: 0;
     display: flex;
     flex-direction: column;
@@ -213,6 +241,41 @@
   .lightbox__img.is-loading {
     color: transparent;
     font-size: 0;
+  }
+
+  /* The dialog opens on the gallery thumbnail, already decoded, so it is never
+     empty — but a 400px thumbnail blown up to fill a phone is only slightly
+     soft, and nothing about it says a sharper one is on its way. This does.
+     A pseudo-element, so the markup and the careful sizing above are untouched. */
+  .lightbox__figure.is-waiting::after {
+    content: '';
+    position: absolute;
+    /* Top-LEFT. The close button hangs off the top-right corner on every
+       width, and the two sat on top of each other there. */
+    top: 0.8rem;
+    left: 0.8rem;
+    z-index: 3;
+    width: 1.35rem;
+    height: 1.35rem;
+    border: 3px solid var(--cream);
+    border-top-color: var(--pink-deep);
+    border-radius: 50%;
+    /* Over a photograph that could be any colour, including cream. */
+    box-shadow: 0 0 0 2px rgba(10, 10, 10, 0.45);
+    animation: lightbox-spin 0.7s linear infinite;
+  }
+
+  @keyframes lightbox-spin {
+    to { transform: rotate(1turn); }
+  }
+
+  /* Still say that something is happening, without the spin. */
+  @media (prefers-reduced-motion: reduce) {
+    .lightbox__figure.is-waiting::after {
+      animation: none;
+      border-color: var(--pink-deep);
+      border-top-color: var(--cream);
+    }
   }
 
   .lightbox__caption {
