@@ -12,27 +12,73 @@ const day = (iso: string) =>
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
   });
 
-// Grouped by the day they were taken: a gallery of a year of runs reads far
-// better as days than as one undifferentiated wall.
-const days: { date: string; photos: Photo[] }[] = [];
+/** The Monday of the week a date falls in, ISO-style. Sunday is day 0, and
+ *  belongs to the week that started six days earlier — not the one starting
+ *  tomorrow, which is what a naive subtraction gives. */
+function monday(iso: string) {
+  const d = new Date(iso + 'T12:00:00Z');
+  const shift = (d.getUTCDay() + 6) % 7;
+  d.setUTCDate(d.getUTCDate() - shift);
+  return d.toISOString().slice(0, 10);
+}
+
+const add = (iso: string, days: number) => {
+  const d = new Date(iso + 'T12:00:00Z');
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+};
+
+const part = (iso: string, opts: Intl.DateTimeFormatOptions) =>
+  new Date(iso + 'T12:00:00Z').toLocaleDateString('en-GB', { ...opts, timeZone: 'UTC' });
+
+/** "1 – 7 September 2026", dropping whatever the two ends already share. */
+function span(from: string, to: string) {
+  const sameYear = from.slice(0, 4) === to.slice(0, 4);
+  const sameMonth = sameYear && from.slice(5, 7) === to.slice(5, 7);
+  const left = sameMonth
+    ? part(from, { day: 'numeric' })
+    : part(from, { day: 'numeric', month: 'long', ...(sameYear ? {} : { year: 'numeric' }) });
+  return `${left} – ${part(to, { day: 'numeric', month: 'long', year: 'numeric' })}`;
+}
+
+/*
+ * Grouped by the week they were taken.
+ *
+ * By day, most blocks were three or four photographs — too few for a mosaic to
+ * be a mosaic, and the page turned into a column of thin strips separated by
+ * headings. A week is two or three runs plus whatever else happened, which is
+ * enough to pack properly. The individual dates are not lost: they are listed
+ * under the heading, each one linking into that day in the diary, and every
+ * photograph carries its own date into the lightbox.
+ */
+const weeks: { start: string; photos: Photo[]; days: string[] }[] = [];
 for (const photo of photos) {
-  if (days.at(-1)?.date !== photo.date) days.push({ date: photo.date, photos: [] });
-  days.at(-1)!.photos.push(photo);
+  const start = monday(photo.date);
+  if (weeks.at(-1)?.start !== start) weeks.push({ start, photos: [], days: [] });
+  const week = weeks.at(-1)!;
+  week.photos.push(photo);
+  if (!week.days.includes(photo.date)) week.days.push(photo.date);
 }
 ---
 
 {
-  days.map((group) => (
-    <section class="wall__day">
-      <h2 class="wall__date">
-        <a href={`/diary#${group.date}`}>
-          <time datetime={group.date}>{day(group.date)}</time>
-        </a>
-        <small>{group.photos.length} {group.photos.length === 1 ? 'photo' : 'photos'}</small>
+  weeks.map((week) => (
+    <section class="wall__week">
+      <h2 class="wall__span">
+        <time datetime={week.start}>{span(week.start, add(week.start, 6))}</time>
+        <small>{week.photos.length} {week.photos.length === 1 ? 'photo' : 'photos'}</small>
       </h2>
 
+      <p class="wall__days">
+        {week.days.map((date) => (
+          <a href={`/diary#${date}`}>
+            <time datetime={date}>{part(date, { weekday: 'short', day: 'numeric' })}</time>
+          </a>
+        ))}
+      </p>
+
       <ul class="wall">
-        {group.photos.map((photo, i) => (
+        {week.photos.map((photo, i) => (
           <li class="wall__item" style={`--tilt:${(i % 3) - 1}deg`}>
             <a
               class="shot__link"
@@ -63,26 +109,47 @@ for (const photo of photos) {
 }
 
 <style>
-  .wall__day {
-    margin-bottom: clamp(2rem, 5vw, 3rem);
+  .wall__week {
+    margin-bottom: clamp(2.5rem, 6vw, 4rem);
   }
 
-  .wall__date {
+  .wall__span {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     gap: 0.75rem;
-    margin: 0 0 0.9rem;
+    margin: 0 0 0.45rem;
     font-size: clamp(1rem, 2.6vw, 1.25rem);
   }
 
-  .wall__date a {
-    text-decoration: none;
-    color: inherit;
-    border-bottom: 3px solid var(--pink-text);
+  /* The days inside the week, each into the diary. Small, because the week is
+     the heading here and these are a way back to a particular evening. */
+  .wall__days {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0 0 0.9rem;
   }
 
-  .wall__date small {
+  .wall__days a {
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.55rem;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: var(--cream);
+  }
+
+  .wall__days a:hover,
+  .wall__days a:focus-visible {
+    background: var(--pink);
+  }
+
+  .wall__span small {
     font-family: var(--font-body);
     font-size: 0.6875rem;
     font-weight: 700;

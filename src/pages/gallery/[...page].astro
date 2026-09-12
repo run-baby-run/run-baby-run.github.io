@@ -11,7 +11,10 @@ import { photos } from '../../data/library';
 
 // getStaticPaths is hoisted out of the component scope, so it cannot close over
 // anything declared here — the page size is inlined deliberately. Newest first,
-// which means the top of the gallery is the last run.
+// which means the top of the gallery is the last run. PhotoWall groups what it
+// is handed into weeks, so a week can straddle a page boundary — as a day used
+// to. Paginating by week instead would make the page lengths wildly uneven,
+// since a race weekend can carry eighty photographs and a quiet week four.
 export const getStaticPaths = (({ paginate }) => {
   const newest = [...photos].sort((a, b) => b.date.localeCompare(a.date) || a.id.localeCompare(b.id));
   return paginate(newest, { pageSize: 60 });
@@ -23,7 +26,7 @@ const suffix = page.currentPage > 1 ? ` — page ${page.currentPage}` : '';
 
 <Base
   title={`Gallery${suffix} — Run Baby Run Club`}
-  description="Every photo from Run Baby Run's runs around Yerevan, by the day it was taken."
+  description="Every photo from Run Baby Run's runs around Yerevan, a week at a time."
 >
   <Nav current="gallery" />
   <main>
@@ -35,8 +38,8 @@ const suffix = page.currentPage > 1 ? ` — page ${page.currentPage}` : '';
     >
       <p>
         Every run ends the same way — someone shouts “photo!” and we all squint into
-        it. {page.total} of them since February, by the day they were taken. Any date
-        here takes you to that day in the <a href="/diary/">diary</a>.
+        it. {page.total} of them since February, a week at a time. Any date under a
+        week takes you to that day in the <a href="/diary/">diary</a>.
       </p>
     </PageHeader>
 
