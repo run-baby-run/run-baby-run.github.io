@@ -39,7 +39,10 @@ for (const day of days) {
     if (!existsSync(full)) {
       meta = await sharp(src).rotate().resize(FULL, FULL, { fit: 'inside', withoutEnlargement: true })
         .webp({ quality: 68 }).toFile(full);
-      await sharp(src).rotate().resize(THUMB, THUMB, { fit: 'cover' }).webp({ quality: 62 }).toFile(thumb);
+      // 'inside', not 'cover': the gallery is a mosaic and lays each
+      // photograph out at its own proportions. See scripts/rebuild-thumbs.mjs.
+      await sharp(src).rotate().resize(THUMB, THUMB, { fit: 'inside', withoutEnlargement: true })
+        .webp({ quality: 62 }).toFile(thumb);
     } else {
       meta = await sharp(full).metadata();
     }

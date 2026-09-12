@@ -33,7 +33,7 @@ for (const photo of photos) {
 
       <ul class="wall">
         {group.photos.map((photo, i) => (
-          <li class={`wall__item${photo.tall ? ' wall__item--tall' : ''}`} style={`--tilt:${(i % 3) - 1}deg`}>
+          <li class="wall__item" style={`--tilt:${(i % 3) - 1}deg`}>
             <a
               class="shot__link"
               href={`/photos/${photo.month}/${photo.id}.webp`}
@@ -48,8 +48,9 @@ for (const photo of photos) {
               <img
                 src={`/photos/${photo.month}/${photo.id}-t.webp`}
                 alt={`Run Baby Run, ${day(photo.date)}`}
-                width="400"
-                height="400"
+                width={photo.width}
+                height={photo.height}
+                style={`aspect-ratio:${photo.width}/${photo.height}`}
                 loading="lazy"
                 decoding="async"
               />
@@ -90,17 +91,30 @@ for (const photo of photos) {
     color: var(--ink-soft);
   }
 
+  /* A mosaic, not a grid: every photograph keeps its own proportions, so
+     portraits are tall and the wide ones are wide. Columns rather than grid
+     because the number of columns then follows the width on its own, with no
+     media queries and no JavaScript — and because a masonry column packs with
+     no gaps under the short photos, which a row-based layout cannot.
+
+     The trade is reading order, which runs down each column rather than
+     across. Within a single day — which is all any one of these is — that is
+     not something anybody reads as wrong. */
   .wall {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 0.6rem;
+    columns: clamp(150px, 21vw, 240px);
+    column-gap: 0.6rem;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
   .wall__item {
-    margin: 0;
+    /* Both are needed: break-inside for the modern engines, and a zero-height
+       inline-block wrapper is not an option here because the tilt needs a
+       block box. A photograph split across two columns is the failure mode. */
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin: 0 0 0.6rem;
   }
 
   .wall__item a {
@@ -119,11 +133,13 @@ for (const photo of photos) {
     transform: rotate(0deg) translate(-2px, -2px);
   }
 
+  /* The aspect-ratio is set inline from the photograph's own dimensions, so
+     the mosaic is laid out correctly before a single image has loaded and
+     nothing shifts underneath the reader as they arrive. */
   .wall__item img {
     display: block;
     width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
+    height: auto;
   }
 
   @media (prefers-reduced-motion: reduce) {
