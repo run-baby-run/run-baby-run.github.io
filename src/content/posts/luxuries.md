@@ -41,9 +41,11 @@ whether we might call it off. We did not, and that run is in the
 [diary](/diary/) because of the snow rather than despite it. Rain is the same.
 Nobody has ever regretted a wet run once they were dry again.
 
-**Quiet streets.** The reason the night run starts at ten is not toughness. It
-is that Yerevan at ten is a different city, emptier and cooler, and you get it
-more or less to yourself.
+**Quiet.** Not on a Tuesday. Yerevan at ten at night is wide awake and busy,
+and the night run goes straight through the middle of that — which is its own
+kind of good, but nobody would call it peaceful. The quiet one is Saturday. At
+half past six the path by the river has nobody on it, and for an hour the
+loudest thing out there is us.
 
 ## The ones that come afterwards
 
