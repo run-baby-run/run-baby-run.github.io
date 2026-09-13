@@ -1,6 +1,7 @@
 /**
  * Strava figures for the club, transcribed from each athlete's side-by-side
- * comparison view on 8 September 2026, and Agnesa's on 10 September.
+ * comparison view on 8 September 2026 — Agnesa's on 10 September, Ohanes's and
+ * a refreshed Pouria on 13 September.
  *
  * A snapshot, not a live feed: Strava's API only exposes an athlete's own
  * detailed stats, so these cannot be refreshed automatically. Best efforts are
@@ -47,7 +48,7 @@ export const stats: AthleteStats[] = [
   {
     member: 'Pouria',
     stravaName: 'Pouria Jahandideh',
-    recent: { activitiesPerWeek: 4, distancePerWeekKm: 38.6, timePerWeek: '4h 15m', elevationPerWeekM: 290 },
+    recent: { activitiesPerWeek: 4, distancePerWeekKm: 45.5, timePerWeek: '5h 1m', elevationPerWeekM: 347 },
     bests: [
       { label: '400m', time: '45s' },
       { label: '½ mile', time: '1:52' },
@@ -58,13 +59,13 @@ export const stats: AthleteStats[] = [
       { label: '10K', time: '49:27' },
       { label: '15K', time: '1:19:23' },
       { label: '10 mile', time: '1:26:13' },
-      { label: '20K', time: '1:52:44' },
-      { label: 'Half-Marathon', time: '1:58:58' },
+      { label: '20K', time: '1:52:06' },
+      { label: 'Half-Marathon', time: '1:58:32' },
       { label: '30K', time: '3:17:10' },
       { label: 'Marathon', time: '4:59:34' },
     ],
-    thisYear: { activities: 76, distanceKm: 544.4, time: '65h 55m', elevationM: 5261 },
-    allTime: { activities: 740, distanceKm: 4074.3, time: '519h 38m', elevationM: 49267 },
+    thisYear: { activities: 79, distanceKm: 584.7, time: '70h 14m', elevationM: 5554 },
+    allTime: { activities: 743, distanceKm: 4114.6, time: '523h 58m', elevationM: 49560 },
     highlight: 'Ran his fastest ever 30K (3:17:10)',
   },
   {
@@ -668,6 +669,33 @@ export const stats: AthleteStats[] = [
     thisYear: { activities: 0, distanceKm: 0, time: '0h 0m', elevationM: 0 },
     allTime: { activities: 39, distanceKm: 542.1, time: '73h 57m', elevationM: 26047 },
     highlight: 'A 50K in 9:51:09, and 1,006 m of climbing in one morning',
+  },
+  {
+    member: 'Ohanes',
+    stravaName: 'Ohanes Battalian',
+    location: 'Yerevan',
+    // One run in the last four weeks, which is what Strava's per-week averages
+    // are dividing: 0 activities a week alongside 5.4 km a week is its own
+    // rounding, not a mistake in the transcription.
+    recent: { activitiesPerWeek: 0, distancePerWeekKm: 5.4, timePerWeek: '33m 37s', elevationPerWeekM: 40 },
+    bests: [
+      { label: '400m', time: '1:01' },
+      { label: '½ mile', time: '2:38' },
+      { label: '1K', time: '3:55' },
+      { label: '1 mile', time: '7:49' },
+      { label: '2 mile', time: '17:16' },
+      { label: '5K', time: '28:06' },
+      { label: '10K', time: '1:00:34' },
+      { label: '15K', time: '1:31:24' },
+      { label: '10 mile', time: '1:38:52' },
+      { label: '20K', time: '2:03:29' },
+      { label: 'Half-Marathon', time: '2:10:46' },
+    ],
+    // Seven activities, and the same figure all-time: he is new to Strava, so
+    // this year and every year are the same number.
+    thisYear: { activities: 7, distanceKm: 58.1, time: '5h 45m', elevationM: 489 },
+    allTime: { activities: 7, distanceKm: 58.1, time: '5h 45m', elevationM: 489 },
+    highlight: 'Ran his fastest ever half marathon (2:10:46)',
   },
 ];
 
