@@ -41,8 +41,15 @@ const WEEKS_AHEAD = 6;
 const TZ = '+04:00';
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-/** The next `count` occurrences of a weekday at a time, as local ISO strings. */
-function occurrences(day: string, time: string, count: number) {
+const pad = (n: number) => String(n).padStart(2, '0');
+
+/** A Date holding Yerevan wall-clock in its UTC fields, as a local ISO string. */
+const stamp = (d: Date) =>
+  `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}` +
+  `T${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:00${TZ}`;
+
+/** The next `count` occurrences of a weekday at a time, start and end. */
+function occurrences(day: string, time: string, minutes: number, count: number) {
   const [h, m] = time.split(':').map(Number);
   // Read the build instant as a Yerevan wall clock, then do everything in UTC
   // getters so the machine's own zone never enters into it.
@@ -56,10 +63,13 @@ function occurrences(day: string, time: string, count: number) {
   first.setUTCDate(first.getUTCDate() + ahead);
 
   return Array.from({ length: count }, (_, i) => {
-    const d = new Date(first);
-    d.setUTCDate(d.getUTCDate() + i * 7);
-    const pad = (n: number) => String(n).padStart(2, '0');
-    return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}T${pad(h)}:${pad(m)}:00${TZ}`;
+    const start = new Date(first);
+    start.setUTCDate(start.getUTCDate() + i * 7);
+    // Adding minutes rolls the date over on its own, which is what the Tuesday
+    // night run needs: 22:00 plus an hour is 23:00, but a later start would
+    // land on the following day and must say so.
+    const end = new Date(start.getTime() + minutes * 60_000);
+    return { startDate: stamp(start), endDate: stamp(end) };
   });
 }
 
@@ -90,12 +100,14 @@ const club = {
   // The weekly runs, so the schedule can be read rather than inferred from a
   // table — one entry per dated occurrence, newest build wins.
   event: runs.flatMap((run) =>
-    occurrences(run.day, run.time, WEEKS_AHEAD).map((startDate) => ({
+    occurrences(run.day, run.time, run.minutes, WEEKS_AHEAD).map(({ startDate, endDate }) => ({
       '@type': 'SportsEvent',
       name: `${site.name} — ${run.label}`,
       description: run.blurb,
       sport: 'Running',
       startDate,
+      endDate,
+      duration: `PT${run.minutes}M`,
       isAccessibleForFree: true,
       eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
       eventStatus: 'https://schema.org/EventScheduled',

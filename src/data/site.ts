@@ -13,6 +13,8 @@ export const runs = [
   {
     day: 'Tuesday',
     time: '22:00',
+    /** Minutes. Read by StructuredData.astro to give each run an end time. */
+    minutes: 60,
     icon: '🌓',
     label: 'Night run',
     blurb: 'City lights, cool air, easy pace. The one that ends with everyone talking too long on the corner.',
@@ -21,6 +23,7 @@ export const runs = [
   {
     day: 'Thursday',
     time: '07:45',
+    minutes: 60,
     icon: '☀️',
     label: 'Morning run',
     blurb: 'Before work, before excuses. Short, honest, and you get the whole day back afterwards.',
@@ -29,6 +32,7 @@ export const runs = [
   {
     day: 'Saturday',
     time: '06:30',
+    minutes: 60,
     icon: '☀️',
     label: 'Long run',
     blurb: 'The big one. Distance for whoever wants it, coffee for everyone at the end.',
