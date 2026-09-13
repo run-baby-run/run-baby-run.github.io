@@ -1,6 +1,6 @@
 /**
  * Strava figures for the club, transcribed from each athlete's side-by-side
- * comparison view on 8 September 2026 — Agnesa's on 10 September, Ohanes's and
+ * comparison view on 8 September 2026 — Agnesa's on 10 September, Hovig's and
  * a refreshed Pouria on 13 September.
  *
  * A snapshot, not a live feed: Strava's API only exposes an athlete's own
@@ -671,7 +671,8 @@ export const stats: AthleteStats[] = [
     highlight: 'A 50K in 9:51:09, and 1,006 m of climbing in one morning',
   },
   {
-    member: 'Ohanes',
+    // The club calls him Hovig; his Strava account is in his other name.
+    member: 'Hovig',
     stravaName: 'Ohanes Battalian',
     location: 'Yerevan',
     // One run in the last four weeks, which is what Strava's per-week averages
