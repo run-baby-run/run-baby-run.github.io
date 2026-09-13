@@ -17,6 +17,52 @@ const url = 'https://runbabyrun.fun';
 /** Saryan street, where the Tuesday and Thursday runs start. */
 const meetingPoint = { latitude: 40.1858, longitude: 44.5045 };
 
+/*
+ * Concrete dates for the weekly runs.
+ *
+ * These used to be one SportsEvent per run carrying an `eventSchedule` of type
+ * Schedule — which is the correct schema.org way to say "every Tuesday at
+ * 22:00", and which Google's Event parser does not accept. It wants a real
+ * `startDate` on every event, so Search Console reported all three as errors
+ * and the schedule never appeared in search at all.
+ *
+ * So each run is expanded into its next WEEKS_AHEAD dated occurrences at build
+ * time. That means the markup goes stale if the site is not rebuilt, which is
+ * why .github/workflows/deploy.yml now also runs on a weekly schedule: a build
+ * every Monday against six weeks of dates leaves at least five weeks in the
+ * future at all times.
+ */
+const WEEKS_AHEAD = 6;
+
+/* Armenia has not observed daylight saving since 2012, so Asia/Yerevan is a
+   fixed +04:00 — verified across all twelve months of 2026. That is what makes
+   the arithmetic below safe: no zone library, and no hour that shifts under a
+   date computed on a UTC build machine. */
+const TZ = '+04:00';
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+/** The next `count` occurrences of a weekday at a time, as local ISO strings. */
+function occurrences(day: string, time: string, count: number) {
+  const [h, m] = time.split(':').map(Number);
+  // Read the build instant as a Yerevan wall clock, then do everything in UTC
+  // getters so the machine's own zone never enters into it.
+  const now = new Date(Date.now() + 4 * 3600_000);
+  const target = DAYS.indexOf(day);
+
+  const first = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), h, m));
+  let ahead = (target - first.getUTCDay() + 7) % 7;
+  // Today, but the run has already set off: start from next week instead.
+  if (ahead === 0 && first.getTime() <= now.getTime()) ahead = 7;
+  first.setUTCDate(first.getUTCDate() + ahead);
+
+  return Array.from({ length: count }, (_, i) => {
+    const d = new Date(first);
+    d.setUTCDate(d.getUTCDate() + i * 7);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}T${pad(h)}:${pad(m)}:00${TZ}`;
+  });
+}
+
 const club = {
   '@context': 'https://schema.org',
   '@type': 'SportsClub',
@@ -41,37 +87,39 @@ const club = {
   },
   geo: { '@type': 'GeoCoordinates', ...meetingPoint },
   sameAs: [site.instagram, site.strava],
-  // The weekly runs, so the schedule can be read rather than inferred from a table.
-  event: runs.map((run) => ({
-    '@type': 'SportsEvent',
-    name: `${site.name} — ${run.label}`,
-    description: run.blurb,
-    sport: 'Running',
-    isAccessibleForFree: true,
-    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-    eventStatus: 'https://schema.org/EventScheduled',
-    location: {
-      '@type': 'Place',
-      name: 'Yerevan',
-      address: { '@type': 'PostalAddress', addressLocality: 'Yerevan', addressCountry: 'AM' },
-      geo: { '@type': 'GeoCoordinates', ...meetingPoint },
-    },
-    organizer: { '@id': `${url}/#club` },
-    eventSchedule: {
-      '@type': 'Schedule',
-      repeatFrequency: 'P1W',
-      byDay: `https://schema.org/${run.day}`,
-      startTime: `${run.time}:00`,
-      scheduleTimezone: 'Asia/Yerevan',
-    },
-    offers: {
-      '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'AMD',
-      availability: 'https://schema.org/InStock',
-      url: site.whatsapp,
-    },
-  })),
+  // The weekly runs, so the schedule can be read rather than inferred from a
+  // table — one entry per dated occurrence, newest build wins.
+  event: runs.flatMap((run) =>
+    occurrences(run.day, run.time, WEEKS_AHEAD).map((startDate) => ({
+      '@type': 'SportsEvent',
+      name: `${site.name} — ${run.label}`,
+      description: run.blurb,
+      sport: 'Running',
+      startDate,
+      isAccessibleForFree: true,
+      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+      eventStatus: 'https://schema.org/EventScheduled',
+      image: [`${url}/images/logo.jpg`, `${url}/video/run-baby-run.jpg`],
+      location: {
+        '@type': 'Place',
+        name: 'Yerevan',
+        address: { '@type': 'PostalAddress', addressLocality: 'Yerevan', addressCountry: 'AM' },
+        geo: { '@type': 'GeoCoordinates', ...meetingPoint },
+      },
+      organizer: { '@id': `${url}/#club` },
+      // The club is who puts the run on. There is no separate act to name.
+      performer: { '@id': `${url}/#club` },
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'AMD',
+        availability: 'https://schema.org/InStock',
+        url: site.whatsapp,
+        // Free since the club started, and it has never been otherwise.
+        validFrom: '2026-02-12T00:00:00+04:00',
+      },
+    }))
+  ),
 };
 ---
 

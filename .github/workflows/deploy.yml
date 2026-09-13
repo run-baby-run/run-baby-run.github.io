@@ -4,6 +4,13 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # The home page's structured data carries the next six weeks of run dates,
+  # expanded at build time, because Google's Event parser will not accept a
+  # recurring schedule without a real startDate. Dates baked into a build go
+  # stale, so rebuild every Monday: six weeks of dates rebuilt weekly leaves at
+  # least five weeks in the future at all times. 03:00 UTC is 07:00 in Yerevan.
+  schedule:
+    - cron: '0 3 * * 1'
 
 permissions:
   contents: read
