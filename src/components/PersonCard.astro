@@ -38,7 +38,25 @@ const { person, image, tilt = 0 } = Astro.props;
           </a>
         )
       }
-      <StravaLink id={person.strava} />
+      <div class="person__links">
+        <StravaLink id={person.strava} />
+        {
+          person.email && (
+            <a class="person__mail" href={`mailto:${person.email}`}>
+              <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true">
+                <path
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linejoin="round"
+                  d="M3 6h18v12H3z M3 6l9 7 9-7"
+                />
+              </svg>
+              <span>Email</span>
+            </a>
+          )
+        }
+      </div>
     </figcaption>
   </figure>
 </li>
@@ -102,6 +120,46 @@ const { person, image, tilt = 0 } = Astro.props;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--pink-text);
+  }
+
+  /* The Strava pill carries its own top margin, so the row only needs to hold
+     the two together and wrap them on a narrow card. */
+  .person__links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  /* Deliberately the same shape as the Strava pill — they are two ways to
+     reach the same person and should not look like different kinds of thing. */
+  .person__mail {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.5rem;
+    padding: 0.2rem 0.55rem;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: var(--cream);
+    color: var(--ink);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .person__mail:hover {
+    background: var(--pink);
+    transform: translateY(-1px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .person__mail {
+      transition: none;
+    }
   }
 
   .person__role {

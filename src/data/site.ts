@@ -51,6 +51,12 @@ export interface Person {
   focus?: string;
   /** Strava athlete id. */
   strava?: string;
+  /**
+   * Their address on the club domain. The local part must match a real Zoho
+   * mailbox exactly — a published address that does not exist just bounces,
+   * silently, at the sender's end.
+   */
+  email?: string;
 }
 
 export const founders: Person[] = [
@@ -60,6 +66,7 @@ export const founders: Person[] = [
     role: 'Co-founder',
     file: 'shaghig.jpg',
     strava: '174103082',
+    email: 'shaghig@runbabyrun.fun',
     alt: 'Shaghig holding up a marathon finisher medal at the end of a race',
   },
   {
@@ -68,6 +75,7 @@ export const founders: Person[] = [
     role: 'Co-founder',
     file: 'asdghig.jpg',
     strava: '161744242',
+    email: 'asdghig@runbabyrun.fun',
     alt: 'Asdghig holding up a Yerevan Night Run medal after the race',
   },
   {
@@ -76,6 +84,7 @@ export const founders: Person[] = [
     role: 'Co-founder',
     file: 'jebid.jpg',
     strava: '137055671',
+    email: 'jebid@runbabyrun.fun',
     alt: 'Jebid smiling among other runners after a night race in Yerevan, medal around her neck',
     // Landscape source: the 3:4 crop needs nudging right to keep her centred.
     focus: '54% center',
