@@ -723,7 +723,14 @@ export const capturedSpan = (() => {
   const newest = dates
     .map((d) => ({ d, t: Date.parse(d) }))
     .sort((a, b) => b.t - a.t)[0].d;
-  return newest === captured ? captured : `${captured}, some as recently as ${newest}`;
+  if (newest === captured) return captured;
+  // "8-27 September 2026" when both ends share a month, which is the usual
+  // case and keeps the line to one row on a phone; the long form otherwise.
+  const [d1, ...rest1] = captured.split(' ');
+  const [d2, ...rest2] = newest.split(' ');
+  return rest1.join(' ') === rest2.join(' ')
+    ? `${d1}–${d2} ${rest2.join(' ')}`
+    : `${captured} to ${newest}`;
 })();
 
 /** "1:58:58" / "24:11" / "45s" -> seconds, for ranking. */

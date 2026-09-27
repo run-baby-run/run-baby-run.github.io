@@ -18,7 +18,15 @@ const byDistance = [...stats].sort((a, b) => b.thisYear.distanceKm - a.thisYear.
 const byElevation = [...stats].sort((a, b) => b.thisYear.elevationM - a.thisYear.elevationM);
 const byWeek = [...stats].sort((a, b) => b.recent.distancePerWeekKm - a.recent.distancePerWeekKm);
 
-const podium = ranking('5K').slice(0, 3);
+/*
+ * The distance that gets the podium at the top of the page. 27 of the 31
+ * runners have a 10K best against all 31 for the 5K, so a few people drop out
+ * of the running — but the club races 10K far more often than 5K, and a 5K
+ * best is usually an estimate pulled out of a longer run rather than an
+ * effort anybody actually went out to set.
+ */
+const PODIUM_DISTANCE = '10K';
+const podium = ranking(PODIUM_DISTANCE).slice(0, 3);
 const medal = ['🥇', '🥈', '🥉'];
 
 const totalsBoards = [
@@ -60,7 +68,7 @@ const totalsBoards = [
 
     <section class="section">
       <div class="wrap">
-        <h2 class="board__heading">Fastest 5K</h2>
+        <h2 class="board__heading">Fastest {PODIUM_DISTANCE}</h2>
         <ol class="podium">
           {
             podium.map((athlete, i) => (
@@ -74,7 +82,7 @@ const totalsBoards = [
                 <a class="podium__name" href={`/athletes/${slugify(athlete.member)}/`}>
                   {athlete.member}
                 </a>
-                <span class="podium__time">{bestFor(athlete, '5K')?.time}</span>
+                <span class="podium__time">{bestFor(athlete, PODIUM_DISTANCE)?.time}</span>
               </li>
             ))
           }
