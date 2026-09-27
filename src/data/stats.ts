@@ -178,8 +178,9 @@ export const stats: AthleteStats[] = [
   },
   {
     member: 'Narek',
+    captured: '27 September 2026',
     stravaName: 'Narek Nazari',
-    recent: { activitiesPerWeek: 1, distancePerWeekKm: 8.6, timePerWeek: '52m 51s', elevationPerWeekM: 63 },
+    recent: { activitiesPerWeek: 1, distancePerWeekKm: 5.4, timePerWeek: '34m 30s', elevationPerWeekM: 27 },
     bests: [
       { label: '400m', time: '1:19' },
       { label: '½ mile', time: '3:41' },
@@ -191,8 +192,8 @@ export const stats: AthleteStats[] = [
       { label: '15K', time: '1:30:20' },
       { label: '10 mile', time: '1:37:59' },
     ],
-    thisYear: { activities: 62, distanceKm: 411.1, time: '45h 11m', elevationM: 3049 },
-    allTime: { activities: 247, distanceKm: 1101.9, time: '117h 58m', elevationM: 4941 },
+    thisYear: { activities: 65, distanceKm: 428.4, time: '47h 3m', elevationM: 3139 },
+    allTime: { activities: 250, distanceKm: 1119.2, time: '119h 49m', elevationM: 5032 },
   },
   {
     member: 'Moojan',
@@ -594,9 +595,10 @@ export const stats: AthleteStats[] = [
   },
   {
     member: 'Subhav',
+    captured: '27 September 2026',
     stravaName: 'Subhav Ramnani',
     location: 'Brooklyn, New York',
-    recent: { activitiesPerWeek: 1, distancePerWeekKm: 3.3, timePerWeek: '21m 57s', elevationPerWeekM: 3 },
+    recent: { activitiesPerWeek: 1, distancePerWeekKm: 6.6, timePerWeek: '45m 8s', elevationPerWeekM: 3 },
     bests: [
       { label: '400m', time: '1:44' },
       { label: '½ mile', time: '3:49' },
@@ -610,12 +612,13 @@ export const stats: AthleteStats[] = [
       { label: '20K', time: '2:05:25' },
       { label: 'Half-Marathon', time: '2:12:38' },
     ],
-    thisYear: { activities: 53, distanceKm: 382.4, time: '40h 22m', elevationM: 2729 },
-    allTime: { activities: 53, distanceKm: 382.4, time: '40h 22m', elevationM: 2729 },
+    thisYear: { activities: 56, distanceKm: 395.8, time: '41h 54m', elevationM: 2729 },
+    allTime: { activities: 56, distanceKm: 395.8, time: '41h 54m', elevationM: 2729 },
     highlight: 'Took the course record on Return From The Sea!',
   },
   {
     member: 'Mehrdad',
+    captured: '27 September 2026',
     stravaName: 'Mehrdad Janboori',
     location: 'Tehran',
     recent: { activitiesPerWeek: 0, distancePerWeekKm: 0, timePerWeek: '0h 0m', elevationPerWeekM: 0 },
@@ -676,6 +679,7 @@ export const stats: AthleteStats[] = [
   {
     // The club calls her Aliya; Strava has all three of her names.
     member: 'Aliya',
+    captured: '27 September 2026',
     stravaName: 'Ellie • Aliya • Hands',
     location: 'Seattle, Washington',
     recent: { activitiesPerWeek: 0, distancePerWeekKm: 0, timePerWeek: '0h 0m', elevationPerWeekM: 0 },
@@ -736,19 +740,23 @@ export const stats: AthleteStats[] = [
  * temporal-dead-zone crash at build time, not a warning.
  */
 export const capturedSpan = (() => {
-  const dates = stats.map((a) => a.captured).filter(Boolean) as string[];
-  if (!dates.length) return captured;
-  const newest = dates
+  // Built from the athletes themselves, not from `captured`: once everyone has
+  // been read on the same day the set-wide constant is nobody's date, and a
+  // range spanning three weeks would be a lie about the oldest figure here.
+  const sorted = stats
+    .map((a) => a.captured ?? captured)
     .map((d) => ({ d, t: Date.parse(d) }))
-    .sort((a, b) => b.t - a.t)[0].d;
-  if (newest === captured) return captured;
-  // "8-27 September 2026" when both ends share a month, which is the usual
-  // case and keeps the line to one row on a phone; the long form otherwise.
-  const [d1, ...rest1] = captured.split(' ');
+    .sort((a, b) => a.t - b.t);
+  const oldest = sorted[0].d;
+  const newest = sorted[sorted.length - 1].d;
+  if (oldest === newest) return newest;
+  // "8–27 September 2026" when both ends share a month, which keeps the line
+  // to one row on a phone; the long form otherwise.
+  const [d1, ...rest1] = oldest.split(' ');
   const [d2, ...rest2] = newest.split(' ');
   return rest1.join(' ') === rest2.join(' ')
     ? `${d1}–${d2} ${rest2.join(' ')}`
-    : `${captured} to ${newest}`;
+    : `${oldest} to ${newest}`;
 })();
 
 /** "1:58:58" / "24:11" / "45s" -> seconds, for ranking. */
