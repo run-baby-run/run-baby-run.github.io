@@ -1,7 +1,8 @@
 /**
  * Strava figures for the club, transcribed from each athlete's side-by-side
- * comparison view on 8 September 2026 — Agnesa's on 10 September, Hovig's and
- * a refreshed Pouria on 13 September.
+ * comparison view on 8 September 2026. Anyone read since carries their own
+ * `captured` date: Agnesa on 10 September, Hovig on 13 September, Arman and a
+ * refreshed Pouria on 27 September.
  *
  * A snapshot, not a live feed: Strava's API only exposes an athlete's own
  * detailed stats, so these cannot be refreshed automatically. Best efforts are
@@ -40,6 +41,12 @@ export interface AthleteStats {
    * (no photo); otherwise the id on their member record is used.
    */
   strava?: string;
+  /**
+   * When this runner's figures were read, if not on the set-wide date below.
+   * Their own page shows this rather than `captured`, because a page dated
+   * three weeks before the numbers on it is simply wrong.
+   */
+  captured?: string;
 }
 
 export const captured = '8 September 2026';
@@ -48,7 +55,8 @@ export const stats: AthleteStats[] = [
   {
     member: 'Pouria',
     stravaName: 'Pouria Jahandideh',
-    recent: { activitiesPerWeek: 4, distancePerWeekKm: 45.5, timePerWeek: '5h 1m', elevationPerWeekM: 347 },
+    captured: '27 September 2026',
+    recent: { activitiesPerWeek: 4, distancePerWeekKm: 50.2, timePerWeek: '5h 25m', elevationPerWeekM: 360 },
     bests: [
       { label: '400m', time: '45s' },
       { label: '½ mile', time: '1:52' },
@@ -64,8 +72,8 @@ export const stats: AthleteStats[] = [
       { label: '30K', time: '3:17:10' },
       { label: 'Marathon', time: '4:59:34' },
     ],
-    thisYear: { activities: 79, distanceKm: 584.7, time: '70h 14m', elevationM: 5554 },
-    allTime: { activities: 743, distanceKm: 4114.6, time: '523h 58m', elevationM: 49560 },
+    thisYear: { activities: 87, distanceKm: 680.2, time: '80h 26m', elevationM: 6197 },
+    allTime: { activities: 751, distanceKm: 4210.1, time: '534h 9m', elevationM: 50203 },
     highlight: 'Ran his fastest ever 30K (3:17:10)',
   },
   {
@@ -434,22 +442,24 @@ export const stats: AthleteStats[] = [
     member: 'Arman',
     stravaName: 'Arman Hovsepyan',
     location: 'Yerevan',
-    recent: { activitiesPerWeek: 2, distancePerWeekKm: 19.9, timePerWeek: '1h 57m', elevationPerWeekM: 153 },
+    captured: '27 September 2026',
+    recent: { activitiesPerWeek: 2, distancePerWeekKm: 21.4, timePerWeek: '2h 6m', elevationPerWeekM: 165 },
     bests: [
       { label: '400m', time: '1:03' },
       { label: '½ mile', time: '2:35' },
       { label: '1K', time: '3:13' },
-      { label: '1 mile', time: '6:10' },
-      { label: '2 mile', time: '13:06' },
-      { label: '5K', time: '21:05' },
-      { label: '10K', time: '43:16' },
+      { label: '1 mile', time: '5:59' },
+      { label: '2 mile', time: '12:19' },
+      { label: '5K', time: '19:51' },
+      { label: '10K', time: '41:18' },
       { label: '15K', time: '1:13:49' },
       { label: '10 mile', time: '1:20:16' },
       { label: '20K', time: '1:42:54' },
       { label: 'Half-Marathon', time: '1:47:39' },
     ],
-    thisYear: { activities: 23, distanceKm: 203.7, time: '31h 58m', elevationM: 1421 },
-    allTime: { activities: 23, distanceKm: 203.7, time: '31h 58m', elevationM: 1421 },
+    thisYear: { activities: 30, distanceKm: 266.3, time: '37h 55m', elevationM: 1876 },
+    allTime: { activities: 30, distanceKm: 266.3, time: '37h 55m', elevationM: 1876 },
+    highlight: 'Four personal bests in one morning, including a 41:18 10K',
   },
   {
     member: 'Aram',
@@ -629,6 +639,7 @@ export const stats: AthleteStats[] = [
   },
   {
     member: 'Agnesa',
+    captured: '10 September 2026',
     stravaName: 'Agnesa Galstyan',
     location: 'Yerevan',
     recent: { activitiesPerWeek: 5, distancePerWeekKm: 19.1, timePerWeek: '2h 19m', elevationPerWeekM: 194 },
@@ -673,6 +684,7 @@ export const stats: AthleteStats[] = [
   {
     // The club calls him Hovig; his Strava account is in his other name.
     member: 'Hovig',
+    captured: '13 September 2026',
     stravaName: 'Ohanes Battalian',
     location: 'Yerevan',
     // One run in the last four weeks, which is what Strava's per-week averages
@@ -699,6 +711,20 @@ export const stats: AthleteStats[] = [
     highlight: 'Ran his fastest ever half marathon (2:10:46)',
   },
 ];
+
+/**
+ * The span the figures cover, for pages that describe the whole set.
+ * Declared after `stats` on purpose: a const read above its declaration is a
+ * temporal-dead-zone crash at build time, not a warning.
+ */
+export const capturedSpan = (() => {
+  const dates = stats.map((a) => a.captured).filter(Boolean) as string[];
+  if (!dates.length) return captured;
+  const newest = dates
+    .map((d) => ({ d, t: Date.parse(d) }))
+    .sort((a, b) => b.t - a.t)[0].d;
+  return newest === captured ? captured : `${captured}, some as recently as ${newest}`;
+})();
 
 /** "1:58:58" / "24:11" / "45s" -> seconds, for ranking. */
 export function toSeconds(time: string): number {

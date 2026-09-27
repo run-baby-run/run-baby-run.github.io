@@ -4,7 +4,7 @@ import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Avatar from '../components/Avatar.astro';
-import { stats, ranking, bestFor, slugify, captured, RANKED } from '../data/stats';
+import { stats, ranking, bestFor, slugify, capturedSpan, RANKED } from '../data/stats';
 import { photosByName } from '../data/photos';
 
 const photos = await photosByName();
@@ -50,7 +50,7 @@ const totalsBoards = [
       eyebrow="Bragging rights"
       title="The leaderboard."
       tone="pink"
-      meta={`${stats.length} runners · Strava figures captured ${captured}`}
+      meta={`${stats.length} runners · Strava figures captured ${capturedSpan}`}
     >
       <p>
         Personal bests and yearly totals for everyone in the club who shares their Strava. No
@@ -123,7 +123,7 @@ const totalsBoards = [
         </div>
 
         <p class="note">
-          Figures come from each runner's Strava, captured {captured}, and are a snapshot rather
+          Figures come from each runner's Strava, captured {capturedSpan}, and are a snapshot rather
           than a live feed. Best efforts are Strava's own estimates, so the odd one is optimistic.
         </p>
       </div>
