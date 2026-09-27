@@ -22,3 +22,7 @@ npm-debug.log*
 /WhatsApp Chat with*
 
 diary/
+
+# Scratch output from scripts/refresh-stats.mjs — a snapshot of other people's
+# Strava figures, regenerated on demand and never committed.
+/collected.json
