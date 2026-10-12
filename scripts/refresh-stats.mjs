@@ -53,14 +53,17 @@ const num = (s) => Number(String(s).replace(/,/g,'').replace(/[^\d.]/g,''));
 
 export function parseAthlete(text) {
   const lines = text.split('\n').map((l)=>l.replace(/\s+$/,'')).filter((l)=>l.trim());
-  const i = lines.findIndex((l)=>/^Side by Side Comparison$/i.test(l.trim()));
-  if (i < 0) return { error: 'no side-by-side section (own profile, or not logged in)' };
+  // Two layouts, same row labels: "Side by Side Comparison" on everyone
+  // else's profile, and "My Stats" on your own, which has one value column
+  // instead of two. Taking parts[1] reads the right column in both.
+  const i = lines.findIndex((l)=>/^(Side by Side Comparison|My Stats)$/i.test(l.trim()));
+  if (i < 0) return { error: 'neither a side-by-side nor a My Stats section — not logged in?' };
 
   const rows = [];
   for (const l of lines.slice(i+1)) {
     const parts = l.split(/\t|\s{2,}/).map((p)=>p.trim()).filter(Boolean);
     if (parts.length >= 2) rows.push(parts);
-    if (/^Your Recent Activities$/i.test(l.trim())) break;
+    if (/^(Your Recent Activities|Share Your Activities|Shoes)$/i.test(l.trim())) break;
   }
   const get = (label) => rows.find((p)=>p[0].toLowerCase()===label.toLowerCase())?.[1];
   const all = (label) => rows.filter((p)=>p[0].toLowerCase()===label.toLowerCase()).map((p)=>p[1]);
