@@ -21,6 +21,7 @@ const entries: Member[] = [
   { name: 'Ashot', file: 'ashot.jpg', strava: '776905918' },
   { name: 'Avak', file: 'avak.jpg', strava: '351549088' },
   { name: 'Georgii', file: 'georgii.jpg', strava: '138012348' },
+  { name: 'Hamid', file: 'hamid.jpg', strava: '165852356' },
   { name: 'Hayk', file: 'hayk.jpg', strava: '2024080023' },
   { name: 'Hovig', file: 'hovig.jpg', strava: '183502987' },
   { name: 'Hrag', file: 'hrag.jpg', strava: '156345876' },
@@ -43,6 +44,8 @@ const entries: Member[] = [
   { name: 'Soheil', file: 'soheil.jpg', strava: '1604216481' },
   { name: 'Subhav', file: 'subhav.jpg', strava: '203339007' },
   { name: 'Tagouhi', file: 'tagouhi.jpg', strava: '142928973' },
+  { name: 'Vahe', file: 'vahe.jpg', strava: '189206417' },
+  { name: 'Victor', file: 'victor.jpg', strava: '183478835' },
   { name: 'Yeva', file: 'yeva.jpg', strava: '1587411643' },
 ];
 

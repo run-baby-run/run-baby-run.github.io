@@ -733,6 +733,23 @@ export const stats: AthleteStats[] = [
     allTime: { activities: 8, distanceKm: 68.2, time: '6h 43m', elevationM: 567 },
     highlight: 'Ran his fastest ever half marathon (2:10:46)',
   },
+{
+    member: 'Hamid',
+    stravaName: 'Hamid Rp',
+    location: 'Yerevan',
+    captured: '12 October 2026',
+    recent: { activitiesPerWeek: 1, distancePerWeekKm: 8.4, timePerWeek: '1h 0m', elevationPerWeekM: 33 },
+    bests: [
+      { label: '400m', time: '1:30' },
+      { label: '½ mile', time: '4:32' },
+      { label: '1K', time: '5:57' },
+      { label: '1 mile', time: '11:16' },
+      { label: '2 mile', time: '26:08' },
+      { label: '5K', time: '51:32' },
+    ],
+    thisYear: { activities: 5, distanceKm: 33.6, time: '4h 1m', elevationM: 132 },
+    allTime: { activities: 7, distanceKm: 52.8, time: '6h 33m', elevationM: 132 },
+  },
 ];
 
 /**
