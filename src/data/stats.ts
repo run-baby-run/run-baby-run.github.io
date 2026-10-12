@@ -750,6 +750,30 @@ export const stats: AthleteStats[] = [
     thisYear: { activities: 5, distanceKm: 33.6, time: '4h 1m', elevationM: 132 },
     allTime: { activities: 7, distanceKm: 52.8, time: '6h 33m', elevationM: 132 },
   },
+{
+    member: 'Vahe',
+    stravaName: 'Vahe Tildian',
+    location: 'Yerevan',
+    captured: '12 October 2026',
+    recent: { activitiesPerWeek: 0, distancePerWeekKm: 2.6, timePerWeek: '16m 44s', elevationPerWeekM: 20 },
+    bests: [
+      { label: '400m', time: '1:33' },
+      { label: '½ mile', time: '3:57' },
+      { label: '1K', time: '5:02' },
+      // Strava also reports a 4:56 mile. That is 3:07/km against a 1K of
+      // 5:03/km, from a run averaging 6:30/km — left out, like Georgii's.
+      { label: '2 mile', time: '15:46' },
+      { label: '5K', time: '28:55' },
+      { label: '10K', time: '59:43' },
+    ],
+    // Strava's own distance and time disagree here: 435.6 km in 15h 02m is
+    // 29 km/h. The distance is the suspect half — at his 6:20/km that time is
+    // nearer 140 km — but both are what his profile reports, so both are
+    // transcribed rather than guessed at. Worth asking him.
+    thisYear: { activities: 19, distanceKm: 418.9, time: '13h 17m', elevationM: 866 },
+    allTime: { activities: 21, distanceKm: 435.6, time: '15h 2m', elevationM: 1034 },
+    highlight: 'Fastest ever two miles on an October morning (15:46)',
+  },
 ];
 
 /**

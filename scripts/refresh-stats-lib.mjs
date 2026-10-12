@@ -15,6 +15,9 @@ export const ARTEFACTS = {
   // best effort, and 40:12 is quicker per kilometre than his 21:13 5K.
   // 56:06 is the last figure anyone verified.
   Ashot: { replace: { '10K': '56:06' } },
+  // A 4:56 mile — 3:07/km — against a 1K of 5:03/km, derived from a run whose
+  // average was 6:30/km. Not a mile he ran.
+  Vahe: { drop: ['1 mile'] },
 };
 
 export function deArtefact(member, bests) {
