@@ -21,12 +21,12 @@ const byWeek = [...stats].sort((a, b) => b.recent.distancePerWeekKm - a.recent.d
 /*
  * The distances that get a podium at the top of the page, in order.
  *
- * The 10K leads because the club races it far more often, and because a 5K
- * best is usually an estimate Strava pulled out of a longer run rather than
- * an effort anybody went out to set. The 5K follows because everybody has
- * one — a few runners have no 10K at all and cannot appear on that board.
+ * The 5K leads because everybody has one: a few runners have no 10K at all
+ * and cannot appear on that board. The 10K follows — the club races it far
+ * more often, but a 5K best is the figure most people here know about
+ * themselves.
  */
-const PODIUM_DISTANCES = ['10K', '5K'] as const;
+const PODIUM_DISTANCES = ['5K', '10K'] as const;
 const podiums = PODIUM_DISTANCES.map((distance) => ({
   distance,
   rows: ranking(distance).slice(0, 3),
