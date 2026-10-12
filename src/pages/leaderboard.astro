@@ -19,14 +19,18 @@ const byElevation = [...stats].sort((a, b) => b.thisYear.elevationM - a.thisYear
 const byWeek = [...stats].sort((a, b) => b.recent.distancePerWeekKm - a.recent.distancePerWeekKm);
 
 /*
- * The distance that gets the podium at the top of the page. 27 of the 31
- * runners have a 10K best against all 31 for the 5K, so a few people drop out
- * of the running — but the club races 10K far more often than 5K, and a 5K
- * best is usually an estimate pulled out of a longer run rather than an
- * effort anybody actually went out to set.
+ * The distances that get a podium at the top of the page, in order.
+ *
+ * The 10K leads because the club races it far more often, and because a 5K
+ * best is usually an estimate Strava pulled out of a longer run rather than
+ * an effort anybody went out to set. The 5K follows because everybody has
+ * one — a few runners have no 10K at all and cannot appear on that board.
  */
-const PODIUM_DISTANCE = '10K';
-const podium = ranking(PODIUM_DISTANCE).slice(0, 3);
+const PODIUM_DISTANCES = ['10K', '5K'] as const;
+const podiums = PODIUM_DISTANCES.map((distance) => ({
+  distance,
+  rows: ranking(distance).slice(0, 3),
+}));
 const medal = ['🥇', '🥈', '🥉'];
 
 const totalsBoards = [
@@ -68,25 +72,29 @@ const totalsBoards = [
 
     <section class="section">
       <div class="wrap">
-        <h2 class="board__heading">Fastest {PODIUM_DISTANCE}</h2>
-        <ol class="podium">
-          {
-            podium.map((athlete, i) => (
-              <li class={`podium__item podium__item--${i}`}>
-                <div class="podium__top">
-                  <Avatar name={athlete.member} image={photos.get(athlete.member)} size={56} />
-                  <span class="podium__medal" aria-hidden="true">
-                    {medal[i]}
-                  </span>
-                </div>
-                <a class="podium__name" href={`/athletes/${slugify(athlete.member)}/`}>
-                  {athlete.member}
-                </a>
-                <span class="podium__time">{bestFor(athlete, PODIUM_DISTANCE)?.time}</span>
-              </li>
-            ))
-          }
-        </ol>
+        {
+          podiums.map(({ distance, rows }) => (
+            <>
+              <h2 class="board__heading">Fastest {distance}</h2>
+              <ol class="podium">
+                {rows.map((athlete, i) => (
+                  <li class={`podium__item podium__item--${i}`}>
+                    <div class="podium__top">
+                      <Avatar name={athlete.member} image={photos.get(athlete.member)} size={56} />
+                      <span class="podium__medal" aria-hidden="true">
+                        {medal[i]}
+                      </span>
+                    </div>
+                    <a class="podium__name" href={`/athletes/${slugify(athlete.member)}/`}>
+                      {athlete.member}
+                    </a>
+                    <span class="podium__time">{bestFor(athlete, distance)?.time}</span>
+                  </li>
+                ))}
+              </ol>
+            </>
+          ))
+        }
 
         <div class="boards">
           {
