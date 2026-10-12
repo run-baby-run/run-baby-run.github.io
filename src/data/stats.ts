@@ -774,6 +774,24 @@ export const stats: AthleteStats[] = [
     allTime: { activities: 21, distanceKm: 435.6, time: '15h 2m', elevationM: 1034 },
     highlight: 'Fastest ever two miles on an October morning (15:46)',
   },
+{
+    member: 'Victor',
+    stravaName: 'Victor Avtandilyan',
+    location: 'Kraków',
+    captured: '12 October 2026',
+    recent: { activitiesPerWeek: 1, distancePerWeekKm: 5.2, timePerWeek: '38m 7s', elevationPerWeekM: 21 },
+    bests: [
+      { label: '400m', time: '1:43' },
+      { label: '½ mile', time: '3:51' },
+      { label: '1K', time: '4:48' },
+      { label: '1 mile', time: '7:53' },
+      { label: '2 mile', time: '16:30' },
+      { label: '5K', time: '27:21' },
+      { label: '10K', time: '56:49' },
+    ],
+    thisYear: { activities: 24, distanceKm: 154.3, time: '16h 45m', elevationM: 699 },
+    allTime: { activities: 33, distanceKm: 211.4, time: '22h 41m', elevationM: 1151 },
+  },
 ];
 
 /**
