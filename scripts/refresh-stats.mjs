@@ -33,7 +33,6 @@ import { readFileSync, writeFileSync } from 'node:fs';
 const WRITE = process.argv.includes('--write');
 const PORT = 9222;
 const STATS = 'src/data/stats.ts';
-const TODAY = '27 September 2026';
 
 /**
  * Figures Strava reports that are not real, kept as data so the next refresh

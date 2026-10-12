@@ -39,7 +39,13 @@ function pacewarnings(member, bests) {
 }
 
 const WRITE = process.argv.includes('--write');
-const TODAY = '27 September 2026';
+/**
+ * The date stamped on every athlete this run touches. Derived, not written in:
+ * it was hardcoded to the day the script was first used, so the next refresh
+ * would have dated fresh figures three weeks earlier and the leaderboard would
+ * have said so.
+ */
+const TODAY = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 const STATS = 'src/data/stats.ts';
 
 const warnings = [];
