@@ -24,9 +24,10 @@ const byWeek = [...stats].sort((a, b) => b.recent.distancePerWeekKm - a.recent.d
  * The 5K leads because everybody has one: a few runners have no 10K at all
  * and cannot appear on that board. The 10K follows — the club races it far
  * more often, but a 5K best is the figure most people here know about
- * themselves.
+ * themselves. The marathon comes last: far fewer of us have one, but it is
+ * the distance people train months for.
  */
-const PODIUM_DISTANCES = ['5K', '10K'] as const;
+const PODIUM_DISTANCES = ['5K', '10K', 'Marathon'] as const;
 const podiums = PODIUM_DISTANCES.map((distance) => ({
   distance,
   rows: ranking(distance).slice(0, 3),
