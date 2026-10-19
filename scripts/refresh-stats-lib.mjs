@@ -19,10 +19,12 @@ export const ARTEFACTS = {
   // average was 6:30/km. Not a mile he ran.
   Vahe: { drop: ['1 mile'] },
   // He ran the Yerevan Marathon on 18 October 2026 and cropped the activity
-  // to 40.20 km by accident, so Strava has no marathon best for him. 3:33:11
-  // is his 3:23:06 elapsed time carried to 42.195 km at the same pace; swap
-  // in his chip time, or drop this once the full activity is restored.
-  'Har Hov': { add: { Marathon: '3:33:11' } },
+  // to 40.20 km by accident, so Strava has no marathon best for him. His
+  // Garmin has the whole run: 42.82 km in 3:35:21. 3:32:12 is that carried
+  // down to 42.195 km at his average pace, the way Strava's best efforts are
+  // the fastest 42.195 km inside a longer run. Drop this once the full
+  // activity is restored on Strava.
+  'Har Hov': { add: { Marathon: '3:32:12' } },
 };
 
 export function deArtefact(member, bests) {

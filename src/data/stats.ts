@@ -370,9 +370,10 @@ export const stats: AthleteStats[] = [
       { label: '20K', time: '1:28:54' },
       { label: 'Half-Marathon', time: '1:33:48' },
       { label: '30K', time: '2:26:07' },
-      // Cropped to 40.20 km by accident; 3:23:06 elapsed carried to 42.195 km.
-      // See ARTEFACTS in scripts/refresh-stats-lib.mjs.
-      { label: 'Marathon', time: '3:33:11' },
+      // Cropped to 40.20 km on Strava by accident; his Garmin has 42.82 km in
+      // 3:35:21, carried down to 42.195 km. See ARTEFACTS in
+      // scripts/refresh-stats-lib.mjs.
+      { label: 'Marathon', time: '3:32:12' },
     ],
     thisYear: { activities: 103, distanceKm: 1000.3, time: '93h 41m', elevationM: 9633 },
     allTime: { activities: 133, distanceKm: 1239.3, time: '113h 33m', elevationM: 12113 },
