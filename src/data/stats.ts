@@ -184,9 +184,9 @@ export const stats: AthleteStats[] = [
   },
   {
     member: 'Narek',
-    captured: '27 September 2026',
+    captured: '19 October 2026',
     stravaName: 'Narek Nazari',
-    recent: { activitiesPerWeek: 1, distancePerWeekKm: 5.4, timePerWeek: '34m 30s', elevationPerWeekM: 27 },
+    recent: { activitiesPerWeek: 1, distancePerWeekKm: 5, timePerWeek: '31m 22s', elevationPerWeekM: 28 },
     bests: [
       { label: '400m', time: '1:19' },
       { label: '½ mile', time: '3:41' },
@@ -198,8 +198,8 @@ export const stats: AthleteStats[] = [
       { label: '15K', time: '1:30:20' },
       { label: '10 mile', time: '1:37:59' },
     ],
-    thisYear: { activities: 65, distanceKm: 428.4, time: '47h 3m', elevationM: 3139 },
-    allTime: { activities: 250, distanceKm: 1119.2, time: '119h 49m', elevationM: 5032 },
+    thisYear: { activities: 67, distanceKm: 443.4, time: '48h 33m', elevationM: 3216 },
+    allTime: { activities: 252, distanceKm: 1134.2, time: '121h 20m', elevationM: 5109 },
   },
   {
     member: 'Moojan',
@@ -610,10 +610,10 @@ export const stats: AthleteStats[] = [
   },
   {
     member: 'Subhav',
-    captured: '27 September 2026',
+    captured: '19 October 2026',
     stravaName: 'Subhav Ramnani',
     location: 'Brooklyn, New York',
-    recent: { activitiesPerWeek: 1, distancePerWeekKm: 6.6, timePerWeek: '45m 8s', elevationPerWeekM: 3 },
+    recent: { activitiesPerWeek: 1, distancePerWeekKm: 4.3, timePerWeek: '29m 38s', elevationPerWeekM: 0 },
     bests: [
       { label: '400m', time: '1:44' },
       { label: '½ mile', time: '3:49' },
@@ -627,13 +627,13 @@ export const stats: AthleteStats[] = [
       { label: '20K', time: '2:05:25' },
       { label: 'Half-Marathon', time: '2:12:38' },
     ],
-    thisYear: { activities: 56, distanceKm: 395.8, time: '41h 54m', elevationM: 2729 },
-    allTime: { activities: 56, distanceKm: 395.8, time: '41h 54m', elevationM: 2729 },
+    thisYear: { activities: 58, distanceKm: 408.6, time: '43h 22m', elevationM: 2729 },
+    allTime: { activities: 58, distanceKm: 408.6, time: '43h 22m', elevationM: 2729 },
     highlight: 'Took the course record on Return From The Sea!',
   },
   {
     member: 'Mehrdad',
-    captured: '27 September 2026',
+    captured: '19 October 2026',
     stravaName: 'Mehrdad Janboori',
     location: 'Tehran',
     recent: { activitiesPerWeek: 0, distancePerWeekKm: 0, timePerWeek: '0h 0m', elevationPerWeekM: 0 },
@@ -769,8 +769,8 @@ export const stats: AthleteStats[] = [
     member: 'Vahe',
     stravaName: 'Vahe Tildian',
     location: 'Yerevan',
-    captured: '12 October 2026',
-    recent: { activitiesPerWeek: 0, distancePerWeekKm: 2.6, timePerWeek: '16m 44s', elevationPerWeekM: 20 },
+    captured: '19 October 2026',
+    recent: { activitiesPerWeek: 1, distancePerWeekKm: 10.1, timePerWeek: '1h 10m', elevationPerWeekM: 79 },
     bests: [
       { label: '400m', time: '1:33' },
       { label: '½ mile', time: '3:57' },
@@ -780,21 +780,21 @@ export const stats: AthleteStats[] = [
       { label: '2 mile', time: '15:46' },
       { label: '5K', time: '28:55' },
       { label: '10K', time: '59:43' },
+      { label: '15K', time: '1:46:31' },
+      { label: '10 mile', time: '1:54:22' },
+      { label: '20K', time: '2:32:34' },
+      { label: 'Half-Marathon', time: '2:43:45' },
     ],
-    // Strava's own distance and time disagree here: 435.6 km in 15h 02m is
-    // 29 km/h. The distance is the suspect half — at his 6:20/km that time is
-    // nearer 140 km — but both are what his profile reports, so both are
-    // transcribed rather than guessed at. Worth asking him.
-    thisYear: { activities: 19, distanceKm: 418.9, time: '13h 17m', elevationM: 866 },
-    allTime: { activities: 21, distanceKm: 435.6, time: '15h 2m', elevationM: 1034 },
+    thisYear: { activities: 22, distanceKm: 154, time: '16h 51m', elevationM: 1102 },
+    allTime: { activities: 24, distanceKm: 170.7, time: '18h 37m', elevationM: 1271 },
     highlight: 'Fastest ever two miles on an October morning (15:46)',
   },
   {
     member: 'Victor',
     stravaName: 'Victor Avtandilyan',
     location: 'Kraków',
-    captured: '12 October 2026',
-    recent: { activitiesPerWeek: 1, distancePerWeekKm: 5.2, timePerWeek: '38m 7s', elevationPerWeekM: 21 },
+    captured: '19 October 2026',
+    recent: { activitiesPerWeek: 1, distancePerWeekKm: 10.3, timePerWeek: '1h 9m', elevationPerWeekM: 41 },
     bests: [
       { label: '400m', time: '1:43' },
       { label: '½ mile', time: '3:51' },
@@ -803,9 +803,13 @@ export const stats: AthleteStats[] = [
       { label: '2 mile', time: '16:30' },
       { label: '5K', time: '27:21' },
       { label: '10K', time: '56:49' },
+      { label: '15K', time: '1:29:31' },
+      { label: '10 mile', time: '1:36:32' },
+      { label: '20K', time: '2:02:23' },
+      { label: 'Half-Marathon', time: '2:10:03' },
     ],
-    thisYear: { activities: 24, distanceKm: 154.3, time: '16h 45m', elevationM: 699 },
-    allTime: { activities: 33, distanceKm: 211.4, time: '22h 41m', elevationM: 1151 },
+    thisYear: { activities: 25, distanceKm: 175.9, time: '18h 59m', elevationM: 775 },
+    allTime: { activities: 34, distanceKm: 233, time: '24h 56m', elevationM: 1228 },
   },
 ];
 
